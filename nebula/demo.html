@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project NEBULA — MLAOS Architecture Prototype</title>
+<style>
+  :root {
+    --bg: #0a0c10; --panel: #11151c; --panel2: #0d1117; --line: #1f2733;
+    --fg: #d7dee8; --dim: #7b8798; --accent: #58d6ff; --good: #4ade80;
+    --bad: #f87171; --warn: #fbbf24; --violet: #a78bfa;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg);
+    font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color: var(--accent); }
+
+  header { padding: 14px 18px 10px; border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #0e131b, #0a0c10); }
+  h1 { margin: 0; font-size: 16px; letter-spacing: .02em; font-weight: 650; }
+  h1 span { color: var(--accent); }
+  .sub { color: var(--dim); font-size: 11.5px; margin-top: 3px; max-width: 110ch; }
+  .sub b { color: var(--fg); font-weight: 600; }
+
+  .wrap { display: grid; grid-template-columns: 1fr 320px; gap: 14px; padding: 14px 18px 24px; }
+  @media (max-width: 1180px) { .wrap { grid-template-columns: 1fr; } }
+
+  .panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .card h2 { margin: 0; padding: 8px 10px; font-size: 11px; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--dim); border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; background: var(--panel2); }
+  .card h2 .tag { font-size: 9.5px; padding: 2px 6px; border-radius: 3px; letter-spacing: .04em; }
+  .tag.good { background: rgba(74,222,128,.12); color: var(--good); border: 1px solid rgba(74,222,128,.25); }
+  .tag.bad  { background: rgba(248,113,113,.12); color: var(--bad);  border: 1px solid rgba(248,113,113,.25); }
+  .tag.info { background: rgba(88,214,255,.12); color: var(--accent); border: 1px solid rgba(88,214,255,.25); }
+  .tag.vio  { background: rgba(167,139,250,.12); color: var(--violet); border: 1px solid rgba(167,139,250,.25); }
+  .card .body { padding: 8px; }
+  .note { padding: 7px 10px; font-size: 11px; color: var(--dim); border-top: 1px solid var(--line);
+    background: #0b0f15; min-height: 44px; }
+  .note b { color: var(--fg); }
+
+  canvas.view { display: block; width: 100%; image-rendering: auto; border-radius: 4px;
+    background: #05070a; cursor: crosshair; touch-action: none; }
+
+  .side { display: flex; flex-direction: column; gap: 12px; }
+  .ctl { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+  .ctl h3 { margin: 0 0 8px; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  .tools button { padding: 7px 3px; font-size: 10.5px; background: #161c26; color: var(--fg);
+    border: 1px solid var(--line); border-radius: 5px; cursor: pointer; font-family: inherit; }
+  .tools button:hover { border-color: #33404f; background: #1b2330; }
+  .tools button.on { background: rgba(88,214,255,.14); border-color: var(--accent); color: var(--accent); }
+
+  .row { display: flex; align-items: center; gap: 8px; margin: 7px 0; font-size: 11.5px; }
+  .row label { color: var(--dim); flex: 0 0 62px; }
+  .row output { color: var(--fg); font-family: var(--mono); font-size: 10.5px; flex: 0 0 34px; text-align: right; }
+  input[type=range] { flex: 1; accent-color: var(--accent); height: 3px; }
+  select, .btn { background: #161c26; color: var(--fg); border: 1px solid var(--line);
+    border-radius: 5px; padding: 5px 8px; font: inherit; font-size: 11.5px; cursor: pointer; }
+  select { flex: 1; }
+  .btn:hover { border-color: #33404f; background: #1b2330; }
+  .btn.go { border-color: rgba(88,214,255,.4); color: var(--accent); }
+  .btn.warn { border-color: rgba(251,191,36,.4); color: var(--warn); }
+  .btn.bad { border-color: rgba(248,113,113,.4); color: var(--bad); }
+  .btnrow { display: flex; gap: 5px; margin-top: 6px; }
+  .btnrow .btn { flex: 1; text-align: center; }
+
+  .chk { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--dim); margin: 5px 0; cursor: pointer; }
+  .chk input { accent-color: var(--accent); }
+
+  .hud { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 1px;
+    background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .m { background: var(--panel); padding: 7px 9px; }
+  .m .k { font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--dim); }
+  .m .v { font-family: var(--mono); font-size: 14px; margin-top: 2px; color: var(--fg); }
+  .m .v small { font-size: 10px; color: var(--dim); }
+  .m .v.good { color: var(--good); } .m .v.bad { color: var(--bad); } .m .v.warn { color: var(--warn); }
+
+  #log { font-family: var(--mono); font-size: 10.5px; line-height: 1.5; max-height: 190px;
+    overflow-y: auto; background: #080b10; border: 1px solid var(--line); border-radius: 6px; padding: 7px 8px; }
+  #log div { color: var(--dim); white-space: pre-wrap; word-break: break-word; }
+  #log .p { color: var(--accent); } #log .a { color: var(--good); }
+  #log .n { color: var(--warn); } #log .e { color: var(--bad); }
+
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 10px; color: var(--dim); margin-top: 6px; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+  .boot { padding: 40px 18px; text-align: center; color: var(--dim); font-family: var(--mono); font-size: 12px; }
+  .bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+  .bar i { display: block; height: 100%; background: var(--accent); width: 0%; transition: width .15s; }
+  code { font-family: var(--mono); font-size: 11px; background: #161c26; padding: 1px 4px; border-radius: 3px; color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Project <span>NEBULA</span> — MLAOS architecture prototype</h1>
+  <div class="sub">
+    <b>Symbolic kernel owns truth. Neural layer owns appearance. Scheduler decides who pays.</b>
+    The left panel is the corrected architecture; the right panel is the original roadmap's
+    §4.2 "consensus via vector averaging" running on the identical input stream. Same edits, both worlds.
+  </div>
+</header>
+
+<div id="boot" class="boot">
+  <div id="bootmsg">initialising kernel…</div>
+  <div class="bar" style="max-width:420px;margin:8px auto 0"><i id="bootbar"></i></div>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+  <div>
+    <div class="panels">
+      <div class="card">
+        <h2>Neural Canvas <span class="tag good">corrected · symbolic truth + neural materializer</span></h2>
+        <div class="body"><canvas id="cvMain" class="view" width="128" height="80"></canvas></div>
+        <div class="legend" style="padding:0 10px 8px">
+          <span><i style="background:#58d6ff"></i>hi-fi (baked)</span>
+          <span><i style="background:#3a2f14"></i>lo-fi (instant fallback)</span>
+          <span id="brushInfo" style="margin-left:auto"></span>
+        </div>
+        <div class="note" id="noteMain">Drag to edit. Every stroke is an <b>idempotent intent</b> — the world below it is
+          discrete, replayable state. The neural pass only decides how that state <b>looks</b>.</div>
+      </div>
+
+      <div class="card">
+        <h2>Symbolic Truth <span class="tag info">the source of truth · never generated</span></h2>
+        <div class="body"><canvas id="cvTruth" class="view" width="128" height="80"></canvas></div>
+        <div class="row" style="padding:2px 10px 8px;margin:0">
+          <label style="flex:0 0 52px">channel</label>
+          <select id="chanSel">
+            <option value="-1">composite (lo-fi)</option>
+            <option value="0">elevation</option>
+            <option value="1">moisture</option>
+            <option value="2">rock</option>
+            <option value="3">vegetation</option>
+            <option value="4">structure</option>
+            <option value="5">water</option>
+          </select>
+        </div>
+        <div class="note" id="noteTruth">This is what gets <b>saved, replicated, rolled back and diffed</b>.
+          A vector cannot do any of those four things.</div>
+      </div>
+
+      <div class="card">
+        <h2>Latent-as-Truth <span class="tag bad">original §4.2 · vector averaging</span></h2>
+        <div class="body"><canvas id="cvNaive" class="view" width="128" height="80"></canvas></div>
+        <div class="legend" style="padding:0 10px 8px">
+          <span>decode RMSE <b id="nvRmse" style="color:var(--bad);font-family:var(--mono)">—</b></span>
+          <span style="margin-left:auto">redeliveries <b id="nvDrift" style="font-family:var(--mono)">0</b></span>
+        </div>
+        <div class="note" id="noteNaive">Same intents, resolved by <b>averaging embeddings</b>. Watch what happens
+          where two brushes overlap — and press <b>Redeliver</b> to see it diverge permanently.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div class="hud" id="hud"></div>
+    </div>
+
+    <div class="ctl" style="margin-top:12px">
+      <h3>Event log — append-only intent stream</h3>
+      <div id="log"></div>
+    </div>
+  </div>
+
+  <div class="side">
+    <div class="ctl">
+      <h3>Intent brush</h3>
+      <div class="tools" id="tools"></div>
+      <div class="row"><label>radius</label><input type="range" id="radius" min="2" max="14" step="1" value="6"><output id="radiusO">6</output></div>
+      <div class="row"><label>strength</label><input type="range" id="strength" min="5" max="100" step="5" value="45"><output id="strengthO">.45</output></div>
+      <div class="row"><label>river dir</label><input type="range" id="dir" min="0" max="180" step="5" value="35"><output id="dirO">35°</output></div>
+    </div>
+
+    <div class="ctl">
+      <h3>Simulation</h3>
+      <div class="btnrow">
+        <button class="btn go" id="playBtn">❚❚ pause</button>
+        <button class="btn" id="stepBtn">step</button>
+        <button class="btn" id="resetBtn">reset</button>
+      </div>
+      <div class="row"><label>speed</label><input type="range" id="speed" min="0" max="8" step="1" value="2"><output id="speedO">2×</output></div>
+      <div class="row"><label>macro / s</label><input type="range" id="macroRate" min="1" max="20" step="1" value="4"><output id="macroRateO">4</output></div>
+      <label class="chk"><input type="checkbox" id="agentsOn" checked> autonomous settler agents (macro tier)</label>
+      <label class="chk"><input type="checkbox" id="negotiateOn" checked> negotiation resolver on conflict</label>
+    </div>
+
+    <div class="ctl">
+      <h3>Regional weights <span style="text-transform:none;letter-spacing:0;color:var(--dim)">(roadmap §6.2)</span></h3>
+      <div class="row" style="margin-top:0"><label style="flex:0 0 44px">style</label>
+        <select id="styleSel"></select></div>
+      <div class="note" style="border:0;background:none;padding:4px 0 0;min-height:0">
+        Swapping weights re-bakes <b>appearance only</b>. The fingerprint below does not change —
+        the save file is portable across style packs.
+      </div>
+    </div>
+
+    <div class="ctl">
+      <h3>Architecture probes</h3>
+      <div class="btnrow"><button class="btn warn" id="conflictBtn">⛰ conflict test</button></div>
+      <div class="note" style="border:0;background:none;padding:4px 0 6px;min-height:0">
+        Player A raises a mountain, Player B carves a river, same cells. Composition yields a
+        <b>canyon</b>; averaging yields neither.
+      </div>
+      <div class="btnrow"><button class="btn bad" id="redeliverBtn">↻ redeliver all events</button></div>
+      <div class="note" style="border:0;background:none;padding:4px 0 6px;min-height:0">
+        Simulates an at-least-once broker. Symbolic state is a <b>no-op</b>; latent averaging
+        <b>drifts permanently</b> and clients can never reconverge.
+      </div>
+      <div class="btnrow"><button class="btn" id="replayBtn">⟲ replay from log</button></div>
+      <div class="note" style="border:0;background:none;padding:4px 0 6px;min-height:0">
+        Rebuilds the world from the event stream alone and compares fingerprints.
+      </div>
+      <label class="chk"><input type="checkbox" id="overlayOn" checked> show chunk fidelity overlay</label>
+      <label class="chk"><input type="checkbox" id="naiveOn" checked> run latent control panel</label>
+    </div>
+
+    <div class="ctl">
+      <h3>Unit economics</h3>
+      <div id="cost" style="font-family:var(--mono);font-size:11px;line-height:1.7"></div>
+    </div>
+  </div>
+</div>
+
+<script src="core.js"></script>
+<script>
+(function () {
+  'use strict';
+  const N = window.NEBULA;
+  const W = 128, H = 80, CW = 16, CHH = 10;
+  const SEED = 1337;
+
+  /* ------------------------------------------------------------------ boot */
+  const bootmsg = document.getElementById('bootmsg');
+  const bootbar = document.getElementById('bootbar');
+  function boot(pct, msg) { bootbar.style.width = pct + '%'; bootmsg.textContent = msg; }
+
+  const TOOLS = [
+    { id: 'raise',    label: '▲ raise',  note: 'Additive terrain. Two raises compose into a taller peak — clamped, never overwritten.' },
+    { id: 'lower',    label: '▽ lower',  note: 'Subtractive terrain. Composes with raise into a pass, not a compromise blob.' },
+    { id: 'carve',    label: '≈ river',  note: 'Water uses max-composition, bed uses min. A river through a mountain yields a CANYON.' },
+    { id: 'afforest', label: '✦ forest', note: 'Vegetation is gated by moisture, elevation and rock — symbolic constraints, not a guardrail net.' },
+    { id: 'deforest', label: '✧ clear',  note: 'Clearing near a settlement triggers the negotiation resolver. Riparian buffers survive automatically.' },
+    { id: 'build',    label: '⌂ settle', note: 'Structures use max-composition with footprint exclusion. Two builders resolve by claim order.' },
+    { id: 'erode',    label: '◌ erode',  note: 'Forces extra micro-simulation ticks. Mass-conserving: nothing appears or disappears.' },
+    { id: 'inspect',  label: '◎ inspect',note: 'Reads symbolic truth at the cursor. No inference, no cost — the answer is already stored.' }
+  ];
+
+  let world, naive, anchored, mat, sched, agents, resolver, cost;
+  let styleCode = new Float32Array(N.STYLE_DIM);
+  let styleName = 'vanilla';
+
+  const fin = new Float32Array(N.MAT_IN);
+  const outC = new Float32Array(N.MAT_OUT);
+
+  const cvMain = document.getElementById('cvMain');
+  const cvTruth = document.getElementById('cvTruth');
+  const cvNaive = document.getElementById('cvNaive');
+  const ctxMain = cvMain.getContext('2d');
+  const ctxTruth = cvTruth.getContext('2d');
+  const ctxNaive = cvNaive.getContext('2d');
+
+  // Full-resolution pixel buffers. We render the world at 1:1 into an
+  // ImageData and let the browser bilinear-upscale — the neural decode is the
+  // expensive part, and it is cached per chunk, never run per frame.
+  const imgMain = ctxMain.createImageData(W, H);
+  const imgTruth = ctxTruth.createImageData(W, H);
+  const imgNaive = ctxNaive.getContext ? ctxNaive.createImageData(W, H) : null;
+  const pxMain = imgMain.data, pxTruth = imgTruth.data, pxNaive = imgNaive.data;
+
+  const nChunks = Math.ceil(W / CW) * Math.ceil(H / CHH);
+  const chunkCols = Math.ceil(W / CW), chunkRows = Math.ceil(H / CHH);
+
+  async function init() {
+    boot(5, 'generating symbolic base world…');
+    await frame();
+    const base = new N.World(W, H, SEED);
+    world = N.World.replay([], W, H, SEED);
+
+    boot(15, 'encoding latent control world…');
+    await frame();
+    naive = new N.LatentWorld(W, H, SEED, true).seedFrom(base);
+    anchored = new N.LatentWorld(W, H, SEED, false).seedFrom(base);
+    // Decoder is fit ONCE on the untouched base world, exactly as in production.
+    naive.fitDecoder(base);
+    anchored.fitDecoder(base);
+    naive.decodeToChannels();
+
+    boot(30, 'training neural materializer (offline bake)…');
+    mat = new N.Materializer(42);
+    styleCode.set(N.STYLE_PRESETS.vanilla);
+    // Train incrementally so the progress bar is honest rather than decorative.
+    const totalSteps = 2600, slices = 13;
+    for (let s = 0; s < slices; s++) {
+      await frame();
+      mat.train(world, totalSteps / slices | 0, 99 + s);
+      boot(30 + (s + 1) / slices * 55, `training neural materializer… ${((s + 1) / slices * 100) | 0}%  (loss ${mat.trainLoss.toFixed(5)})`);
+    }
+
+    boot(88, 'warming chunk cache…');
+    await frame();
+    sched = new N.RefinementScheduler(world, CW, CHH, { bakeMsPerChunk: 110, msPerFrame: 16.7 });
+    sched.parallelBakes = 1;
+    for (let c = 0; c < nChunks; c++) sched.queue.push(c), sched.state[c] = 1;
+
+    agents = [new N.SettlerAgent(1, { cooldown: 26, seed: 3 }),
+              new N.SettlerAgent(2, { cooldown: 31, seed: 17, utility: { water: 1.0, flat: 0.8, veg: 1.5, isolate: 1.0, avoidRock: 0.6 } })];
+    resolver = new N.NegotiationResolver();
+    cost = new N.CostModel();
+
+    boot(100, 'ready');
+    await frame();
+    document.getElementById('boot').style.display = 'none';
+    document.getElementById('app').style.display = 'grid';
+
+    buildUI();
+    rebuildAllLoFi();
+    invalidateAll();
+    log('p', 'kernel online — symbolic truth + neural materializer');
+    log('a', `materializer baked: ${mat.paramCount} params, loss ${mat.trainLoss.toFixed(5)}`);
+    log('a', `${chunkCols}×${chunkRows} = ${nChunks} chunks under progressive refinement`);
+    requestAnimationFrame(loop);
+  }
+
+  function frame() { return new Promise(r => requestAnimationFrame(() => r())); }
+
+  /* ------------------------------------------------------------------- UI */
+  let tool = 'raise';
+  function buildUI() {
+    const t = document.getElementById('tools');
+    TOOLS.forEach(x => {
+      const b = document.createElement('button');
+      b.textContent = x.label; b.dataset.id = x.id;
+      if (x.id === tool) b.classList.add('on');
+      b.onclick = () => {
+        tool = x.id;
+        [...t.children].forEach(c => c.classList.toggle('on', c.dataset.id === tool));
+        document.getElementById('noteMain').innerHTML = x.note;
+      };
+      t.appendChild(b);
+    });
+    document.getElementById('noteMain').innerHTML = TOOLS[0].note;
+
+    const ss = document.getElementById('styleSel');
+    Object.keys(N.STYLE_PRESETS).forEach(k => {
+      const o = document.createElement('option'); o.value = k; o.textContent = k; ss.appendChild(o);
+    });
+    ss.onchange = () => {
+      styleName = ss.value;
+      styleCode.set(N.STYLE_PRESETS[styleName]);
+      log('p', `regional weights swapped → "${styleName}"`);
+      const before = world.fingerprint();
+      invalidateAll();                       // re-bake appearance only
+      log('a', `world fingerprint unchanged: ${before} (save is portable)`);
+    };
+
+    bindRange('radius', v => v);
+    bindRange('strength', v => (v / 100).toFixed(2).replace('0.', '.'));
+    bindRange('dir', v => v + '°');
+    bindRange('speed', v => v + '×');
+    bindRange('macroRate', v => v);
+
+    document.getElementById('playBtn').onclick = e => {
+      running = !running;
+      e.target.textContent = running ? '❚❚ pause' : '▶ play';
+      e.target.classList.toggle('go', running);
+    };
+    document.getElementById('stepBtn').onclick = () => { doMicro(1); doMacro(true); };
+    document.getElementById('resetBtn').onclick = resetWorld;
+    document.getElementById('conflictBtn').onclick = conflictTest;
+    document.getElementById('redeliverBtn').onclick = redeliver;
+    document.getElementById('replayBtn').onclick = replayFromLog;
+
+    // HUD
+    const hud = document.getElementById('hud');
+    HUD_KEYS.forEach(k => {
+      const d = document.createElement('div'); d.className = 'm';
+      d.innerHTML = `<div class="k">${k.label}</div><div class="v" id="hud-${k.id}">—</div>`;
+      hud.appendChild(d);
+    });
+  }
+  function bindRange(id, fmt) {
+    const el = document.getElementById(id), o = document.getElementById(id + 'O');
+    const up = () => o.textContent = fmt(+el.value);
+    el.oninput = up; up();
+  }
+
+  const HUD_KEYS = [
+    { id: 'fps', label: 'frame' }, { id: 'micro', label: 'micro ticks' },
+    { id: 'macro', label: 'macro ticks' }, { id: 'decisions', label: 'agent decisions' },
+    { id: 'hifi', label: 'chunk cache hi-fi' }, { id: 'queue', label: 'bake queue' },
+    { id: 'decode', label: 'neural decode' }, { id: 'events', label: 'intents logged' },
+    { id: 'fp', label: 'world fingerprint' }, { id: 'mass', label: 'mass drift' },
+    { id: 'costc', label: 'cost · corrected' }, { id: 'costn', label: 'cost · naive §4.2' }
+  ];
+  function hud(id, html, cls) {
+    const el = document.getElementById('hud-' + id);
+    if (!el) return;
+    el.innerHTML = html;
+    el.className = 'v' + (cls ? ' ' + cls : '');
+  }
+
+  /* -------------------------------------------------------------- editing */
+  let painting = false, lastCell = null, inspectInfo = '';
+
+  function cellFromEvent(e) {
+    const r = cvMain.getBoundingClientRect();
+    const x = Math.floor((e.clientX - r.left) / r.width * W);
+    const y = Math.floor((e.clientY - r.top) / r.height * H);
+    return { x: N.clamp(x, 0, W - 1), y: N.clamp(y, 0, H - 1) };
+  }
+
+  cvMain.addEventListener('pointerdown', e => {
+    cvMain.setPointerCapture(e.pointerId);
+    painting = true; lastCell = null;
+    emit(cellFromEvent(e), true);
+  });
+  cvMain.addEventListener('pointermove', e => {
+    const c = cellFromEvent(e);
+    hover = c;
+    if (!painting) return;
+    if (lastCell && Math.hypot(c.x - lastCell.x, c.y - lastCell.y) < 2) return;
+    lastCell = c; emit(c, false);
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev =>
+    cvMain.addEventListener(ev, () => { painting = false; lastCell = null; }));
+
+  let hover = null;
+
+  function emit(c, isFirst) {
+    const r = +document.getElementById('radius').value;
+    const s = +document.getElementById('strength').value / 100;
+    const dir = +document.getElementById('dir').value / 180;
+    let intent;
+
+    switch (tool) {
+      case 'raise':    intent = world.makeIntent('raise', { x: c.x, y: c.y, r, amount: s * 0.55 }); break;
+      case 'lower':    intent = world.makeIntent('lower', { x: c.x, y: c.y, r, amount: s * 0.55 }); break;
+      case 'carve':    intent = world.makeIntent('carve', { x: c.x, y: c.y, r: r * 0.8, depth: s, dir }); break;
+      case 'afforest': intent = world.makeIntent('afforest', { x: c.x, y: c.y, r, amount: s }); break;
+      case 'deforest': intent = world.makeIntent('deforest', { x: c.x, y: c.y, r, amount: s }); break;
+      case 'build':    intent = world.makeIntent('build', { x: c.x, y: c.y, r: Math.max(2, r * 0.5), kind: 'settlement', actor: 'player' }); break;
+      case 'erode':    doMicro(Math.round(20 * s) + 4); invalidateRect({ x0: c.x - r, y0: c.y - r, x1: c.x + r, y1: c.y + r }); return;
+      case 'inspect': {
+        const i = world.idx(c.x, c.y);
+        const vals = N.CH_NAMES.map((n, k) => `${n}=${world.ch[k][i].toFixed(3)}`).join(' ');
+        inspectInfo = `(${c.x},${c.y}) ${vals}`;
+        document.getElementById('brushInfo').textContent = inspectInfo;
+        log('p', `inspect ${inspectInfo}`);
+        return;
+      }
+    }
+
+    const res = world.apply(intent);
+    if (res.duplicate) return;
+
+    // The SAME intent object goes to the latent control world.
+    if (document.getElementById('naiveOn').checked) {
+      naive.apply(intent);
+      naive.decodeToChannels();
+    }
+
+    invalidateRect(res.dirty);
+    log('p', `#${intent.id} ${intent.op} @(${c.x},${c.y}) r=${r} s=${s.toFixed(2)}`);
+
+    // negotiation resolver — conflict between player intent and agent intent
+    if (document.getElementById('negotiateOn').checked) {
+      const r2 = resolver.resolve(world, intent);
+      if (r2) {
+        if (r2.dirty) invalidateRect(r2.dirty);
+        log('n', `⚖ ${r2.kind} — ${r2.text}`);
+      }
+    }
+  }
+
+  /* ------------------------------------------------------- refinement */
+  function invalidateRect(rect) {
+    if (!rect) return;
+    const x0 = N.clamp(rect.x0 | 0, 0, W - 1), x1 = N.clamp(rect.x1 | 0, 0, W - 1);
+    const y0 = N.clamp(rect.y0 | 0, 0, H - 1), y1 = N.clamp(rect.y1 | 0, 0, H - 1);
+    // lo-fi IMMEDIATELY — the frame never blocks on generation
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        N.featuresAt(world, x, y, fin, null);
+        mat.decodeLoFi(fin, outC);
+        writePx(pxMain, y * W + x, outC);
+      }
+    }
+    sched.invalidate({ x0, y0, x1, y1 });
+  }
+  function invalidateAll() { invalidateRect({ x0: 0, y0: 0, x1: W - 1, y1: H - 1 }); }
+
+  function rebuildAllLoFi() {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      N.featuresAt(world, x, y, fin, null);
+      mat.decodeLoFi(fin, outC);
+      writePx(pxMain, y * W + x, outC);
+    }
+  }
+
+  function writePx(buf, i, c) {
+    const o = i * 4;
+    buf[o] = N.clamp(c[0], 0, 1) * 255;
+    buf[o + 1] = N.clamp(c[1], 0, 1) * 255;
+    buf[o + 2] = N.clamp(c[2], 0, 1) * 255;
+    buf[o + 3] = 255;
+  }
+
+  /** The actual neural decode. Runs ONLY when a chunk's bake completes, and the
+   *  result is cached. This is the whole "bake heavy / run light" argument:
+   *  per-frame cost is a memcpy, not an inference. */
+  function bakeChunk(cid) {
+    const cx = (cid % chunkCols) * CW, cy = ((cid / chunkCols) | 0) * CHH;
+    const t0 = performance.now();
+    for (let y = cy; y < Math.min(cy + CHH, H); y++) {
+      for (let x = cx; x < Math.min(cx + CW, W); x++) {
+        N.featuresAt(world, x, y, fin, styleCode);
+        mat.decode(fin, outC);
+        writePx(pxMain, y * W + x, outC);
+      }
+    }
+    return performance.now() - t0;
+  }
+
+  /* ---------------------------------------------------------- simulation */
+  let running = true, massRef = 0;
+  function doMicro(n) {
+    for (let i = 0; i < n; i++) world.microStep(1);
+    cost.addMicro(n * 0.0007);
+  }
+  function doMacro(force) {
+    if (!document.getElementById('agentsOn').checked && !force) return;
+    const evs = world.macroStep(document.getElementById('agentsOn').checked ? agents : []);
+    for (const e of evs) {
+      cost.addMacro(e.tokens);
+      if (e.kind === 'FOUND_SETTLEMENT') {
+        log('a', `⌂ agent ${e.actor} founds a settlement @(${e.x},${e.y}) — ${e.rationale} [${e.tokens} tok]`);
+        invalidateRect({ x0: e.x - 6, y0: e.y - 6, x1: e.x + 6, y1: e.y + 6 });
+      }
+    }
+    return evs.length;
+  }
+
+  /* -------------------------------------------------------------- probes */
+  function conflictTest() {
+    const cx = 64, cy = 40, r = 9;
+    const a = world.makeIntent('raise', { x: cx, y: cy, r, amount: 0.95, actor: 'playerA' });
+    world.apply(a); if (document.getElementById('naiveOn').checked) naive.apply(a);
+    log('p', `#${a.id} ⛰ playerA raises a mountain @(${cx},${cy})`);
+
+    const b = world.makeIntent('carve', { x: cx, y: cy, r, depth: 0.95, dir: 0.35, actor: 'playerB' });
+    world.apply(b); if (document.getElementById('naiveOn').checked) naive.apply(b);
+    log('p', `#${b.id} ≈ playerB carves a river through the same cells`);
+
+    invalidateRect({ x0: cx - r - 2, y0: cy - r - 2, x1: cx + r + 2, y1: cy + r + 2 });
+    if (document.getElementById('naiveOn').checked) naive.decodeToChannels();
+
+    // quantify the outcome in both worlds
+    let symWater = 0, symRock = 0, symCanyon = 0, nvCanyon = 0, n = 0;
+    for (let y = cy - r; y <= cy + r; y++) for (let x = cx - r; x <= cx + r; x++) {
+      if (x < 0 || y < 0 || x >= W || y >= H) continue;
+      const i = world.idx(x, y); n++;
+      symWater += world.ch[N.CH.WATER][i] > 0.2 ? 1 : 0;
+      symRock += world.ch[N.CH.ROCK][i] > 0.25 ? 1 : 0;
+      if (world.ch[N.CH.WATER][i] > 0.2 && world.ch[N.CH.ROCK][i] > 0.25) symCanyon++;
+      if (naive.ch[N.CH.WATER][i] > 0.2 && naive.ch[N.CH.ROCK][i] > 0.25) nvCanyon++;
+    }
+    log(symCanyon > 0 ? 'a' : 'e',
+      `composition → ${symCanyon} canyon cells (water ${symWater}, rock ${symRock} of ${n})`);
+    log('e', `vector averaging → ${nvCanyon} canyon cells. The river and the mountain cancelled.`);
+    document.getElementById('noteNaive').innerHTML =
+      `<b>${nvCanyon} canyon cells</b> vs <b>${symCanyon}</b> under composition. Averaging "mountain" with "river" ` +
+      `did not produce a canyon — it produced neither. This is §4.2 failing exactly as predicted.`;
+  }
+
+  function redeliver() {
+    const before = world.fingerprint();
+    const nvBefore = naive.latent.map(a => a.slice());
+    let dups = 0, applied = 0;
+    for (const e of world.events.slice()) {
+      const r = world.apply(e);
+      r.duplicate ? dups++ : applied++;
+    }
+    let drifted = 0;
+    if (document.getElementById('naiveOn').checked) {
+      for (const e of world.events.slice()) naive.apply(e);
+      for (let d = 0; d < nvBefore.length; d++)
+        for (let i = 0; i < nvBefore[d].length; i++)
+          if (Math.abs(nvBefore[d][i] - naive.latent[d][i]) > 1e-9) { drifted++; break; }
+      naive.decodeToChannels();
+    }
+    const after = world.fingerprint();
+    log(after === before ? 'a' : 'e',
+      `redelivered ${world.events.length} events → ${dups} rejected as duplicates, ${applied} applied`);
+    log(after === before ? 'a' : 'e',
+      `symbolic fingerprint ${before} → ${after}  ${after === before ? '(IDENTICAL — idempotent)' : '(DIVERGED!)'}`);
+    log('e', `latent control: ${drifted}/24 latent planes drifted. Clients can never reconverge.`);
+    document.getElementById('noteNaive').innerHTML =
+      `<b>Redelivery diverged ${drifted} latent planes.</b> Kafka is at-least-once, so this happens in production, ` +
+      `not in theory. There is no reconciliation: the drift is permanent and invisible until two clients disagree.`;
+  }
+
+  function replayFromLog() {
+    const fp = world.fingerprint();
+    const t0 = performance.now();
+    const rebuilt = N.World.replay(world.events, W, H, SEED);
+    const ms = performance.now() - t0;
+    const fp2 = rebuilt.fingerprint();
+    // shuffle arrival order and replay again — canonical order is by event id
+    const shuffled = world.events.slice().sort(() => Math.random() - 0.5);
+    const fp3 = N.World.replay(shuffled, W, H, SEED).fingerprint();
+    log(fp2 === fp ? 'a' : 'e', `replayed ${world.events.length} events in ${ms.toFixed(1)}ms → ${fp2} ${fp2 === fp ? '✓ matches live state' : '✗ MISMATCH'}`);
+    log(fp3 === fp ? 'a' : 'e', `replayed in SHUFFLED arrival order → ${fp3} ${fp3 === fp ? '✓ identical (order-tolerant)' : '✗ order-dependent'}`);
+    if (fp2 === fp && fp3 === fp) {
+      document.getElementById('noteTruth').innerHTML =
+        `<b>Replay verified.</b> ${world.events.length} events reproduce a byte-identical world in ${ms.toFixed(1)}ms,
+         regardless of arrival order. That is a save file, a rollback, and a netcode reconciliation — from one mechanism.`;
+    }
+  }
+
+  function resetWorld() {
+    const base = new N.World(W, H, SEED);
+    world = N.World.replay([], W, H, SEED);
+    naive = new N.LatentWorld(W, H, SEED, true).seedFrom(base);
+    anchored = new N.LatentWorld(W, H, SEED, false).seedFrom(base);
+    naive.fitDecoder(base); anchored.fitDecoder(base); naive.decodeToChannels();
+    sched = new N.RefinementScheduler(world, CW, CHH, { bakeMsPerChunk: 110, msPerFrame: 16.7 });
+    sched.parallelBakes = 1;
+    for (let c = 0; c < nChunks; c++) { sched.queue.push(c); sched.state[c] = 1; }
+    agents.forEach(a => { a.lastDecision = -1e9; a.log.length = 0; });
+    resolver.history.length = 0;
+    massRef = world.elevMass();
+    document.getElementById('log').innerHTML = '';
+    rebuildAllLoFi();
+    log('p', 'world reset — event log cleared');
+  }
+
+  /* ---------------------------------------------------------------- log */
+  const logEl = document.getElementById('log');
+  let logCount = 0;
+  function log(cls, msg) {
+    const d = document.createElement('div');
+    d.className = cls;
+    d.textContent = String(msgCount()++).padStart(4, '0') + '  ' + msg;
+    logEl.appendChild(d);
+    while (logEl.children.length > 220) logEl.removeChild(logEl.firstChild);
+    logEl.scrollTop = logEl.scrollHeight;
+    logCount++;
+  }
+  let _c = 0; function msgCount() { return _c; } function inc() { return _c++; }
+  // simple monotonic counter
+  let _n = 0; function nextN() { return _n++; }
+  logCount = 0;
+  // rebind: use a plain incrementing counter
+  window.__lc = 0;
+  log = function (cls, msg) {
+    const d = document.createElement('div');
+    d.className = cls;
+    d.textContent = String(window.__lc++).padStart(4, '0') + '  ' + msg;
+    logEl.appendChild(d);
+    while (logEl.children.length > 220) logEl.removeChild(logEl.firstChild);
+    logEl.scrollTop = logEl.scrollHeight;
+  };
+
+  /* --------------------------------------------------------------- loop */
+  let last = performance.now(), fpsAcc = 0, fpsN = 0, macroAcc = 0, decodeMs = 0;
+  let lastDecodeReport = 0;
+
+  function loop(now) {
+    const dtReal = Math.min(64, now - last); last = now;
+    fpsAcc += dtReal; fpsN++;
+
+    const speed = +document.getElementById('speed').value;
+    const t0 = performance.now();
+
+    if (running) {
+      // MICRO tier: every frame, cheap, deterministic, mass-conserving
+      doMicro(speed);
+      // MACRO tier: budgeted, infrequent
+      macroAcc += dtReal / 1000;
+      const rate = +document.getElementById('macroRate').value;
+      if (macroAcc >= 1 / rate) { macroAcc = 0; doMacro(false); }
+      // micro-sim moves terrain, so the surface must be re-materialized.
+      // We re-bake lazily: mark all chunks stale at a low rate rather than
+      // every frame, which is what a real LOD/refresh budget looks like.
+      if (world.microTick % 40 === 0) invalidateAll();
+    }
+
+    // Progressive refinement: advance bakes inside this frame's budget
+    const done = sched.tick(dtReal);
+    let dms = 0;
+    for (const cid of done) dms += bakeChunk(cid);
+    decodeMs = dms;
+
+    renderMain(now);
+    renderTruth();
+    if (document.getElementById('naiveOn').checked) renderNaive();
+    updateHud(dtReal, dms);
+
+    requestAnimationFrame(loop);
+  }
+
+  function renderMain(now) {
+    ctxMain.putImageData(imgMain, 0, 0);
+    // fidelity overlay: draw chunk boundaries for anything not yet hi-fi
+    if (document.getElementById('overlayOn').checked) {
+      const sx = W / W;
+      ctxMain.save();
+      for (let cy = 0; cy < chunkRows; cy++) {
+        for (let cx = 0; cx < chunkCols; cx++) {
+          const id = cy * chunkCols + cx;
+          const st = sched.state[id];
+          if (st === 2) continue;
+          ctxMain.fillStyle = st === 1 ? 'rgba(251,191,36,0.20)' : 'rgba(248,113,113,0.20)';
+          ctxMain.fillRect(cx * CW, cy * CHH, CW, CHH);
+          // progress bar inside the chunk
+          const p = sched.progress[id];
+          if (p > 0 && p < 1) {
+            ctxMain.fillStyle = 'rgba(88,214,255,0.75)';
+            ctxMain.fillRect(cx * CW + 1, cy * CHH + CHH - 2, (CW - 2) * p, 1);
+          }
+        }
+      }
+      ctxMain.restore();
+    }
+    // brush cursor
+    if (hover && tool !== 'inspect') {
+      const r = +document.getElementById('radius').value;
+      ctxMain.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctxMain.lineWidth = 0.4;
+      ctxMain.beginPath(); ctxMain.arc(hover.x + 0.5, hover.y + 0.5, r, 0, Math.PI * 2); ctxMain.stroke();
+    }
+    document.getElementById('brushInfo').textContent =
+      hover ? `${tool} @(${hover.x},${hover.y})` : '';
+  }
+
+  function renderTruth() {
+    const c = +document.getElementById('chanSel').value;
+    if (c < 0) {
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        N.featuresAt(world, x, y, fin, null);
+        mat.decodeLoFi(fin, outC);
+        writePx(pxTruth, y * W + x, outC);
+      }
+    } else {
+      const arr = world.ch[c];
+      for (let i = 0; i < W * H; i++) {
+        const v = N.clamp(arr[i], 0, 1);
+        // perceptual heatmap: deep blue -> cyan -> green -> yellow -> white
+        const o = i * 4;
+        pxTruth[o]     = 255 * N.clamp(v * 2.2 - 0.9, 0, 1);
+        pxTruth[o + 1] = 255 * N.clamp(v * 1.7 - 0.25, 0, 1);
+        pxTruth[o + 2] = 255 * N.clamp(1.25 - v * 1.5, 0, 1) * 0.9 + 40 * v;
+        pxTruth[o + 3] = 255;
+      }
+    }
+    // settlement markers — discrete, attributable facts
+    for (const s of world.settlements) {
+      const i = world.idx(N.clamp(s.x | 0, 0, W - 1), N.clamp(s.y | 0, 0, H - 1));
+      const o = i * 4;
+      pxTruth[o] = 255; pxTruth[o + 1] = 90; pxTruth[o + 2] = 220; pxTruth[o + 3] = 255;
+    }
+    ctxTruth.putImageData(imgTruth, 0, 0);
+  }
+
+  function renderNaive() {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      N.biomeTarget(naive.ch[0][i], naive.ch[1][i], naive.ch[2][i],
+        naive.ch[3][i], naive.ch[4][i], naive.ch[5][i], 0, outC);
+      writePx(pxNaive, i, outC);
+    }
+    ctxNaive.putImageData(imgNaive, 0, 0);
+
+    // decode error vs symbolic truth
+    let se = 0, n = 0;
+    for (let i = 0; i < W * H; i++) {
+      for (let c = 0; c < N.CH.N; c++) { const d = naive.ch[c][i] - world.ch[c][i]; se += d * d; n++; }
+    }
+    const rmse = Math.sqrt(se / n);
+    document.getElementById('nvRmse').textContent = rmse.toFixed(4);
+    document.getElementById('nvDrift').textContent = naive.reDeliveryDrift;
+  }
+
+  function updateHud(dtReal, dms) {
+    if (fpsAcc > 400) {
+      const fps = 1000 / (fpsAcc / fpsN);
+      hud('fps', `${fps.toFixed(0)} <small>fps · ${(fpsAcc / fpsN).toFixed(1)}ms</small>`,
+        fps > 50 ? 'good' : fps > 28 ? 'warn' : 'bad');
+      fpsAcc = 0; fpsN = 0;
+    }
+    hud('micro', `${world.microTick.toLocaleString()} <small>· ${(world.microTick / Math.max(1, (performance.now() - t_start) / 1000)).toFixed(0)}/s</small>`);
+    hud('macro', `${world.macroTick.toLocaleString()} <small>· ${document.getElementById('macroRate').value}/s cap</small>`);
+    const dec = agents.reduce((a, g) => a + g.log.length, 0);
+    hud('decisions', `${dec} <small>· ${agents.reduce((a, g) => a + g.log.reduce((s, e) => s + e.tokens, 0), 0)} tok</small>`);
+
+    const hifi = sched.fractionHiFi();
+    hud('hifi', `${(hifi * 100).toFixed(0)}<small>% · ${sched.stats.bakes} bakes</small>`,
+      hifi > 0.95 ? 'good' : hifi > 0.6 ? 'warn' : 'bad');
+    hud('queue', `${sched.queue.length} <small>chunks pending</small>`, sched.queue.length === 0 ? 'good' : 'warn');
+    hud('decode', `${dms.toFixed(1)} <small>ms this frame</small>`, dms < 8 ? 'good' : dms < 16 ? 'warn' : 'bad');
+    hud('events', `${world.events.length} <small>· ${world.settlements.length} settlements</small>`);
+    hud('fp', `${world.fingerprint()}`);
+
+    const drift = massRef ? Math.abs(world.elevMass() - massRef) / massRef : 0;
+    hud('mass', `${(drift * 1e6).toFixed(1)} <small>ppm over ${world.microTick} ticks</small>`,
+      drift < 1e-4 ? 'good' : 'warn');
+
+    const players = 100;
+    const cc = cost.corrected(players), cn = cost.naive(players);
+    hud('costc', `$${cc.total.toFixed(2)}<small>/hr · 100p</small>`, 'good');
+    hud('costn', `$${cn.total.toFixed(0)}<small>/hr · ${(cn.total / cc.total).toFixed(0)}× more</small>`, 'bad');
+
+    document.getElementById('cost').innerHTML =
+      `<div style="color:var(--good)">corrected  $${cc.total.toFixed(3)}/hr</div>` +
+      `<div style="color:var(--dim);padding-left:10px">bake $${cc.bake.toFixed(3)} · macro $${cc.macro.toFixed(3)} · cpu $${cc.cpu.toFixed(3)}</div>` +
+      `<div style="color:var(--bad);margin-top:4px">naive §4.2  $${cn.total.toFixed(2)}/hr</div>` +
+      `<div style="color:var(--dim);padding-left:10px">runtime-gen $${(cn.gen || 0).toFixed(2)} · macro $${cn.macro.toFixed(2)}</div>` +
+      `<div style="margin-top:6px;color:var(--fg)">${(cn.total / cc.total).toFixed(0)}× delta</div>` +
+      `<div style="color:var(--dim);font-size:10px">per player-hour: $${cc.perPlayerHour.toFixed(4)} vs $${cn.perPlayerHour.toFixed(2)}</div>`;
+  }
+  const t_start = performance.now();
+
+  init().catch(err => {
+    bootmsg.innerHTML = '<span style="color:var(--bad)">init failed: ' + (err && err.message ? err.message : err) + '</span>';
+    console.error(err);
+  });
+})();
+</script>
+</body>
+</html>

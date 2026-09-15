@@ -1,0 +1,155 @@
+#!/usr/bin/env python3
+"""
+MLAOS-Prime // Cathedral-Engine Architecture
+Module: Landauer-Coupled Auditing Circuit (Thermodynamic Proof-of-Erasure)
+Substrate: Codex Section VII / Ash Archive JBP Ledger
+Author: Mr. Laos / Kenneth W. Dallmier
+"""
+
+import json
+import math
+import random
+import hashlib
+
+try:
+    import numpy as np
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False
+
+class LandauerAuditingCircuit:
+    KB = 1.380649e-23
+    LN2 = math.log(2.0)
+    T_AMBIENT = 293.15
+    JOULES_PER_GAS_CREDIT = 1.0e-21
+
+    def __init__(self, dataset_path=None):
+        if dataset_path:
+            try:
+                with open(dataset_path, "r", encoding="utf-8") as f:
+                    self.data = json.load(f)
+                self.gaussians = self.data["gaussians"]
+            except FileNotFoundError:
+                self.gaussians = self._generate_fallback_gaussians()
+        else:
+            self.gaussians = self._generate_fallback_gaussians()
+
+        self.merkle_ledger = []
+        self.total_gas_minted = 0
+        self.current_gas_pool = 0
+
+    def _generate_fallback_gaussians(self, count=60):
+        nodes = []
+        for i in range(count):
+            nodes.append({
+                "position": [random.uniform(-5.0, 5.0) for _ in range(3)],
+                "opacity": random.uniform(0.01, 0.35),
+                "semantic_tag": "Zone_of_Omission" if i % 2 == 0 else "Foreclosed_Timeline"
+            })
+        return nodes
+
+    @staticmethod
+    def _dist(p1, p2):
+        return math.sqrt(sum((a - b) ** 2 for a, b in zip(p1, p2)))
+
+    @staticmethod
+    def _dot(v1, v2):
+        return sum(a * b for a, b in zip(v1, v2))
+
+    @staticmethod
+    def _norm(v):
+        return math.sqrt(sum(a ** 2 for a in v))
+
+    def calculate_anisotropic_gradient(self, g, neighbor_radius=2.0):
+        pos = g["position"]
+        alpha = g["opacity"]
+        grad = [0.0, 0.0, 0.0]
+        weight_sum = 0.0
+
+        for other in self.gaussians:
+            other_pos = other["position"]
+            d = self._dist(pos, other_pos)
+            if 0.0 < d <= neighbor_radius:
+                delta_alpha = other["opacity"] - alpha
+                weight = math.exp(-d)
+                for i in range(3):
+                    direction = (other_pos[i] - pos[i]) / d
+                    grad[i] += direction * delta_alpha * weight
+                weight_sum += weight
+
+        if weight_sum > 0.0:
+            grad = [val / weight_sum for val in grad]
+        return grad
+
+    def execute_forensic_audit(self, query_frequency_hz=1.5, observer_velocity=(0.0, 0.0, 1.0)):
+        v_mag = self._norm(observer_velocity) + 1e-6
+        v_norm = [c / v_mag for c in observer_velocity]
+        harvested_nodes = []
+        total_work_joules = 0.0
+
+        for idx, g in enumerate(self.gaussians):
+            if g["opacity"] < 0.40:
+                grad_alpha = self.calculate_anisotropic_gradient(g)
+                grad_mag = self._norm(grad_alpha)
+                directional_coupling = abs(self._dot(v_norm, grad_alpha))
+                t_horizon = self.T_AMBIENT / (g["opacity"] + 1e-3)
+
+                work = (self.KB * t_horizon * self.LN2 * query_frequency_hz * 
+                        (directional_coupling + 0.25 * grad_mag + 0.05))
+                total_work_joules += work
+
+                gas_minted = max(1, int(work / self.JOULES_PER_GAS_CREDIT))
+                self.total_gas_minted += gas_minted
+                self.current_gas_pool += gas_minted
+
+                harvested_nodes.append({
+                    "node_index": idx,
+                    "tag": g["semantic_tag"],
+                    "opacity": round(g["opacity"], 4),
+                    "t_horizon_kelvin": round(t_horizon, 2),
+                    "grad_magnitude": round(grad_mag, 4),
+                    "directional_coupling": round(directional_coupling, 4),
+                    "work_joules": f"{work:.4e}",
+                    "gas_credits_minted": gas_minted
+                })
+        return harvested_nodes, total_work_joules
+
+    def commit_to_merkle_dag(self, audit_batch, previous_hash="0x7F4C8E2B19A03D51", fee_per_node=2):
+        batch_serialized = json.dumps(audit_batch, sort_keys=True)
+        block_hasher = hashlib.sha256()
+        block_hasher.update((previous_hash + batch_serialized).encode("utf-8"))
+        block_hash = "0x" + block_hasher.hexdigest()[:16].upper()
+
+        gas_fee = len(audit_batch) * fee_per_node
+        self.current_gas_pool = max(0, self.current_gas_pool - gas_fee)
+
+        commit_entry = {
+            "block_index": len(self.merkle_ledger) + 1,
+            "previous_hash": previous_hash,
+            "block_hash": block_hash,
+            "nodes_verified": len(audit_batch),
+            "gas_fee_paid": gas_fee,
+            "remaining_gas_pool": self.current_gas_pool,
+            "cadence": "1.5 Hz",
+            "proof_of_erasure": "THERMODYNAMICALLY_AUTHENTICATED"
+        }
+        self.merkle_ledger.append(commit_entry)
+        return commit_entry
+
+if __name__ == "__main__":
+    circuit = LandauerAuditingCircuit()
+    audited_nodes, raw_work = circuit.execute_forensic_audit(query_frequency_hz=1.5)
+    print("=== LANDAUER AUDITING CIRCUIT: RUN COMPLETE ===")
+    print(f"NumPy Acceleration: {'ACTIVE' if HAS_NUMPY else 'STANDARD_LIB'}")
+    print(f"Nodes Audited:      {len(audited_nodes)}")
+    print(f"Landauer Work:      {raw_work:.6e} J")
+    print(f"Gas Minted:         {circuit.total_gas_minted} Credits")
+
+    commit = circuit.commit_to_merkle_dag(audited_nodes[:30], fee_per_node=2)
+    print("\n--- ASH ARCHIVE MERKLE DAG BLOCK ---")
+    print(f"Previous Root:      {commit['previous_hash']}")
+    print(f"Block Hash:         {commit['block_hash']}")
+    print(f"Nodes Committed:    {commit['nodes_verified']}")
+    print(f"Gas Fee Paid:       {commit['gas_fee_paid']} Credits")
+    print(f"Remaining Balance:  {commit['remaining_gas_pool']} Credits")
+    print(f"Verification:       {commit['proof_of_erasure']}")

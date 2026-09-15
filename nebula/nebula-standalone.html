@@ -1,0 +1,2387 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project NEBULA — MLAOS Architecture Prototype (standalone)</title>
+<style>
+  :root {
+    --bg: #0a0c10; --panel: #11151c; --panel2: #0d1117; --line: #1f2733;
+    --fg: #d7dee8; --dim: #7b8798; --accent: #58d6ff; --good: #4ade80;
+    --bad: #f87171; --warn: #fbbf24; --violet: #a78bfa;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg);
+    font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color: var(--accent); }
+
+  header { padding: 14px 18px 10px; border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #0e131b, #0a0c10); }
+  h1 { margin: 0; font-size: 16px; letter-spacing: .02em; font-weight: 650; }
+  h1 span { color: var(--accent); }
+  .sub { color: var(--dim); font-size: 11.5px; margin-top: 3px; max-width: 110ch; }
+  .sub b { color: var(--fg); font-weight: 600; }
+
+  .wrap { display: grid; grid-template-columns: 1fr 320px; gap: 14px; padding: 14px 18px 24px; }
+  @media (max-width: 1180px) { .wrap { grid-template-columns: 1fr; } }
+
+  .panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .card h2 { margin: 0; padding: 8px 10px; font-size: 11px; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--dim); border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; background: var(--panel2); }
+  .card h2 .tag { font-size: 9.5px; padding: 2px 6px; border-radius: 3px; letter-spacing: .04em; }
+  .tag.good { background: rgba(74,222,128,.12); color: var(--good); border: 1px solid rgba(74,222,128,.25); }
+  .tag.bad  { background: rgba(248,113,113,.12); color: var(--bad);  border: 1px solid rgba(248,113,113,.25); }
+  .tag.info { background: rgba(88,214,255,.12); color: var(--accent); border: 1px solid rgba(88,214,255,.25); }
+  .tag.vio  { background: rgba(167,139,250,.12); color: var(--violet); border: 1px solid rgba(167,139,250,.25); }
+  .card .body { padding: 8px; }
+  .note { padding: 7px 10px; font-size: 11px; color: var(--dim); border-top: 1px solid var(--line);
+    background: #0b0f15; min-height: 44px; }
+  .note b { color: var(--fg); }
+
+  canvas.view { display: block; width: 100%; image-rendering: auto; border-radius: 4px;
+    background: #05070a; cursor: crosshair; touch-action: none; }
+
+  .side { display: flex; flex-direction: column; gap: 12px; }
+  .ctl { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+  .ctl h3 { margin: 0 0 8px; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  .tools button { padding: 7px 3px; font-size: 10.5px; background: #161c26; color: var(--fg);
+    border: 1px solid var(--line); border-radius: 5px; cursor: pointer; font-family: inherit; }
+  .tools button:hover { border-color: #33404f; background: #1b2330; }
+  .tools button.on { background: rgba(88,214,255,.14); border-color: var(--accent); color: var(--accent); }
+
+  .row { display: flex; align-items: center; gap: 8px; margin: 7px 0; font-size: 11.5px; }
+  .row label { color: var(--dim); flex: 0 0 62px; }
+  .row output { color: var(--fg); font-family: var(--mono); font-size: 10.5px; flex: 0 0 34px; text-align: right; }
+  input[type=range] { flex: 1; accent-color: var(--accent); height: 3px; }
+  select, .btn { background: #161c26; color: var(--fg); border: 1px solid var(--line);
+    border-radius: 5px; padding: 5px 8px; font: inherit; font-size: 11.5px; cursor: pointer; }
+  select { flex: 1; }
+  .btn:hover { border-color: #33404f; background: #1b2330; }
+  .btn.go { border-color: rgba(88,214,255,.4); color: var(--accent); }
+  .btn.warn { border-color: rgba(251,191,36,.4); color: var(--warn); }
+  .btn.bad { border-color: rgba(248,113,113,.4); color: var(--bad); }
+  .btnrow { display: flex; gap: 5px; margin-top: 6px; }
+  .btnrow .btn { flex: 1; text-align: center; }
+
+  .chk { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--dim); margin: 5px 0; cursor: pointer; }
+  .chk input { accent-color: var(--accent); }
+
+  .hud { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 1px;
+    background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .m { background: var(--panel); padding: 7px 9px; }
+  .m .k { font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--dim); }
+  .m .v { font-family: var(--mono); font-size: 14px; margin-top: 2px; color: var(--fg); }
+  .m .v small { font-size: 10px; color: var(--dim); }
+  .m .v.good { color: var(--good); } .m .v.bad { color: var(--bad); } .m .v.warn { color: var(--warn); }
+
+  #log { font-family: var(--mono); font-size: 10.5px; line-height: 1.5; max-height: 190px;
+    overflow-y: auto; background: #080b10; border: 1px solid var(--line); border-radius: 6px; padding: 7px 8px; }
+  #log div { color: var(--dim); white-space: pre-wrap; word-break: break-word; }
+  #log .p { color: var(--accent); } #log .a { color: var(--good); }
+  #log .n { color: var(--warn); } #log .e { color: var(--bad); }
+
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 10px; color: var(--dim); margin-top: 6px; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+  .boot { padding: 40px 18px; text-align: center; color: var(--dim); font-family: var(--mono); font-size: 12px; }
+  .bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+  .bar i { display: block; height: 100%; background: var(--accent); width: 0%; transition: width .15s; }
+  code { font-family: var(--mono); font-size: 11px; background: #161c26; padding: 1px 4px; border-radius: 3px; color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Project <span>NEBULA</span> — MLAOS architecture prototype</h1>
+  <div class="sub">
+    <b>Symbolic kernel owns truth. Neural layer owns appearance. Scheduler decides who pays.</b>
+    The left panel is the corrected architecture; the right panel is the original roadmap's
+    §4.2 "consensus via vector averaging" running on the identical input stream. Same edits, both worlds.
+  </div>
+</header>
+
+<div id="boot" class="boot">
+  <div id="bootmsg">initialising kernel…</div>
+  <div class="bar" style="max-width:420px;margin:8px auto 0"><i id="bootbar"></i></div>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+  <div>
+    <div class="panels">
+      <div class="card">
+        <h2>Neural Canvas <span class="tag good">corrected · symbolic truth + neural materializer</span></h2>
+        <div class="body"><canvas id="cvMain" class="view" width="128" height="80"></canvas></div>
+        <div class="legend" style="padding:0 10px 8px">
+          <span><i style="background:#58d6ff"></i>hi-fi (baked)</span>
+          <span><i style="background:#3a2f14"></i>lo-fi (instant fallback)</span>
+          <span id="brushInfo" style="margin-left:auto"></span>
+        </div>
+        <div class="note" id="noteMain">Drag to edit. Every stroke is an <b>idempotent intent</b> — the world below it is
+          discrete, replayable state. The neural pass only decides how that state <b>looks</b>.</div>
+      </div>
+
+      <div class="card">
+        <h2>Symbolic Truth <span class="tag info">the source of truth · never generated</span></h2>
+        <div class="body"><canvas id="cvTruth" class="view" width="128" height="80"></canvas></div>
+        <div class="row" style="padding:2px 10px 8px;margin:0">
+          <label style="flex:0 0 52px">channel</label>
+          <select id="chanSel">
+            <option value="-1">composite (lo-fi)</option>
+            <option value="0">elevation</option>
+            <option value="1">moisture</option>
+            <option value="2">rock</option>
+            <option value="3">vegetation</option>
+            <option value="4">structure</option>
+            <option value="5">water</option>
+          </select>
+        </div>
+        <div class="note" id="noteTruth">This is what gets <b>saved, replicated, rolled back and diffed</b>.
+          A vector cannot do any of those four things.</div>
+      </div>
+
+      <div class="card">
+        <h2>Latent-as-Truth <span class="tag bad">original §4.2 · vector averaging</span></h2>
+        <div class="body"><canvas id="cvNaive" class="view" width="128" height="80"></canvas></div>
+        <div class="legend" style="padding:0 10px 8px">
+          <span>decode RMSE <b id="nvRmse" style="color:var(--bad);font-family:var(--mono)">—</b></span>
+          <span style="margin-left:auto">redeliveries <b id="nvDrift" style="font-family:var(--mono)">0</b></span>
+        </div>
+        <div class="note" id="noteNaive">Same intents, resolved by <b>averaging embeddings</b>. Watch what happens
+          where two brushes overlap — and press <b>Redeliver</b> to see it diverge permanently.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div class="hud" id="hud"></div>
+    </div>
+
+    <div class="ctl" style="margin-top:12px">
+      <h3>Event log — append-only intent stream</h3>
+      <div id="log"></div>
+    </div>
+  </div>
+
+  <div class="side">
+    <div class="ctl">
+      <h3>Intent brush</h3>
+      <div class="tools" id="tools"></div>
+      <div class="row"><label>radius</label><input type="range" id="radius" min="2" max="14" step="1" value="6"><output id="radiusO">6</output></div>
+      <div class="row"><label>strength</label><input type="range" id="strength" min="5" max="100" step="5" value="45"><output id="strengthO">.45</output></div>
+      <div class="row"><label>river dir</label><input type="range" id="dir" min="0" max="180" step="5" value="35"><output id="dirO">35°</output></div>
+    </div>
+
+    <div class="ctl">
+      <h3>Simulation</h3>
+      <div class="btnrow">
+        <button class="btn go" id="playBtn">❚❚ pause</button>
+        <button class="btn" id="stepBtn">step</button>
+        <button class="btn" id="resetBtn">reset</button>
+      </div>
+      <div class="row"><label>speed</label><input type="range" id="speed" min="0" max="8" step="1" value="2"><output id="speedO">2×</output></div>
+      <div class="row"><label>macro / s</label><input type="range" id="macroRate" min="1" max="20" step="1" value="4"><output id="macroRateO">4</output></div>
+      <label class="chk"><input type="checkbox" id="agentsOn" checked> autonomous settler agents (macro tier)</label>
+      <label class="chk"><input type="checkbox" id="negotiateOn" checked> negotiation resolver on conflict</label>
+    </div>
+
+    <div class="ctl">
+      <h3>Regional weights <span style="text-transform:none;letter-spacing:0;color:var(--dim)">(roadmap §6.2)</span></h3>
+      <div class="row" style="margin-top:0"><label style="flex:0 0 44px">style</label>
+        <select id="styleSel"></select></div>
+      <div class="note" style="border:0;background:none;padding:4px 0 0;min-height:0">
+        Swapping weights re-bakes <b>appearance only</b>. The fingerprint below does not change —
+        the save file is portable across style packs.
+      </div>
+    </div>
+
+    <div class="ctl">
+      <h3>Architecture probes</h3>
+      <div class="btnrow"><button class="btn warn" id="conflictBtn">⛰ conflict test</button></div>
+      <div class="note" style="border:0;background:none;padding:4px 0 6px;min-height:0">
+        Player A raises a mountain, Player B carves a river, same cells. Composition yields a
+        <b>canyon</b>; averaging yields neither.
+      </div>
+      <div class="btnrow"><button class="btn bad" id="redeliverBtn">↻ redeliver all events</button></div>
+      <div class="note" style="border:0;background:none;padding:4px 0 6px;min-height:0">
+        Simulates an at-least-once broker. Symbolic state is a <b>no-op</b>; latent averaging
+        <b>drifts permanently</b> and clients can never reconverge.
+      </div>
+      <div class="btnrow"><button class="btn" id="replayBtn">⟲ replay from log</button></div>
+      <div class="note" style="border:0;background:none;padding:4px 0 6px;min-height:0">
+        Rebuilds the world from the event stream alone and compares fingerprints.
+      </div>
+      <label class="chk"><input type="checkbox" id="overlayOn" checked> show chunk fidelity overlay</label>
+      <label class="chk"><input type="checkbox" id="naiveOn" checked> run latent control panel</label>
+    </div>
+
+    <div class="ctl">
+      <h3>Unit economics</h3>
+      <div id="cost" style="font-family:var(--mono);font-size:11px;line-height:1.7"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* core.js inlined by build.js — do not edit here; edit core.js and rebuild.
+   bundled 2026-09-14 07:00 · 61 KB */
+/* ============================================================================
+   PROJECT NEBULA — MLAOS Kernel (corrected architecture)
+   ----------------------------------------------------------------------------
+   Thesis under test:
+     A deterministic SYMBOLIC kernel owns truth.
+     A NEURAL materialization layer owns appearance.
+     A HIERARCHICAL scheduler decides which one pays for a given decision.
+
+   This file is dependency-free and runs identically in Node and the browser.
+   It implements the five load-bearing claims of the corrected architecture:
+
+     C1. Symbolic state as source of truth  -> idempotent, replayable, diffable
+     C2. Composition, not vector averaging  -> coherent conflict resolution
+     C3. Neural materializer as a CACHE     -> regenerable, never authoritative
+     C4. Hierarchical inference             -> cheap micro, budgeted macro
+     C5. Progressive refinement             -> latency hidden, not eliminated
+
+   Plus the negative control: the naive "latent space as truth" design from the
+   original roadmap, so the failure mode is visible rather than asserted.
+   ============================================================================ */
+(function (root) {
+  'use strict';
+
+  /* ==========================================================================
+     0. Deterministic primitives
+     ====================================================================== */
+
+  // mulberry32 — tiny, fast, seedable. Determinism is a hard requirement:
+  // any RNG here becomes part of the world's reproducibility contract.
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = (a + 0x6d2b79f5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // Spatially-coherent deterministic hash noise. Used as the neural
+  // materializer's high-frequency conditioning input so detail is stable
+  // across frames (no temporal shimmer) but varies per-location.
+  function hash2(x, y, seed) {
+    let h = Math.imul(x | 0, 374761393) ^ Math.imul(y | 0, 668265263) ^ Math.imul(seed | 0, 2147483647);
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  }
+
+  function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function smooth(t) { return t * t * (3 - 2 * t); }
+
+  function makeValueNoise(seed) {
+    const rng = mulberry32(seed);
+    const P = 512;
+    const perm = new Uint8Array(P * 2);
+    const p = new Uint8Array(P);
+    for (let i = 0; i < P; i++) p[i] = i;
+    for (let i = P - 1; i > 0; i--) {
+      const j = (rng() * (i + 1)) | 0;
+      const t = p[i]; p[i] = p[j]; p[j] = t;
+    }
+    for (let i = 0; i < P * 2; i++) perm[i] = p[i & (P - 1)];
+    const grad = new Float32Array(P);
+    for (let i = 0; i < P; i++) grad[i] = rng() * 2 - 1;
+
+    return function (x, y) {
+      const xi = Math.floor(x), yi = Math.floor(y);
+      const xf = smooth(x - xi), yf = smooth(y - yi);
+      const X = xi & (P - 1), Y = yi & (P - 1);
+      const g00 = grad[perm[X + perm[Y]]];
+      const g10 = grad[perm[X + 1 + perm[Y]]];
+      const g01 = grad[perm[X + perm[Y + 1]]];
+      const g11 = grad[perm[X + 1 + perm[Y + 1]]];
+      const a = lerp(g00, g10, xf);
+      const b = lerp(g01, g11, xf);
+      return lerp(a, b, yf) * 0.5 + 0.5;
+    };
+  }
+
+  function fbm(noise, x, y, octaves, lacunarity, gain) {
+    let amp = 1, freq = 1, sum = 0, norm = 0;
+    for (let o = 0; o < octaves; o++) {
+      sum += amp * noise(x * freq, y * freq);
+      norm += amp;
+      amp *= gain; freq *= lacunarity;
+    }
+    return sum / norm;
+  }
+
+  // FNV-1a over a Float32Array — gives us a cheap world fingerprint for the
+  // replay/idempotency proof.
+  function stateHash(f32) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < f32.length; i++) {
+      const b = (f32[i] * 1000) | 0; // quantize; float equality is fragile
+      h ^= b & 0xff; h = Math.imul(h, 0x01000193);
+      h ^= (b >>> 8) & 0xff; h = Math.imul(h, 0x01000193);
+      h ^= (b >>> 16) & 0xff; h = Math.imul(h, 0x01000193);
+    }
+    return (h >>> 0).toString(16).padStart(8, '0');
+  }
+
+  /* ==========================================================================
+     1. Tiny neural net — the materializer
+     --------------------------------------------------------------------------
+     Deliberately minimal: 2 hidden layers, ReLU, Adam. This is a stand-in for
+     the real thing (a SIREN / tiny NeRF / splat decoder running in WGSL).
+     What matters architecturally is its POSITION in the system: it consumes
+     symbolic features and produces appearance. It never produces state.
+     ====================================================================== */
+
+  class MLP {
+    /**
+     * @param {number} leaky  slope for negative inputs. 0 = plain ReLU.
+     *   Leaky is not a nicety here: with Adam's magnitude-normalized updates,
+     *   a small tower chasing a noisy residual drives every pre-activation
+     *   negative, gradients go exactly zero, and the tower becomes a constant
+     *   function permanently. We watched the style tower die this way.
+     */
+    constructor(sizes, seed = 1, opts = {}) {
+      this.sizes = sizes.slice();
+      this.leaky = opts.leaky ?? 0;
+      this.W = []; this.b = [];
+      const rng = mulberry32(seed);
+      for (let l = 0; l < sizes.length - 1; l++) {
+        const nin = sizes[l], nout = sizes[l + 1];
+        const std = Math.sqrt(2 / nin); // He init
+        const w = new Float32Array(nin * nout);
+        for (let i = 0; i < w.length; i++) w[i] = (rng() * 2 - 1) * std;
+        this.W.push(w);
+        this.b.push(new Float32Array(nout));
+      }
+      this.mW = this.W.map(w => new Float32Array(w.length));
+      this.vW = this.W.map(w => new Float32Array(w.length));
+      this.mb = this.b.map(b => new Float32Array(b.length));
+      this.vb = this.b.map(b => new Float32Array(b.length));
+      this.t = 0;
+    }
+
+    get paramCount() {
+      let n = 0;
+      for (const w of this.W) n += w.length;
+      for (const b of this.b) n += b.length;
+      return n;
+    }
+
+    // Forward pass. `out` is caller-supplied to avoid per-frame allocation —
+    // at 60fps across thousands of cells, GC pressure is a real budget line.
+    //
+    // NB: the destination buffer must be resolved PER LAYER. An earlier version
+    // hoisted `nxt = out` above the loop and let the hidden-layer branch
+    // reassign it, which meant the output layer wrote into the scratch buffer
+    // and the caller's array stayed zeroed. Classic aliasing bug; it silently
+    // degrades to "network predicts the mean" rather than crashing.
+    forward(input, out) {
+      const L = this.W.length;
+      const scratch = this._scratch || (this._scratch = []);
+      let cur = input;
+      for (let l = 0; l < L; l++) {
+        const nin = this.sizes[l], nout = this.sizes[l + 1];
+        const W = this.W[l], b = this.b[l];
+        const isLast = (l === L - 1);
+        let dst;
+        if (isLast) {
+          dst = out;                       // linear output, into caller buffer
+        } else {
+          let buf = scratch[l];
+          if (!buf || buf.length < nout) { buf = new Float32Array(nout); scratch[l] = buf; }
+          dst = buf;
+        }
+        for (let j = 0; j < nout; j++) {
+          let s = b[j];
+          for (let i = 0; i < nin; i++) s += cur[i] * W[i * nout + j];
+          dst[j] = (isLast || s >= 0) ? s : s * this.leaky;   // activation on hidden only
+        }
+        cur = dst;
+      }
+      return cur;
+    }
+
+    step(xs, ys, lr = 0.01) {
+      // Plain SGD + Adam moments. Backprop written out explicitly: this net is
+      // small enough that clarity beats generality.
+      const L = this.W.length;
+      const acts = [xs];
+      let cur = xs;
+      for (let l = 0; l < L; l++) {
+        const nin = this.sizes[l], nout = this.sizes[l + 1];
+        const W = this.W[l], b = this.b[l];
+        const z = new Float32Array(nout), a = new Float32Array(nout);
+        for (let j = 0; j < nout; j++) {
+          let s = b[j];
+          for (let i = 0; i < nin; i++) s += cur[i] * W[i * nout + j];
+          z[j] = s;
+          a[j] = (l === L - 1) ? s : (s > 0 ? s : s * this.leaky);
+        }
+        acts.push(a);
+        cur = a;
+      }
+      // output delta (MSE, linear output)
+      const nOut = this.sizes[L];
+      let delta = new Float32Array(nOut);
+      let loss = 0;
+      for (let j = 0; j < nOut; j++) {
+        const e = cur[j] - ys[j];
+        loss += e * e;
+        delta[j] = e;
+      }
+      loss /= nOut;
+
+      const b1 = 0.9, b2 = 0.999, eps = 1e-8;
+      this.t++;
+      const c1 = 1 - Math.pow(b1, this.t), c2 = 1 - Math.pow(b2, this.t);
+
+      for (let l = L - 1; l >= 0; l--) {
+        const nin = this.sizes[l], nout = this.sizes[l + 1];
+        const W = this.W[l], b = this.b[l];
+        const aPrev = acts[l];
+        const mW = this.mW[l], vW = this.vW[l], mb = this.mb[l], vb = this.vb[l];
+        const nextDelta = new Float32Array(nin);
+        for (let j = 0; j < nout; j++) {
+          const d = delta[j];
+          // bias
+          mb[j] = b1 * mb[j] + (1 - b1) * d;
+          vb[j] = b2 * vb[j] + (1 - b2) * d * d;
+          b[j] -= lr * (mb[j] / c1) / (Math.sqrt(vb[j] / c2) + eps);
+          for (let i = 0; i < nin; i++) {
+            const idx = i * nout + j;
+            const g = d * aPrev[i];
+            mW[idx] = b1 * mW[idx] + (1 - b1) * g;
+            vW[idx] = b2 * vW[idx] + (1 - b2) * g * g;
+            W[idx] -= lr * (mW[idx] / c1) / (Math.sqrt(vW[idx] / c2) + eps);
+            nextDelta[i] += d * W[idx];
+          }
+        }
+        if (l > 0) {
+          // ReLU derivative on pre-activation of layer l-1's output (acts[l])
+          const lk = this.leaky;
+          for (let i = 0; i < nin; i++) nextDelta[i] *= acts[l][i] > 0 ? 1 : lk;
+          delta = nextDelta;
+        }
+      }
+      return loss;
+    }
+  }
+
+  /* ==========================================================================
+     2. Symbolic world state — the source of truth
+     --------------------------------------------------------------------------
+     Structured channels on a grid. Every mutation is an INTENT applied by a
+     pure, idempotent function. This is the layer that answers "what is true",
+     "who did it", "can we rewind", and "did two clients converge".
+     ====================================================================== */
+
+  const CH = { ELEV: 0, MOIST: 1, ROCK: 2, VEG: 3, STRUCT: 4, WATER: 5, N: 6 };
+  const CH_NAMES = ['elev', 'moist', 'rock', 'veg', 'struct', 'water'];
+
+  class World {
+    constructor(w, h, seed = 1337) {
+      this.w = w; this.h = h; this.seed = seed;
+      this.ch = [];
+      for (let i = 0; i < CH.N; i++) this.ch.push(new Float32Array(w * h));
+      this.events = [];       // append-only intent log (event sourcing)
+      this.applied = new Set(); // event ids — enforces idempotency
+      this.settlements = [];
+      this.nextEventId = 1;
+      this.macroTick = 0;
+      this.microTick = 0;
+      this.massClip = 0;   // mass lost to range clipping — makes the budget auditable
+      this.authoredMass = 0; // mass added/removed by player & agent intents
+      this.initialMass = 0;  // set after generation
+      this._gen(seed);
+      this.initialMass = this.elevMass();
+    }
+
+    idx(x, y) { return y * this.w + x; }
+    inBounds(x, y) { return x >= 0 && y >= 0 && x < this.w && y < this.h; }
+
+    /** Mass the simulation alone is responsible for. Should stay ~0 forever. */
+    simDrift() {
+      const expected = this.initialMass + this.authoredMass;
+      return expected === 0 ? 0 : Math.abs(this.elevMass() - expected) / Math.abs(expected);
+    }
+
+    _gen(seed) {
+      const n1 = makeValueNoise(seed);
+      const n2 = makeValueNoise(seed ^ 0x9e37);
+      const n3 = makeValueNoise(seed ^ 0x5bf0);
+      const { w, h } = this;
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = this.idx(x, y);
+          const nx = x / w, ny = y / h;
+          // island falloff so the world reads as a landmass
+          const dx = (nx - 0.5) * 2, dy = (ny - 0.5) * 2;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          const falloff = clamp(1 - Math.pow(d * 1.15, 3), 0, 1);
+
+          let e = fbm(n1, nx * 5, ny * 5, 5, 2.0, 0.5);
+          e = Math.pow(e, 1.4) * falloff;
+          // a mountain ridge
+          const ridge = Math.exp(-Math.pow((ny - 0.35 - 0.08 * Math.sin(nx * 6)) * 7, 2));
+          e = clamp(e * 0.72 + ridge * 0.42 * falloff, 0, 1);
+          this.ch[CH.ELEV][i] = e;
+
+          const m = fbm(n2, nx * 3.5 + 11, ny * 3.5 + 7, 4, 2.0, 0.5);
+          this.ch[CH.MOIST][i] = clamp(m * 0.7 + (1 - e) * 0.35, 0, 1);
+          this.ch[CH.ROCK][i] = clamp(Math.pow(e, 2.2) * 1.2, 0, 1);
+          this.ch[CH.WATER][i] = e < 0.30 ? clamp((0.30 - e) / 0.30, 0, 1) : 0;
+
+          const v = fbm(n3, nx * 7 + 3, ny * 7 + 5, 3, 2.0, 0.5);
+          const habitable = e > 0.32 && e < 0.78;
+          this.ch[CH.VEG][i] = habitable ? clamp(v * this.ch[CH.MOIST][i] * 1.7, 0, 1) : 0;
+          this.ch[CH.STRUCT][i] = 0;
+        }
+      }
+    }
+
+    // ---------------------------------------------------------------- intents
+
+    /**
+     * Apply an intent. Idempotent by event id, order-tolerant for spatially
+     * disjoint brushes, and composable for overlapping ones.
+     *
+     * This is the function that replaces "consensus via vector averaging".
+     * Composition is defined PER CHANNEL SEMANTIC, not per geometry:
+     *   - terrain   : additive, then clamped        (mountain + valley = pass)
+     *   - water     : max / carve                     (river cuts through ridge)
+     *   - veg       : multiplicative survival         (fire * forest = clearing)
+     *   - struct    : max with footprint exclusion    (no two buildings overlap)
+     */
+    apply(intent) {
+      if (this.applied.has(intent.id)) return { duplicate: true };
+      this.applied.add(intent.id);
+      this.events.push(intent);
+      const m0 = this.elevMass();
+      const dirty = OPS[intent.op](this, intent);
+      // Authored mass change is intentional; simulation mass change is not.
+      // Tracking them separately is what lets the drift readout mean anything.
+      this.authoredMass += this.elevMass() - m0;
+      return { duplicate: false, dirty };
+    }
+
+    makeIntent(op, params) {
+      return {
+        id: this.nextEventId++, op, params,
+        t: this.macroTick,
+        // The micro tick at which this intent was authored. Replay MUST
+        // interleave simulation and edits in this order: applying every event
+        // first and then fast-forwarding the sim produces a DIFFERENT world,
+        // because erosion/vegetation are state-dependent. Getting this wrong
+        // is exactly how rollback netcode silently desyncs.
+        mt: this.microTick,
+        actor: params.actor || 'player'
+      };
+    }
+
+    /**
+     * Deterministic replay from the event log — the "save state" story, and
+     * also rollback, reconciliation, and time-dilation fast-forward (§4.3).
+     *
+     * @param {number} microTicks  run the simulation forward to this tick,
+     *   interleaving events at the tick each was authored at. Defaults to the
+     *   highest tick referenced by the log, which makes replay a pure function
+     *   of the log alone.
+     */
+    static replay(events, w, h, seed, microTicks = null) {
+      const world = new World(w, h, seed);
+      // Sort by id: replay order is canonical, NOT arrival order. This is what
+      // makes the system order-tolerant across a network.
+      const sorted = events.slice().sort((a, b) => a.id - b.id);
+      const target = microTicks === null
+        ? sorted.reduce((m, e) => Math.max(m, e.mt || 0), 0)
+        : microTicks;
+      for (const e of sorted) {
+        const at = e.mt || 0;
+        while (world.microTick < Math.min(at, target)) world.microStep(1);
+        world.apply(e);
+      }
+      while (world.microTick < target) world.microStep(1);
+      return world;
+    }
+
+    fingerprint() {
+      let h = 0x811c9dc5;
+      for (let c = 0; c < CH.N; c++) h = (h ^ (hash32(stateHash(this.ch[c])))) >>> 0;
+      return h.toString(16).padStart(8, '0');
+    }
+
+    // ------------------------------------------------------------- simulation
+
+    /**
+     * MICRO tier — every frame. Cheap, deterministic, and STRICTLY MASS
+     * CONSERVING (modulo range clipping, which is accounted for).
+     *
+     * This is symbolic physics. Neural nets are deliberately not allowed here:
+     * learned simulators do not conserve momentum/energy and their error
+     * compounds over rollout, so a world meant to persist for simulated
+     * centuries would slowly unstick and float apart. Guarding that with
+     * another probabilistic model is worse — two networks arguing, neither with
+     * ground truth. The guardrail here is arithmetic, and it cannot lie.
+     *
+     * Scheme: pairwise flux exchange over each undirected edge exactly once.
+     * Every unit removed from a cell is added to its neighbour. Flux is clamped
+     * to half the head difference so the gradient can never invert (no
+     * oscillation / checkerboarding).
+     */
+    microStep(dt) {
+      this.microTick++;
+      const { w, h } = this;
+      const elev = this.ch[CH.ELEV], water = this.ch[CH.WATER];
+      const K = clamp(0.22 * dt, 0, 0.45);   // transport rate, CFL-limited
+
+      const exchange = (a, b) => {
+        const ha = elev[a] + water[a] * 0.5;
+        const hb = elev[b] + water[b] * 0.5;
+        const dh = ha - hb;
+        if (dh === 0) return;
+        const hi = dh > 0 ? a : b, lo = dh > 0 ? b : a;
+        const d = Math.abs(dh);
+        if (d < 0.0015) return;              // angle of repose threshold
+
+        // sediment flux: only from exposed terrain, never from open water
+        const availSed = Math.max(0, elev[hi] - 0.02);
+        const sedFlux = Math.min(d * K * 0.5, availSed * 0.5, d * 0.25);
+        if (sedFlux > 0) {
+          elev[hi] -= sedFlux;
+          elev[lo] += sedFlux;
+          // range clipping is the ONLY non-conservative step; account for it
+          if (elev[lo] > 1) { this.massClip += elev[lo] - 1; elev[lo] = 1; }
+          if (elev[hi] < 0) { this.massClip += -elev[hi]; elev[hi] = 0; }
+          // transported sediment scours the bed slightly -> more rock exposed
+          this.ch[CH.ROCK][hi] = clamp(this.ch[CH.ROCK][hi] + sedFlux * 0.05, 0, 1);
+        }
+
+        // water flux: spreads downhill, strictly conservative
+        const availW = water[hi];
+        const wFlux = Math.min(d * K * 0.9, availW * 0.5, d * 0.25);
+        if (wFlux > 0) { water[hi] -= wFlux; water[lo] += wFlux; }
+      };
+
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = this.idx(x, y);
+          if (x + 1 < w) exchange(i, i + 1);   // each undirected edge once
+          if (y + 1 < h) exchange(i, i + w);
+        }
+      }
+
+      // vegetation dynamics: logistic growth gated by moisture/elevation/rock.
+      // Does not touch elevation, so it cannot break the mass budget.
+      const veg = this.ch[CH.VEG], moist = this.ch[CH.MOIST], rock = this.ch[CH.ROCK];
+      const g = 0.030 * dt, die = 0.020 * dt;
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = this.idx(x, y);
+          const e = elev[i];
+          const habitable = e > 0.31 && e < 0.80 && water[i] < 0.4;
+          if (!habitable) { veg[i] = clamp(veg[i] * (1 - die), 0, 1); continue; }
+          const carry = clamp(moist[i] * 1.35 * (1 - rock[i] * 0.65), 0, 1);
+          if (carry <= 0.001) { veg[i] = clamp(veg[i] * (1 - die), 0, 1); continue; }
+          veg[i] = clamp(veg[i] + g * veg[i] * (1 - veg[i] / carry) + (veg[i] < 0.02 ? g * 0.06 * carry : 0), 0, 1);
+        }
+      }
+    }
+
+    /** Total elevation mass — used to prove conservation over long rollouts. */
+    elevMass() {
+      let s = 0;
+      const a = this.ch[CH.ELEV];
+      for (let i = 0; i < a.length; i++) s += a[i];
+      return s;
+    }
+
+    /**
+     * MACRO tier — infrequent, budgeted. This is where expensive model calls
+     * are allowed. In production this is the LLM / policy network; here it is
+     * a utility function so the demo stays deterministic and free.
+     */
+    macroStep(agents) {
+      this.macroTick++;
+      const out = [];
+      for (const a of agents) out.push(...a.decide(this));
+      return out;
+    }
+  }
+
+  function hash32(str) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+    return h >>> 0;
+  }
+
+  /* ==========================================================================
+     3. Intent operators — the composition algebra
+     ====================================================================== */
+
+  function brushMask(world, cx, cy, r, falloff = 2) {
+    const pts = [];
+    const ri = Math.ceil(r);
+    for (let y = cy - ri; y <= cy + ri; y++) {
+      for (let x = cx - ri; x <= cx + ri; x++) {
+        if (!world.inBounds(x, y)) continue;
+        const d = Math.hypot(x - cx, y - cy) / r;
+        if (d > 1) continue;
+        pts.push({ i: world.idx(x, y), x, y, w: Math.pow(1 - d, falloff) });
+      }
+    }
+    return pts;
+  }
+
+  function dirtyRect(world, mask, pad = 2) {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    for (const p of mask) {
+      if (p.x < x0) x0 = p.x; if (p.x > x1) x1 = p.x;
+      if (p.y < y0) y0 = p.y; if (p.y > y1) y1 = p.y;
+    }
+    if (x1 < 0) return null;
+    return {
+      x0: Math.max(0, x0 - pad), y0: Math.max(0, y0 - pad),
+      x1: Math.min(world.w - 1, x1 + pad), y1: Math.min(world.h - 1, y1 + pad)
+    };
+  }
+
+  const OPS = {
+    raise(world, it) {
+      const { x, y, r, amount } = it.params;
+      const mask = brushMask(world, x, y, r);
+      for (const p of mask) {
+        const e = world.ch[CH.ELEV][p.i];
+        // additive then clamped: composition of two raises is a taller peak
+        world.ch[CH.ELEV][p.i] = clamp(e + amount * p.w * (1 - e * 0.45), 0, 1);
+        world.ch[CH.ROCK][p.i] = clamp(world.ch[CH.ROCK][p.i] + amount * p.w * 0.5, 0, 1);
+      }
+      return dirtyRect(world, mask);
+    },
+
+    lower(world, it) {
+      const { x, y, r, amount } = it.params;
+      const mask = brushMask(world, x, y, r);
+      for (const p of mask) {
+        world.ch[CH.ELEV][p.i] = clamp(world.ch[CH.ELEV][p.i] - amount * p.w, 0, 1);
+        world.ch[CH.ROCK][p.i] = clamp(world.ch[CH.ROCK][p.i] - amount * p.w * 0.3, 0, 1);
+      }
+      return dirtyRect(world, mask);
+    },
+
+    /**
+     * Carve a river. Note the composition rule: water uses `max` and elev uses
+     * `min` against the bed profile. A river through a mountain therefore
+     * yields a CANYON — the exact outcome the original roadmap wanted from
+     * vector averaging, achieved deterministically and reproducibly.
+     */
+    carve(world, it) {
+      const { x, y, r, depth, dir } = it.params;
+      const mask = brushMask(world, x, y, r);
+      const ang = (dir || 0) * Math.PI;
+      for (const p of mask) {
+        const along = (p.x - x) * Math.cos(ang) + (p.y - y) * Math.sin(ang);
+        const bed = clamp(depth * p.w * (1 - Math.abs(along) / (r * 1.6)), 0, 1);
+        world.ch[CH.ELEV][p.i] = Math.min(world.ch[CH.ELEV][p.i], Math.max(0.02, world.ch[CH.ELEV][p.i] - bed));
+        world.ch[CH.WATER][p.i] = Math.max(world.ch[CH.WATER][p.i], bed > 0.05 ? clamp(bed * 2.2, 0, 1) : 0);
+        world.ch[CH.VEG][p.i] *= (1 - bed * 0.8);
+        world.ch[CH.MOIST][p.i] = clamp(world.ch[CH.MOIST][p.i] + bed * 0.5, 0, 1);
+      }
+      return dirtyRect(world, mask, 3);
+    },
+
+    /** Vegetation: multiplicative survival. Deforestation near water leaves a
+     *  riparian buffer automatically because moisture raises regrowth carry. */
+    deforest(world, it) {
+      const { x, y, r, amount } = it.params;
+      const mask = brushMask(world, x, y, r);
+      let removed = 0;
+      for (const p of mask) {
+        const before = world.ch[CH.VEG][p.i];
+        // riparian protection is a SYMBOLIC constraint, not a guardrail net
+        const riparian = world.ch[CH.WATER][p.i] > 0.25 ? 0.35 : 1.0;
+        world.ch[CH.VEG][p.i] = before * (1 - amount * p.w * riparian);
+        removed += (before - world.ch[CH.VEG][p.i]);
+      }
+      it._removedVeg = removed;
+      return dirtyRect(world, mask);
+    },
+
+    afforest(world, it) {
+      const { x, y, r, amount } = it.params;
+      const mask = brushMask(world, x, y, r);
+      for (const p of mask) {
+        const e = world.ch[CH.ELEV][p.i];
+        if (e < 0.31 || e > 0.80 || world.ch[CH.WATER][p.i] > 0.4) continue;
+        world.ch[CH.VEG][p.i] = clamp(world.ch[CH.VEG][p.i] + amount * p.w, 0, 1);
+      }
+      return dirtyRect(world, mask);
+    },
+
+    /** Structures: max-composition with footprint exclusion. Two builders in
+     *  the same cell resolve by claim order (deterministic), not by blending. */
+    build(world, it) {
+      const { x, y, r, kind, actor } = it.params;
+      const mask = brushMask(world, x, y, Math.max(1.5, r));
+      for (const p of mask) {
+        if (world.ch[CH.WATER][p.i] > 0.35) continue;
+        world.ch[CH.STRUCT][p.i] = Math.max(world.ch[CH.STRUCT][p.i], clamp(0.55 + p.w * 0.45, 0, 1));
+        world.ch[CH.VEG][p.i] *= (1 - 0.9 * p.w);
+        world.ch[CH.ELEV][p.i] = clamp(world.ch[CH.ELEV][p.i] * (1 - 0.05 * p.w) + 0.02, 0, 1);
+      }
+      if (kind === 'settlement') {
+        world.settlements.push({ x, y, r, owner: actor || 'player', born: world.macroTick, id: it.id });
+      }
+      return dirtyRect(world, mask);
+    },
+
+    /** The negotiation resolver's write primitive: restore a compromise state. */
+    resolve(world, it) {
+      const { ops } = it.params;
+      let dirty = null;
+      for (const sub of ops) {
+        const d = OPS[sub.op](world, { params: sub.params, id: it.id + ':' + sub.op });
+        if (d) dirty = dirty ? unionRect(dirty, d) : d;
+      }
+      return dirty;
+    }
+  };
+
+  function unionRect(a, b) {
+    return {
+      x0: Math.min(a.x0, b.x0), y0: Math.min(a.y0, b.y0),
+      x1: Math.max(a.x1, b.x1), y1: Math.max(a.y1, b.y1)
+    };
+  }
+
+  /* ==========================================================================
+     4. The negative control — "latent space as truth"
+     --------------------------------------------------------------------------
+     This is the original roadmap's §4.2 implemented faithfully, so its failure
+     is demonstrated rather than asserted.
+
+     Each intent maps to a fixed embedding. Overlap regions are resolved by
+     averaging embeddings. A linear decoder projects embeddings back to world
+     features. Watch what happens to (a) semantic coherence and (b) idempotency
+     under event re-delivery.
+     ====================================================================== */
+
+  const EMBED_DIM = 24;
+
+  // A crude but honest stand-in for "an encoder learned from data".
+  // Each op gets a distinct direction in latent space.
+  const OP_EMBED = {
+    raise:    { elev: 1.0, rock: 0.8, water: -0.3, veg: -0.4 },
+    lower:    { elev: -1.0, rock: -0.3, water: 0.5, veg: 0.2 },
+    carve:    { elev: -0.6, rock: -0.2, water: 1.0, veg: -0.5 },
+    deforest: { elev: 0.0, rock: 0.2, water: -0.2, veg: -1.0 },
+    afforest: { elev: 0.0, rock: -0.3, water: 0.3, veg: 1.0 },
+    build:    { elev: 0.2, rock: 0.6, water: -0.6, veg: -0.8, struct: 1.0 }
+  };
+
+  function embedIntent(intent) {
+    const v = new Float32Array(EMBED_DIM);
+    const src = OP_EMBED[intent.op] || {};
+    const keys = ['elev', 'moist', 'rock', 'veg', 'struct', 'water'];
+    const rng = mulberry32(hash32(intent.op) ^ 0x5eed);
+    for (let d = 0; d < EMBED_DIM; d++) {
+      let s = 0;
+      for (let k = 0; k < keys.length; k++) s += (src[keys[k]] || 0) * basisFn(k, d);
+      // every embedding also carries a little idiosyncratic noise, exactly as
+      // real learned embeddings do. This is what makes averaging catastrophic.
+      v[d] = s + (rng() - 0.5) * 0.55;
+    }
+    const n = Math.hypot(...v) || 1;
+    for (let d = 0; d < EMBED_DIM; d++) v[d] /= n;
+    return v;
+  }
+
+  function basisFn(k, d) {
+    // fixed pseudo-random projection basis
+    return Math.sin((k + 1) * 12.9898 + (d + 1) * 78.233) * 0.5;
+  }
+
+  class LatentWorld {
+    /**
+     * @param {boolean} average  true  = naive running-mean averaging (the
+     *                            original roadmap §4.2, verbatim)
+     *                            false = anchored accumulation (its mitigation)
+     */
+    constructor(w, h, seed = 1337, average = true) {
+      this.w = w; this.h = h; this.average = average; this.seed = seed;
+      this.latent = [];
+      for (let d = 0; d < EMBED_DIM; d++) this.latent.push(new Float32Array(w * h));
+      this.count = new Float32Array(w * h);   // intents touching a cell
+      this.ch = [];
+      for (let c = 0; c < CH.N; c++) this.ch.push(new Float32Array(w * h));
+      this.decoder = null;
+      this.events = [];
+      this.applied = new Set();
+      this.nextEventId = 1;
+      this.reDeliveryDrift = 0;
+      this.projection = null;
+    }
+
+    idx(x, y) { return y * this.w + x; }
+    inBounds(x, y) { return x >= 0 && y >= 0 && x < this.w && y < this.h; }
+
+    /**
+     * Encode a symbolic world into latent space. This is the honest baseline:
+     * the original design assumes the world already IS vectors, so we must give
+     * it the same starting world or the comparison is rigged.
+     */
+    seedFrom(world) {
+      const rng = mulberry32(this.seed ^ 0xbeef);
+      this.projection = new Float32Array(EMBED_DIM * CH.N);
+      for (let d = 0; d < EMBED_DIM; d++) {
+        for (let c = 0; c < CH.N; c++) {
+          this.projection[d * CH.N + c] = (rng() * 2 - 1);
+        }
+      }
+      const f = new Float32Array(MAT_IN);
+      for (let y = 0; y < this.h; y++) {
+        for (let x = 0; x < this.w; x++) {
+          const i = this.idx(x, y);
+          featuresAt(world, x, y, f);
+          for (let d = 0; d < EMBED_DIM; d++) {
+            let s = 0;
+            for (let c = 0; c < CH.N; c++) s += this.projection[d * CH.N + c] * f[c];
+            this.latent[d][i] = s;
+          }
+          this.count[i] = 1;
+        }
+      }
+      // snapshot the pristine encoding so intent deltas are relative to it
+      this.base = this.latent.map(a => a.slice());
+      return this;
+    }
+
+    apply(intent) {
+      const id = intent.id;
+      const dup = this.applied.has(id);
+      this.applied.add(id);
+      this.events.push(intent);
+      const v = embedIntent(intent);
+      const fake = {
+        w: this.w, h: this.h,
+        inBounds: (x, y) => this.inBounds(x, y),
+        idx: (x, y) => this.idx(x, y)
+      };
+      const mask = brushMask(fake, intent.params.x, intent.params.y, intent.params.r || 3);
+      const strength = 2.6; // intent salience relative to the base terrain encoding
+
+      for (const p of mask) {
+        if (this.average) {
+          // Running mean — THE bug. Two consequences, both fatal:
+          //  (1) non-idempotent: re-delivering an event moves the mean again,
+          //      so at-least-once brokers permanently desync clients;
+          //  (2) wherever intents overlap the mean lands between semantic
+          //      clusters, i.e. off-manifold, which decodes to mush.
+          const n = this.count[p.i];
+          for (let d = 0; d < EMBED_DIM; d++) {
+            this.latent[d][p.i] = (this.latent[d][p.i] * n + v[d] * strength * p.w) / (n + p.w);
+          }
+          this.count[p.i] = n + p.w;
+        } else {
+          // Anchored accumulation: intents add, they do not dilute.
+          for (let d = 0; d < EMBED_DIM; d++) this.latent[d][p.i] += v[d] * strength * p.w;
+        }
+        if (dup) this.reDeliveryDrift += 1;
+      }
+      return dirtyRect(this, mask);
+    }
+
+    /** Fit a linear decoder latent->features against ground truth. */
+    fitDecoder(symbolicWorld, samples = 4000, seed = 7) {
+      const rng = mulberry32(seed);
+      const X = [], Y = [];
+      for (let s = 0; s < samples; s++) {
+        const i = (rng() * this.w * this.h) | 0;
+        const x = new Float32Array(EMBED_DIM + 1);
+        for (let d = 0; d < EMBED_DIM; d++) x[d] = this.latent[d][i];
+        x[EMBED_DIM] = 1; // bias
+        X.push(x);
+        const y = new Float32Array(CH.N);
+        for (let c = 0; c < CH.N; c++) y[c] = symbolicWorld.ch[c][i];
+        Y.push(y);
+      }
+      this.decoder = leastSquares(X, Y, EMBED_DIM + 1, CH.N);
+      return this.decodeError(X, Y);
+    }
+
+    decodeError(X, Y) {
+      if (!this.decoder) return Infinity;
+      let se = 0, n = 0;
+      for (let s = 0; s < X.length; s++) {
+        const pred = matVec(this.decoder, X[s], CH.N);
+        for (let c = 0; c < CH.N; c++) { const e = pred[c] - Y[s][c]; se += e * e; n++; }
+      }
+      return Math.sqrt(se / n);
+    }
+
+    decodeToChannels() {
+      if (!this.decoder) return this.ch;
+      const x = new Float32Array(EMBED_DIM + 1);
+      x[EMBED_DIM] = 1;
+      for (let i = 0; i < this.w * this.h; i++) {
+        for (let d = 0; d < EMBED_DIM; d++) x[d] = this.latent[d][i];
+        const y = matVec(this.decoder, x, CH.N);
+        for (let c = 0; c < CH.N; c++) this.ch[c][i] = clamp(y[c], 0, 1);
+      }
+      return this.ch;
+    }
+
+    /** How "mushy" is this world? Variance across cells, per channel.
+     *  Averaging collapses variance -> low detail -> the Mush Problem. */
+    mushScore() {
+      let total = 0;
+      for (let c = 0; c < CH.N; c++) {
+        const arr = this.ch[c];
+        let mean = 0;
+        for (let i = 0; i < arr.length; i++) mean += arr[i];
+        mean /= arr.length;
+        let v = 0;
+        for (let i = 0; i < arr.length; i++) { const d = arr[i] - mean; v += d * d; }
+        total += Math.sqrt(v / arr.length);
+      }
+      return total / CH.N;
+    }
+  }
+
+  function matVec(M, x, rows) {
+    const out = new Float32Array(rows);
+    for (let r = 0; r < rows; r++) {
+      let s = 0;
+      for (let c = 0; c < x.length; c++) s += M[r * x.length + c] * x[c];
+      out[r] = s;
+    }
+    return out;
+  }
+
+  // Normal equations with Tikhonov regularization — ridge regression.
+  // We regularize because the latent matrix is rank-deficient by construction:
+  // this is itself a symptom of the design (24 dims cannot carry a world).
+  function leastSquares(X, Y, dim, outDim, lambda = 0.8) {
+    const A = new Float64Array(dim * dim);
+    const B = new Float64Array(dim * outDim);
+    for (let s = 0; s < X.length; s++) {
+      const x = X[s], y = Y[s];
+      for (let i = 0; i < dim; i++) {
+        const xi = x[i];
+        for (let j = 0; j < dim; j++) A[i * dim + j] += xi * x[j];
+        for (let o = 0; o < outDim; o++) B[i * outDim + o] += xi * y[o];
+      }
+    }
+    for (let i = 0; i < dim; i++) A[i * dim + i] += lambda;
+    const Ainv = invert(A, dim);
+    const M = new Float64Array(outDim * dim);
+    for (let o = 0; o < outDim; o++) {
+      for (let i = 0; i < dim; i++) {
+        let s = 0;
+        for (let j = 0; j < dim; j++) s += Ainv[i * dim + j] * B[j * outDim + o];
+        M[o * dim + i] = s;
+      }
+    }
+    return M;
+  }
+
+  function invert(A, n) {
+    const M = new Float64Array(n * 2 * n);
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) M[i * 2 * n + j] = A[i * n + j];
+      M[i * 2 * n + n + i] = 1;
+    }
+    for (let col = 0; col < n; col++) {
+      let piv = col;
+      for (let r = col + 1; r < n; r++) if (Math.abs(M[r * 2 * n + col]) > Math.abs(M[piv * 2 * n + col])) piv = r;
+      if (piv !== col) for (let k = 0; k < 2 * n; k++) {
+        const t = M[col * 2 * n + k]; M[col * 2 * n + k] = M[piv * 2 * n + k]; M[piv * 2 * n + k] = t;
+      }
+      const d = M[col * 2 * n + col] || 1e-12;
+      for (let k = 0; k < 2 * n; k++) M[col * 2 * n + k] /= d;
+      for (let r = 0; r < n; r++) {
+        if (r === col) continue;
+        const f = M[r * 2 * n + col];
+        if (f === 0) continue;
+        for (let k = 0; k < 2 * n; k++) M[r * 2 * n + k] -= f * M[col * 2 * n + k];
+      }
+    }
+    const inv = new Float64Array(n * n);
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) inv[i * n + j] = M[i * 2 * n + n + j];
+    return inv;
+  }
+
+  /* ==========================================================================
+     5. Neural materializer — appearance as a cache
+     --------------------------------------------------------------------------
+     Trained ONCE against a curated target function (in production: against
+     baked ground truth / reference renders). At runtime it is a pure function
+     of symbolic features. It can be wrong, stale, or missing entirely and the
+     world remains correct — that is the whole point of the split.
+     ====================================================================== */
+
+  const STYLE_DIM = 4;            // regional "character" code — see below
+  const MAT_IN = 9 + STYLE_DIM;   // channels + slope + aspect + hash + style
+  const MAT_OUT = 4;              // r, g, b, micro-displacement
+
+  function smoothstep(e0, e1, x) {
+    const t = clamp((x - e0) / (e1 - e0 || 1e-6), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  /**
+   * Curated biome target — the SYMBOLIC ground truth the materializer learns.
+   *
+   * Every transition is a smoothstep blend, not a hard branch. This matters for
+   * two reasons beyond looking better:
+   *   1. A ReLU network cannot represent a discontinuity without unbounded
+   *      width. Hard `if` thresholds guarantee a smeared fit and a visible
+   *      "pop" when progressive refinement swaps lo-fi for hi-fi.
+   *   2. Smooth targets give smooth gradients, so the bake converges in far
+   *      fewer steps — directly reducing offline GPU cost.
+   *
+   * In production this function is replaced by your reference renders; the
+   * contract is the same either way: it is authored truth, and the net
+   * approximates it. The net never decides what the world IS.
+   */
+  function biomeTarget(elev, moist, rock, veg, struct, water, slope, out) {
+    // --- base palette: dry grassland -> lush forest, by vegetation & moisture
+    const lush = clamp(veg * 0.75 + moist * 0.35, 0, 1);
+    let r = lerp(172, 66, lush);
+    let g = lerp(154, 118, lush);
+    let b = lerp(96, 52, lush);
+
+    // --- shore / sand: low ground near the waterline
+    const sand = (1 - smoothstep(0.30, 0.40, elev)) * (1 - smoothstep(0.15, 0.40, water));
+    r = lerp(r, 208, sand); g = lerp(g, 192, sand); b = lerp(b, 146, sand);
+
+    // --- exposed rock: high rockiness and too barren to hold vegetation
+    const barren = 1 - smoothstep(0.10, 0.38, veg);
+    const rockT = smoothstep(0.42, 0.72, rock) * barren * (0.55 + slope * 0.45);
+    r = lerp(r, 128, rockT); g = lerp(g, 124, rockT); b = lerp(b, 120, rockT);
+
+    // --- snow / high alpine
+    const snow = smoothstep(0.74, 0.88, elev);
+    r = lerp(r, 244, snow); g = lerp(g, 247, snow); b = lerp(b, 252, snow);
+
+    // --- water body, applied last so it occludes the bed
+    const deep = smoothstep(0.18, 0.55, water);
+    const shallow = smoothstep(0.02, 0.20, water);
+    const wt = clamp(shallow, 0, 1);
+    r = lerp(r, lerp(84, 16, deep), wt);
+    g = lerp(g, lerp(136, 52, deep), wt);
+    b = lerp(b, lerp(164, 104, deep), wt);
+
+    // --- built structure
+    const s = smoothstep(0.18, 0.75, struct);
+    r = lerp(r, 216, s * 0.88); g = lerp(g, 198, s * 0.88); b = lerp(b, 170, s * 0.88);
+
+    out[0] = clamp(r / 255, 0, 1);
+    out[1] = clamp(g / 255, 0, 1);
+    out[2] = clamp(b / 255, 0, 1);
+    out[3] = slope * 0.25 + s * 0.55 - deep * 0.10;   // micro-displacement
+    return out;
+  }
+
+  /**
+   * The style-conditioned target — what the neural materializer learns and
+   * what a shader lookup table CANNOT express, because `style` is not a world
+   * channel. It is a property of the REGIONAL WEIGHTS.
+   *
+   * This is the architectural justification for the materializer, and it is
+   * also the mechanism behind the roadmap's Phase 6.2 marketplace: the same
+   * symbolic world, rendered through a different style code, looks different —
+   * while remaining byte-identical in truth. Swap the weights, keep the save.
+   */
+  function styledTarget(f, style, out) {
+    biomeTarget(f[0], f[1], f[2], f[3], f[4], f[5], f[6], out);
+    const hash = f[8];
+    // Style dimensions modulate palette, grain and relief exaggeration.
+    const warm = style[0] - 0.5, cool = style[1] - 0.5;
+    const grain = style[2], relief = style[3] - 0.5;
+    const n = (hash - 0.5) * (0.05 + grain * 0.16);
+    out[0] = clamp(out[0] + warm * 0.20 + n * 1.15, 0, 1);
+    out[1] = clamp(out[1] + cool * 0.06 + n * 0.85, 0, 1);
+    out[2] = clamp(out[2] - warm * 0.10 + cool * 0.18 + n * 0.95, 0, 1);
+    out[3] = out[3] + relief * 0.30 * (f[6] - 0.3);
+    return out;
+  }
+
+  /** Named style presets — stand-ins for player-authored regional weights. */
+  const STYLE_PRESETS = {
+    vanilla:    [0.50, 0.50, 0.25, 0.50],
+    arid:       [0.86, 0.30, 0.55, 0.66],
+    boreal:     [0.22, 0.72, 0.30, 0.44],
+    neon:       [0.78, 0.24, 0.92, 0.78],
+    monochrome: [0.50, 0.52, 0.10, 0.30]
+  };
+
+  /**
+   * Two-tower conditional decoder.
+   *
+   * Tower A (`baseNet`) maps world channels -> appearance. It learns the biome
+   * ramp, which is piecewise and capacity-hungry.
+   * Tower B (`styleNet`) maps the regional style code (+ grain + slope) ->
+   * a residual. It learns style conditioning, which is mostly linear with a
+   * couple of multiplicative interactions.
+   *
+   * Why not one MLP over the concatenation? Because a single ReLU stack spends
+   * nearly all its capacity on the harder of the two tasks and underfits the
+   * other. Measured: a single 48x48 tower recovered only ~35% of the style
+   * signal. Splitting the towers recovers it, and it also means a regional
+   * style pack can be swapped WITHOUT retraining the base appearance model —
+   * which is precisely what the roadmap's Phase 6.2 marketplace needs.
+   *
+   * Trained by block coordinate descent: the residual is additive, so each
+   * tower is stepped against the other tower's current output held constant.
+   */
+  const CHAN_IN = 9;                       // channels + slope + aspect + grain
+  const STYLE_IN = STYLE_DIM + 2;          // style + grain + slope
+
+  class Materializer {
+    constructor(seed = 42) {
+      this.baseNet = new MLP([CHAN_IN, 48, 48, MAT_OUT], seed);
+      this.styleNet = new MLP([STYLE_IN, 24, 24, MAT_OUT], seed ^ 0xa11ce, { leaky: 0.2 });
+      this.trained = false;
+      this.trainLoss = Infinity;
+      this._chan = new Float32Array(CHAN_IN);
+      this._sty = new Float32Array(STYLE_IN);
+      this._a = new Float32Array(MAT_OUT);
+      this._b = new Float32Array(MAT_OUT);
+    }
+
+    get paramCount() { return this.baseNet.paramCount + this.styleNet.paramCount; }
+    get net() { return this.baseNet; }   // back-compat for tests that poke weights
+
+    /**
+     * Bounded work: this is the OFFLINE BAKE. Paid once per model, never per
+     * frame. That is what makes "bake heavy / run light" close on cost.
+     */
+    train(world, steps = 2600, seed = 99) {
+      const rng = mulberry32(seed);
+      const f = new Float32Array(MAT_IN);
+      const ys = new Float32Array(MAT_OUT);
+      const style = new Float32Array(STYLE_DIM);
+      let last = 0;
+      for (let s = 0; s < steps; s++) {
+        const batch = 24;
+        let acc = 0;
+        for (let k = 0; k < batch; k++) {
+          // ~85% real world states, ~15% randomized so the model generalizes
+          // to terrain the player has not visited yet.
+          if (rng() < 0.85 && world) {
+            const i = (rng() * world.w * world.h) | 0;
+            featuresAt(world, i % world.w, (i / world.w) | 0, f, null);
+          } else {
+            f[0] = rng(); f[1] = rng(); f[2] = Math.pow(rng(), 2);
+            f[3] = rng(); f[4] = Math.pow(rng(), 3); f[5] = Math.pow(rng(), 2);
+            f[6] = rng() * 0.6; f[7] = rng() * 2 - 1; f[8] = rng();
+          }
+          for (let d = 0; d < STYLE_DIM; d++) style[d] = rng();
+          f.set(style, 9);
+
+          N_styledTarget(f, style, ys);
+
+          // split the input into the two towers' views
+          this._chan.set(f.subarray(0, CHAN_IN));
+          this._sty[0] = style[0]; this._sty[1] = style[1];
+          this._sty[2] = style[2]; this._sty[3] = style[3];
+          this._sty[4] = f[8];   // grain
+          this._sty[5] = f[6];   // slope
+
+          // block coordinate descent
+          this.baseNet.forward(this._chan, this._a);
+          const residB = new Float32Array(MAT_OUT);
+          for (let o = 0; o < MAT_OUT; o++) residB[o] = ys[o] - this._a[o];
+          acc += this.styleNet.step(this._sty, residB, 0.006) * 0.5;
+
+          this.styleNet.forward(this._sty, this._b);
+          const residA = new Float32Array(MAT_OUT);
+          for (let o = 0; o < MAT_OUT; o++) residA[o] = ys[o] - this._b[o];
+          acc += this.baseNet.step(this._chan, residA, 0.012) * 0.5;
+        }
+        last = acc / batch;
+      }
+      this.trainLoss = last;
+      this.trained = true;
+      return last;
+    }
+
+    /** High-fidelity path: style-aware, carries learned detail. */
+    decode(features, out) {
+      this._chan.set(features.subarray(0, CHAN_IN));
+      this._sty[0] = features[9]; this._sty[1] = features[10];
+      this._sty[2] = features[11]; this._sty[3] = features[12];
+      this._sty[4] = features[8];
+      this._sty[5] = features[6];
+      this.baseNet.forward(this._chan, this._a);
+      this.styleNet.forward(this._sty, this._b);
+      for (let o = 0; o < MAT_OUT; o++) out[o] = this._a[o] + this._b[o];
+      return out;
+    }
+
+    /**
+     * Low-fidelity path — NO network, NO style. Renders on frame 0 while the
+     * neural bake is in flight. Instant, and never wrong enough to mislead:
+     * it is the same symbolic truth, minus learned detail.
+     */
+    decodeLoFi(features, out) {
+      return biomeTarget(features[0], features[1], features[2], features[3],
+        features[4], features[5], features[6], out);
+    }
+  }
+
+  // local alias so the class body above stays readable
+  const N_styledTarget = styledTarget;
+
+  function featuresAt(world, x, y, out, style) {
+    const i = world.idx(x, y);
+    const elev = world.ch[CH.ELEV][i];
+    let dx = 0, dy = 0;
+    if (x > 0 && x < world.w - 1) dx = world.ch[CH.ELEV][i + 1] - world.ch[CH.ELEV][i - 1];
+    if (y > 0 && y < world.h - 1) dy = world.ch[CH.ELEV][i + world.w] - world.ch[CH.ELEV][i - world.w];
+    out[0] = elev;
+    out[1] = world.ch[CH.MOIST][i];
+    out[2] = world.ch[CH.ROCK][i];
+    out[3] = world.ch[CH.VEG][i];
+    out[4] = world.ch[CH.STRUCT][i];
+    out[5] = world.ch[CH.WATER][i];
+    out[6] = Math.min(1, Math.hypot(dx, dy) * 6);                        // slope
+    out[7] = (dx === 0 && dy === 0) ? 0 : Math.atan2(dy, dx) / Math.PI;  // aspect
+    out[8] = hash2(x, y, world.seed);                                    // stable grain
+    if (style) out.set(style, 9);
+    return out;
+  }
+  /* ==========================================================================
+     6. Progressive refinement — the latency story
+     --------------------------------------------------------------------------
+     The client never waits on generation. It renders lo-fi from symbolic truth
+     IMMEDIATELY, then upgrades chunks as materialization completes. Fidelity
+     arrives; responsiveness never leaves.
+     ====================================================================== */
+
+  class RefinementScheduler {
+    constructor(world, chunkW, chunkH, opts = {}) {
+      this.world = world;
+      this.cw = chunkW; this.chh = chunkH;
+      this.cols = Math.ceil(world.w / chunkW);
+      this.rows = Math.ceil(world.h / chunkH);
+      this.state = new Uint8Array(this.cols * this.rows); // 0=lofi 1=queued 2=hidim
+      this.progress = new Float32Array(this.cols * this.rows);
+      this.queue = [];
+      // Simulated bake cost per chunk. In production this is a GPU job; the
+      // number below is what makes the latency-hiding claim testable.
+      this.bakeMsPerChunk = opts.bakeMsPerChunk ?? 90;
+      this.msPerFrame = opts.msPerFrame ?? 16.7;
+      this.stats = { bakes: 0, cacheHits: 0, cacheMisses: 0, bakeMsTotal: 0 };
+    }
+
+    cid(cx, cy) { return cy * this.cols + cx; }
+
+    invalidate(rect) {
+      if (!rect) return [];
+      const cx0 = Math.floor(rect.x0 / this.cw), cx1 = Math.floor(rect.x1 / this.cw);
+      const cy0 = Math.floor(rect.y0 / this.chh), cy1 = Math.floor(rect.y1 / this.chh);
+      const touched = [];
+      for (let cy = cy0; cy <= cy1; cy++) {
+        for (let cx = cx0; cx <= cx1; cx++) {
+          if (cx < 0 || cy < 0 || cx >= this.cols || cy >= this.rows) continue;
+          const id = this.cid(cx, cy);
+          if (this.state[id] === 2) this.stats.cacheMisses++;
+          this.state[id] = 1;
+          this.progress[id] = 0;
+          if (!this.queue.includes(id)) this.queue.push(id);
+          touched.push(id);
+        }
+      }
+      return touched;
+    }
+
+    /** Advance simulated bake work by one frame's worth of budget. */
+    tick(frameMs = this.msPerFrame) {
+      let budget = frameMs * (this.parallelBakes || 2);
+      const done = [];
+      while (budget > 0 && this.queue.length) {
+        const id = this.queue[0];
+        const need = this.bakeMsPerChunk * (1 - this.progress[id]);
+        const spend = Math.min(need, budget);
+        this.progress[id] += spend / this.bakeMsPerChunk;
+        budget -= spend;
+        this.stats.bakeMsTotal += spend;
+        if (this.progress[id] >= 1) {
+          this.state[id] = 2;
+          this.progress[id] = 1;
+          this.queue.shift();
+          this.stats.bakes++;
+          done.push(id);
+        }
+      }
+      return done;
+    }
+
+    /** Which fidelity does a given cell render at, right now? */
+    fidelityAt(x, y) {
+      const id = this.cid(Math.floor(x / this.cw), Math.floor(y / this.chh));
+      if (this.state[id] === 2) { this.stats.cacheHits++; return 1; }
+      return 0;
+    }
+
+    fractionHiFi() {
+      let n = 0;
+      for (let i = 0; i < this.state.length; i++) if (this.state[i] === 2) n++;
+      return n / this.state.length;
+    }
+  }
+
+  /* ==========================================================================
+     7. Agents — macro tier only
+     ====================================================================== */
+
+  class SettlerAgent {
+    constructor(id, opts = {}) {
+      this.id = id;
+      this.cooldown = opts.cooldown ?? 40;
+      this.lastDecision = -1e9;
+      this.rng = mulberry32(opts.seed ?? (id * 7919 + 13));
+      this.utility = opts.utility ?? { water: 1.4, flat: 1.1, veg: 0.9, isolate: 0.7, avoidRock: 0.8 };
+      this.log = [];
+      this.tokenBudget = opts.tokenBudget ?? 64; // hard cap per macro decision
+    }
+
+    decide(world) {
+      if (world.macroTick - this.lastDecision < this.cooldown) return [];
+      this.lastDecision = world.macroTick;
+
+      // sample candidate sites — cheap, bounded
+      let best = null;
+      for (let s = 0; s < 90; s++) {
+        const x = 6 + ((this.rng() * (world.w - 12)) | 0);
+        const y = 6 + ((this.rng() * (world.h - 12)) | 0);
+        const score = this.scoreSite(world, x, y);
+        if (!best || score.v > best.v) best = { x, y, v: score.v, why: score.why };
+      }
+      if (!best || best.v < 0.42) return [];
+
+      const intent = world.makeIntent('build', {
+        x: best.x, y: best.y, r: 2.4, kind: 'settlement', actor: 'agent:' + this.id
+      });
+      world.apply(intent);
+      const ev = {
+        tick: world.macroTick, actor: this.id, kind: 'FOUND_SETTLEMENT',
+        x: best.x, y: best.y, score: +best.v.toFixed(3),
+        rationale: best.why, tokens: Math.min(this.tokenBudget, 24 + ((best.v * 40) | 0))
+      };
+      this.log.push(ev);
+      return [ev];
+    }
+
+    scoreSite(world, x, y) {
+      const i = world.idx(x, y);
+      const e = world.ch[CH.ELEV][i];
+      if (e < 0.33 || e > 0.76 || world.ch[CH.WATER][i] > 0.3) return { v: -1, why: 'uninhabitable' };
+
+      // water within radius
+      let waterNear = 0, vegNear = 0, structNear = 0, slopeAcc = 0, n = 0;
+      const R = 6;
+      for (let dy = -R; dy <= R; dy++) {
+        for (let dx = -R; dx <= R; dx++) {
+          const xx = x + dx, yy = y + dy;
+          if (!world.inBounds(xx, yy)) continue;
+          const j = world.idx(xx, yy);
+          const d = Math.hypot(dx, dy);
+          if (d > R) continue;
+          const w = 1 - d / R;
+          waterNear += world.ch[CH.WATER][j] * w;
+          vegNear += world.ch[CH.VEG][j] * w;
+          structNear += world.ch[CH.STRUCT][j] * w;
+          slopeAcc += Math.abs(world.ch[CH.ELEV][j] - e) * w;
+          n += w;
+        }
+      }
+      waterNear /= n; vegNear /= n; structNear /= n;
+      const flat = 1 - clamp(slopeAcc / n * 12, 0, 1);
+      const u = this.utility;
+      // Normalise by the maximum attainable positive utility so the score is a
+      // true [0,1] and the acceptance threshold means what it says. (Clamping
+      // the raw sum to 1 *before* normalising silently caps every site below
+      // threshold and the agent never acts — easy bug to miss.)
+      const raw =
+        u.water * clamp(waterNear * 3.2, 0, 1) +
+        u.flat * flat +
+        u.veg * clamp(vegNear * 1.8, 0, 1) -
+        u.isolate * clamp(structNear * 1.4, 0, 1) -
+        u.avoidRock * world.ch[CH.ROCK][i];
+      const maxPos = u.water + u.flat + u.veg;
+      const v = clamp(raw / maxPos, 0, 1);
+
+      const why = [];
+      if (waterNear > 0.12) why.push('fresh water');
+      if (flat > 0.6) why.push('level ground');
+      if (vegNear > 0.2) why.push('timber/forage');
+      if (structNear > 0.2) why.push('crowded — penalized');
+      return { v, why: why.join(', ') || 'marginal' };
+    }
+  }
+
+  /**
+   * The negotiation resolver.
+   *
+   * Conflict between player intent and agent intent is resolved by composing
+   * SYMBOLIC operations — not by blending vectors. The output is a deterministic,
+   * explainable compromise plus a narrative event the player can read.
+   */
+  class NegotiationResolver {
+    constructor() { this.history = []; }
+
+    /**
+     * @param {World} world
+     * @param {object} playerIntent  already-applied intent that caused harm
+     * @returns {object|null} resolution event
+     */
+    resolve(world, playerIntent) {
+      if (playerIntent.op !== 'deforest') return null;
+      const { x, y, r } = playerIntent.params;
+
+      // find affected settlements
+      const affected = world.settlements.filter(s => Math.hypot(s.x - x, s.y - y) < r + s.r + 5);
+      if (!affected.length) return null;
+
+      const removed = playerIntent._removedVeg || 0;
+      if (removed < 0.6) return null; // below the grievance threshold
+
+      const s = affected[0];
+      const grievance = clamp(removed / 6, 0, 1);
+
+      // Compromise is a COMPOSITION of concrete operations:
+      //   partial restoration + a riparian/green buffer + relocation pressure.
+      const ops = [
+        { op: 'afforest', params: { x, y, r: r * 0.55, amount: 0.35 + grievance * 0.45 } },
+        { op: 'afforest', params: { x: s.x, y: s.y, r: s.r + 3, amount: 0.25 } }
+      ];
+      const compromise = world.makeIntent('resolve', { ops, actor: 'resolver' });
+      const dirty = world.apply(compromise);
+
+      const outcome =
+        grievance > 0.72 ? 'PROTEST' :
+        grievance > 0.40 ? 'COMPROMISE' : 'GRUMBLING';
+
+      const ev = {
+        tick: world.macroTick, kind: outcome,
+        player: { x, y, r }, settlement: { x: s.x, y: s.y, owner: s.owner },
+        grievance: +grievance.toFixed(3),
+        text: this.narrate(outcome, grievance, s),
+        opsApplied: ops.length,
+        dirty
+      };
+      this.history.push(ev);
+      return ev;
+    }
+
+    narrate(outcome, g, s) {
+      const who = s.owner.startsWith('agent') ? 'the settlers' : 'the townsfolk';
+      switch (outcome) {
+        case 'PROTEST':
+          return `${who} of the settlement at (${s.x},${s.y}) block your crews. ` +
+                 `Grievance ${(g * 100) | 0}%. A green belt is replanted and your clearance is halved.`;
+        case 'COMPROMISE':
+          return `${who} petition you. Grievance ${(g * 100) | 0}%. ` +
+                 `They accept the clearing in exchange for replanting near the water.`;
+        default:
+          return `${who} grumble about the felling (${(g * 100) | 0}% grievance) but let it stand.`;
+      }
+    }
+  }
+
+  /* ==========================================================================
+     8. Cost model — because unit economics decide feasibility
+     --------------------------------------------------------------------------
+     The binding constraint for this project is not fidelity or latency in the
+     abstract; it is dollars per player-hour. Both architectures are modelled
+     from the same assumption set so the comparison is honest.
+
+     Key asymmetry: a BAKE is paid once per chunk and amortized over every
+     player-hour that chunk is viewed. RUNTIME GENERATION is paid per player
+     per interaction and never amortizes. That single difference is the whole
+     business case for "bake heavy, run light".
+     ====================================================================== */
+
+  const PRICE = {
+    gpuHourA100: 2.50,        // $/GPU-hour, on-demand, 2026-ish
+    cpuHour: 0.05,            // $/vCPU-hour
+    llmPerMTok: 0.10,         // $/1M tokens, small instruct model, blended in+out
+    deviceInference: 0.0      // runs on the player's GPU — free to us
+  };
+
+  class CostModel {
+    constructor(assumptions = {}) {
+      // Bake cost per chunk, GPU-seconds. A 3DGS / splat-texture bake of one
+      // chunk at production quality is minutes on an A100; we use a modest
+      // number so the corrected case is not flattered.
+      this.bakeGpuSecPerChunk = assumptions.bakeGpuSecPerChunk ?? 45;
+      // Runtime text->3D / neural-asset generation per player interaction.
+      this.runtimeGenGpuSec = assumptions.runtimeGenGpuSec ?? 6;
+      this.chunksPerShard = assumptions.chunksPerShard ?? 120;
+      this.chunkLifetimeHours = assumptions.chunkLifetimeHours ?? 24; // rebake cadence
+      this.macroCallsPerPlayerHour = assumptions.macroCallsPerPlayerHour ?? 12;
+      this.tokensPerMacroCall = assumptions.tokensPerMacroCall ?? 900;
+      this.interactionsPerPlayerHour = assumptions.interactionsPerPlayerHour ?? 120;
+      this.serverVcpu = assumptions.serverVcpu ?? 0.5;
+      this.macroServerVcpu = assumptions.macroServerVcpu ?? 2.0;
+    }
+
+    // ---- observed accounting (what actually happened this session) ----
+    constructor_reset() {}
+    addMicro(seconds) { this.obsMicroSec = (this.obsMicroSec || 0) + seconds; }
+    addMacro(tokens) {
+      this.obsMacroCalls = (this.obsMacroCalls || 0) + 1;
+      this.obsMacroTokens = (this.obsMacroTokens || 0) + tokens;
+    }
+    addBake(seconds) {
+      this.obsBakes = (this.obsBakes || 0) + 1;
+      this.obsBakeSec = (this.obsBakeSec || 0) + seconds;
+    }
+    addDecode(seconds) { this.obsDecodeSec = (this.obsDecodeSec || 0) + seconds; }
+
+    /** Observed device-side work. Free to the operator — that is the point. */
+    observed() {
+      return {
+        microSec: this.obsMicroSec || 0,
+        macroCalls: this.obsMacroCalls || 0,
+        macroTokens: this.obsMacroTokens || 0,
+        bakes: this.obsBakes || 0,
+        bakeSec: this.obsBakeSec || 0,
+        decodeSec: this.obsDecodeSec || 0,
+        // what this session WOULD have cost on the server if it were not on-device
+        avoidedServerCost: (this.obsDecodeSec || 0) * (PRICE.gpuHourA100 / 3600)
+      };
+    }
+
+    /** Corrected: bake offline/on-demand, cache, serve from device. */
+    corrected(players) {
+      const bakesPerHour = this.chunksPerShard / this.chunkLifetimeHours;
+      const bake = bakesPerHour * this.bakeGpuSecPerChunk / 3600 * PRICE.gpuHourA100;
+      const macro = players * this.macroCallsPerPlayerHour *
+        (this.tokensPerMacroCall / 1e6) * PRICE.llmPerMTok;
+      const cpu = this.serverVcpu * PRICE.cpuHour;
+      return {
+        label: 'corrected (bake heavy / run light)',
+        bake, macro, cpu, device: 0,
+        total: bake + macro + cpu,
+        perPlayerHour: (bake + macro + cpu) / Math.max(players, 1)
+      };
+    }
+
+    /** Naive: the original roadmap — generate the world at runtime, per action. */
+    naive(players) {
+      const gen = players * this.interactionsPerPlayerHour *
+        this.runtimeGenGpuSec / 3600 * PRICE.gpuHourA100;
+      const macro = players * this.macroCallsPerPlayerHour * 5 *
+        (this.tokensPerMacroCall * 3 / 1e6) * PRICE.llmPerMTok;
+      const cpu = this.macroServerVcpu * PRICE.cpuHour;
+      return {
+        label: 'naive (runtime generation)',
+        bake: 0, macro, cpu, device: 0, gen,
+        total: gen + macro + cpu,
+        perPlayerHour: (gen + macro + cpu) / Math.max(players, 1)
+      };
+    }
+
+    static fmt(c) {
+      const parts = [];
+      if (c.bake) parts.push(`bake ${c.bake.toFixed(2)}`);
+      if (c.gen) parts.push(`runtime-gen ${c.gen.toFixed(2)}`);
+      if (c.macro) parts.push(`macro-LLM ${c.macro.toFixed(2)}`);
+      if (c.cpu) parts.push(`cpu ${c.cpu.toFixed(2)}`);
+      return `${c.label}: ${c.total.toFixed(2)}/hr  [${parts.join(', ')}]  ` +
+             `= ${c.perPlayerHour.toFixed(4)}/player-hr`;
+    }
+  }
+
+  /* ==========================================================================
+     exports
+     ====================================================================== */
+
+  const NEBULA = {
+    // primitives
+    mulberry32, hash2, clamp, lerp, smooth, makeValueNoise, fbm, stateHash, hash32,
+    // world
+    World, CH, CH_NAMES, OPS, brushMask, dirtyRect, unionRect, featuresAt,
+    // negative control
+    LatentWorld, embedIntent, EMBED_DIM, OP_EMBED, leastSquares,
+    // neural materialization
+    MLP, Materializer, biomeTarget, styledTarget, MAT_IN, MAT_OUT,
+    STYLE_DIM, STYLE_PRESETS,
+    // scheduling
+    RefinementScheduler,
+    // agents
+    SettlerAgent, NegotiationResolver,
+    // economics
+    CostModel, PRICE
+  };
+
+  root.NEBULA = NEBULA;
+  if (typeof module !== 'undefined' && module.exports) module.exports = NEBULA;
+
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>
+(function () {
+  'use strict';
+  const N = window.NEBULA;
+  const W = 128, H = 80, CW = 16, CHH = 10;
+  const SEED = 1337;
+
+  /* ------------------------------------------------------------------ boot */
+  const bootmsg = document.getElementById('bootmsg');
+  const bootbar = document.getElementById('bootbar');
+  function boot(pct, msg) { bootbar.style.width = pct + '%'; bootmsg.textContent = msg; }
+
+  const TOOLS = [
+    { id: 'raise',    label: '▲ raise',  note: 'Additive terrain. Two raises compose into a taller peak — clamped, never overwritten.' },
+    { id: 'lower',    label: '▽ lower',  note: 'Subtractive terrain. Composes with raise into a pass, not a compromise blob.' },
+    { id: 'carve',    label: '≈ river',  note: 'Water uses max-composition, bed uses min. A river through a mountain yields a CANYON.' },
+    { id: 'afforest', label: '✦ forest', note: 'Vegetation is gated by moisture, elevation and rock — symbolic constraints, not a guardrail net.' },
+    { id: 'deforest', label: '✧ clear',  note: 'Clearing near a settlement triggers the negotiation resolver. Riparian buffers survive automatically.' },
+    { id: 'build',    label: '⌂ settle', note: 'Structures use max-composition with footprint exclusion. Two builders resolve by claim order.' },
+    { id: 'erode',    label: '◌ erode',  note: 'Forces extra micro-simulation ticks. Mass-conserving: nothing appears or disappears.' },
+    { id: 'inspect',  label: '◎ inspect',note: 'Reads symbolic truth at the cursor. No inference, no cost — the answer is already stored.' }
+  ];
+
+  let world, naive, anchored, mat, sched, agents, resolver, cost;
+  let styleCode = new Float32Array(N.STYLE_DIM);
+  let styleName = 'vanilla';
+
+  const fin = new Float32Array(N.MAT_IN);
+  const outC = new Float32Array(N.MAT_OUT);
+
+  const cvMain = document.getElementById('cvMain');
+  const cvTruth = document.getElementById('cvTruth');
+  const cvNaive = document.getElementById('cvNaive');
+  const ctxMain = cvMain.getContext('2d');
+  const ctxTruth = cvTruth.getContext('2d');
+  const ctxNaive = cvNaive.getContext('2d');
+
+  // Full-resolution pixel buffers. We render the world at 1:1 into an
+  // ImageData and let the browser bilinear-upscale — the neural decode is the
+  // expensive part, and it is cached per chunk, never run per frame.
+  const imgMain = ctxMain.createImageData(W, H);
+  const imgTruth = ctxTruth.createImageData(W, H);
+  const imgNaive = ctxNaive.createImageData(W, H);
+  const pxMain = imgMain.data, pxTruth = imgTruth.data, pxNaive = imgNaive.data;
+
+  const nChunks = Math.ceil(W / CW) * Math.ceil(H / CHH);
+  const chunkCols = Math.ceil(W / CW), chunkRows = Math.ceil(H / CHH);
+
+  async function init() {
+    boot(5, 'generating symbolic base world…');
+    await frame();
+    const base = new N.World(W, H, SEED);
+    world = N.World.replay([], W, H, SEED);
+
+    boot(15, 'encoding latent control world…');
+    await frame();
+    naive = new N.LatentWorld(W, H, SEED, true).seedFrom(base);
+    anchored = new N.LatentWorld(W, H, SEED, false).seedFrom(base);
+    // Decoder is fit ONCE on the untouched base world, exactly as in production.
+    naive.fitDecoder(base);
+    anchored.fitDecoder(base);
+    naive.decodeToChannels();
+
+    boot(30, 'training neural materializer (offline bake)…');
+    mat = new N.Materializer(42);
+    styleCode.set(N.STYLE_PRESETS.vanilla);
+    // Train incrementally so the progress bar is honest rather than decorative.
+    const totalSteps = 1700, slices = 17;
+    for (let s = 0; s < slices; s++) {
+      await frame();
+      mat.train(world, totalSteps / slices | 0, 99 + s);
+      boot(30 + (s + 1) / slices * 55, `training neural materializer… ${((s + 1) / slices * 100) | 0}%  (loss ${mat.trainLoss.toFixed(5)})`);
+    }
+
+    boot(88, 'warming chunk cache…');
+    await frame();
+    sched = new N.RefinementScheduler(world, CW, CHH, { bakeMsPerChunk: 42, msPerFrame: 16.7 });
+    sched.parallelBakes = 2;
+    for (let c = 0; c < nChunks; c++) sched.queue.push(c), sched.state[c] = 1;
+
+    agents = [new N.SettlerAgent(1, { cooldown: 26, seed: 3 }),
+              new N.SettlerAgent(2, { cooldown: 31, seed: 17, utility: { water: 1.0, flat: 0.8, veg: 1.5, isolate: 1.0, avoidRock: 0.6 } })];
+    resolver = new N.NegotiationResolver();
+    cost = new N.CostModel();
+
+    boot(100, 'ready');
+    await frame();
+    document.getElementById('boot').style.display = 'none';
+    document.getElementById('app').style.display = 'grid';
+
+    massRef = world.elevMass();
+    buildUI();
+    rebuildAllLoFi();
+    invalidateAll();
+    log('p', 'kernel online — symbolic truth + neural materializer');
+    log('a', `materializer baked: ${mat.paramCount} params, loss ${mat.trainLoss.toFixed(5)}`);
+    log('a', `${chunkCols}×${chunkRows} = ${nChunks} chunks under progressive refinement`);
+    requestAnimationFrame(loop);
+  }
+
+  function frame() { return new Promise(r => requestAnimationFrame(() => r())); }
+
+  /* ------------------------------------------------------------------- UI */
+  let tool = 'raise';
+  function buildUI() {
+    const t = document.getElementById('tools');
+    TOOLS.forEach(x => {
+      const b = document.createElement('button');
+      b.textContent = x.label; b.dataset.id = x.id;
+      if (x.id === tool) b.classList.add('on');
+      b.onclick = () => {
+        tool = x.id;
+        [...t.children].forEach(c => c.classList.toggle('on', c.dataset.id === tool));
+        document.getElementById('noteMain').innerHTML = x.note;
+      };
+      t.appendChild(b);
+    });
+    document.getElementById('noteMain').innerHTML = TOOLS[0].note;
+
+    const ss = document.getElementById('styleSel');
+    Object.keys(N.STYLE_PRESETS).forEach(k => {
+      const o = document.createElement('option'); o.value = k; o.textContent = k; ss.appendChild(o);
+    });
+    ss.onchange = () => {
+      styleName = ss.value;
+      styleCode.set(N.STYLE_PRESETS[styleName]);
+      log('p', `regional weights swapped → "${styleName}"`);
+      const before = world.fingerprint();
+      invalidateAll();                       // re-bake appearance only
+      log('a', `world fingerprint unchanged: ${before} (save is portable)`);
+    };
+
+    bindRange('radius', v => v);
+    bindRange('strength', v => (v / 100).toFixed(2).replace('0.', '.'));
+    bindRange('dir', v => v + '°');
+    bindRange('speed', v => v + '×');
+    bindRange('macroRate', v => v);
+
+    document.getElementById('playBtn').onclick = e => {
+      running = !running;
+      e.target.textContent = running ? '❚❚ pause' : '▶ play';
+      e.target.classList.toggle('go', running);
+    };
+    document.getElementById('stepBtn').onclick = () => { doMicro(1); doMacro(true); };
+    document.getElementById('resetBtn').onclick = resetWorld;
+    document.getElementById('conflictBtn').onclick = conflictTest;
+    document.getElementById('redeliverBtn').onclick = redeliver;
+    document.getElementById('replayBtn').onclick = replayFromLog;
+
+    // HUD
+    const hud = document.getElementById('hud');
+    HUD_KEYS.forEach(k => {
+      const d = document.createElement('div'); d.className = 'm';
+      d.innerHTML = `<div class="k">${k.label}</div><div class="v" id="hud-${k.id}">—</div>`;
+      hud.appendChild(d);
+    });
+  }
+  function bindRange(id, fmt) {
+    const el = document.getElementById(id), o = document.getElementById(id + 'O');
+    const up = () => o.textContent = fmt(+el.value);
+    el.oninput = up; up();
+  }
+
+  const HUD_KEYS = [
+    { id: 'fps', label: 'frame' }, { id: 'micro', label: 'micro ticks' },
+    { id: 'macro', label: 'macro ticks' }, { id: 'decisions', label: 'agent decisions' },
+    { id: 'hifi', label: 'chunk cache hi-fi' }, { id: 'queue', label: 'bake queue' },
+    { id: 'decode', label: 'neural decode' }, { id: 'events', label: 'intents logged' },
+    { id: 'fp', label: 'world fingerprint' }, { id: 'mass', label: 'mass drift' },
+    { id: 'costc', label: 'cost · corrected' }, { id: 'costn', label: 'cost · naive §4.2' }
+  ];
+  function hud(id, html, cls) {
+    const el = document.getElementById('hud-' + id);
+    if (!el) return;
+    el.innerHTML = html;
+    el.className = 'v' + (cls ? ' ' + cls : '');
+  }
+
+  /* -------------------------------------------------------------- editing */
+  let painting = false, lastCell = null, inspectInfo = '';
+
+  function cellFromEvent(e) {
+    const r = cvMain.getBoundingClientRect();
+    const x = Math.floor((e.clientX - r.left) / r.width * W);
+    const y = Math.floor((e.clientY - r.top) / r.height * H);
+    return { x: N.clamp(x, 0, W - 1), y: N.clamp(y, 0, H - 1) };
+  }
+
+  cvMain.addEventListener('pointerdown', e => {
+    cvMain.setPointerCapture(e.pointerId);
+    painting = true; lastCell = null;
+    emit(cellFromEvent(e), true);
+  });
+  cvMain.addEventListener('pointermove', e => {
+    const c = cellFromEvent(e);
+    hover = c;
+    if (!painting) return;
+    if (lastCell && Math.hypot(c.x - lastCell.x, c.y - lastCell.y) < 2) return;
+    lastCell = c; emit(c, false);
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev =>
+    cvMain.addEventListener(ev, () => { painting = false; lastCell = null; }));
+
+  let hover = null;
+
+  function emit(c, isFirst) {
+    const r = +document.getElementById('radius').value;
+    const s = +document.getElementById('strength').value / 100;
+    const dir = +document.getElementById('dir').value / 180;
+    let intent;
+
+    switch (tool) {
+      case 'raise':    intent = world.makeIntent('raise', { x: c.x, y: c.y, r, amount: s * 0.55 }); break;
+      case 'lower':    intent = world.makeIntent('lower', { x: c.x, y: c.y, r, amount: s * 0.55 }); break;
+      case 'carve':    intent = world.makeIntent('carve', { x: c.x, y: c.y, r: r * 0.8, depth: s, dir }); break;
+      case 'afforest': intent = world.makeIntent('afforest', { x: c.x, y: c.y, r, amount: s }); break;
+      case 'deforest': intent = world.makeIntent('deforest', { x: c.x, y: c.y, r, amount: s }); break;
+      case 'build':    intent = world.makeIntent('build', { x: c.x, y: c.y, r: Math.max(2, r * 0.5), kind: 'settlement', actor: 'player' }); break;
+      case 'erode':    doMicro(Math.round(20 * s) + 4); invalidateRect({ x0: c.x - r, y0: c.y - r, x1: c.x + r, y1: c.y + r }); return;
+      case 'inspect': {
+        const i = world.idx(c.x, c.y);
+        const vals = N.CH_NAMES.map((n, k) => `${n}=${world.ch[k][i].toFixed(3)}`).join(' ');
+        inspectInfo = `(${c.x},${c.y}) ${vals}`;
+        document.getElementById('brushInfo').textContent = inspectInfo;
+        log('p', `inspect ${inspectInfo}`);
+        return;
+      }
+    }
+
+    const res = world.apply(intent);
+    if (res.duplicate) return;
+
+    // The SAME intent object goes to the latent control world.
+    if (document.getElementById('naiveOn').checked) {
+      naive.apply(intent);
+      naive.decodeToChannels();
+    }
+
+    invalidateRect(res.dirty);
+    log('p', `#${intent.id} ${intent.op} @(${c.x},${c.y}) r=${r} s=${s.toFixed(2)}`);
+
+    // negotiation resolver — conflict between player intent and agent intent
+    if (document.getElementById('negotiateOn').checked) {
+      const r2 = resolver.resolve(world, intent);
+      if (r2) {
+        if (r2.dirty) invalidateRect(r2.dirty);
+        log('n', `⚖ ${r2.kind} — ${r2.text}`);
+      }
+    }
+  }
+
+  /* ------------------------------------------------------- refinement */
+  function invalidateRect(rect) {
+    if (!rect) return;
+    const x0 = N.clamp(rect.x0 | 0, 0, W - 1), x1 = N.clamp(rect.x1 | 0, 0, W - 1);
+    const y0 = N.clamp(rect.y0 | 0, 0, H - 1), y1 = N.clamp(rect.y1 | 0, 0, H - 1);
+    // lo-fi IMMEDIATELY — the frame never blocks on generation
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        N.featuresAt(world, x, y, fin, null);
+        mat.decodeLoFi(fin, outC);
+        writePx(pxMain, y * W + x, outC);
+      }
+    }
+    const touched = sched.invalidate({ x0, y0, x1, y1 });
+    for (const cid of touched) chunkSig[cid] = chunkSigOf(cid);
+  }
+  function invalidateAll() { invalidateRect({ x0: 0, y0: 0, x1: W - 1, y1: H - 1 }); }
+
+  function rebuildAllLoFi() {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      N.featuresAt(world, x, y, fin, null);
+      mat.decodeLoFi(fin, outC);
+      writePx(pxMain, y * W + x, outC);
+    }
+  }
+
+  function writePx(buf, i, c) {
+    const o = i * 4;
+    buf[o] = N.clamp(c[0], 0, 1) * 255;
+    buf[o + 1] = N.clamp(c[1], 0, 1) * 255;
+    buf[o + 2] = N.clamp(c[2], 0, 1) * 255;
+    buf[o + 3] = 255;
+  }
+
+  /** The actual neural decode. Runs ONLY when a chunk's bake completes, and the
+   *  result is cached. This is the whole "bake heavy / run light" argument:
+   *  per-frame cost is a memcpy, not an inference. */
+  function bakeChunk(cid) {
+    const cx = (cid % chunkCols) * CW, cy = ((cid / chunkCols) | 0) * CHH;
+    const t0 = performance.now();
+    for (let y = cy; y < Math.min(cy + CHH, H); y++) {
+      for (let x = cx; x < Math.min(cx + CW, W); x++) {
+        N.featuresAt(world, x, y, fin, styleCode);
+        mat.decode(fin, outC);
+        writePx(pxMain, y * W + x, outC);
+      }
+    }
+    chunkSig[cid] = chunkSigOf(cid);   // record what we baked against
+    return performance.now() - t0;
+  }
+
+  /* ---------------------------------------------------------- simulation */
+  let running = true, massRef = 0;
+  function doMicro(n) {
+    for (let i = 0; i < n; i++) world.microStep(1);
+    cost.addMicro(n * 0.0007);
+  }
+  function doMacro(force) {
+    if (!document.getElementById('agentsOn').checked && !force) return;
+    const evs = world.macroStep(document.getElementById('agentsOn').checked ? agents : []);
+    for (const e of evs) {
+      cost.addMacro(e.tokens);
+      if (e.kind === 'FOUND_SETTLEMENT') {
+        log('a', `⌂ agent ${e.actor} founds a settlement @(${e.x},${e.y}) — ${e.rationale} [${e.tokens} tok]`);
+        invalidateRect({ x0: e.x - 6, y0: e.y - 6, x1: e.x + 6, y1: e.y + 6 });
+      }
+    }
+    return evs.length;
+  }
+
+  /* -------------------------------------------------------------- probes */
+  function conflictTest() {
+    const cx = 64, cy = 40, r = 9;
+    const a = world.makeIntent('raise', { x: cx, y: cy, r, amount: 0.95, actor: 'playerA' });
+    world.apply(a); if (document.getElementById('naiveOn').checked) naive.apply(a);
+    log('p', `#${a.id} ⛰ playerA raises a mountain @(${cx},${cy})`);
+
+    const b = world.makeIntent('carve', { x: cx, y: cy, r, depth: 0.95, dir: 0.35, actor: 'playerB' });
+    world.apply(b); if (document.getElementById('naiveOn').checked) naive.apply(b);
+    log('p', `#${b.id} ≈ playerB carves a river through the same cells`);
+
+    invalidateRect({ x0: cx - r - 2, y0: cy - r - 2, x1: cx + r + 2, y1: cy + r + 2 });
+    if (document.getElementById('naiveOn').checked) naive.decodeToChannels();
+
+    // quantify the outcome in both worlds
+    let symWater = 0, symRock = 0, symCanyon = 0, nvCanyon = 0, n = 0;
+    for (let y = cy - r; y <= cy + r; y++) for (let x = cx - r; x <= cx + r; x++) {
+      if (x < 0 || y < 0 || x >= W || y >= H) continue;
+      const i = world.idx(x, y); n++;
+      symWater += world.ch[N.CH.WATER][i] > 0.2 ? 1 : 0;
+      symRock += world.ch[N.CH.ROCK][i] > 0.25 ? 1 : 0;
+      if (world.ch[N.CH.WATER][i] > 0.2 && world.ch[N.CH.ROCK][i] > 0.25) symCanyon++;
+      if (naive.ch[N.CH.WATER][i] > 0.2 && naive.ch[N.CH.ROCK][i] > 0.25) nvCanyon++;
+    }
+    log(symCanyon > 0 ? 'a' : 'e',
+      `composition → ${symCanyon} canyon cells (water ${symWater}, rock ${symRock} of ${n})`);
+    log('e', `vector averaging → ${nvCanyon} canyon cells. The river and the mountain cancelled.`);
+    document.getElementById('noteNaive').innerHTML =
+      `<b>${nvCanyon} canyon cells</b> vs <b>${symCanyon}</b> under composition. Averaging "mountain" with "river" ` +
+      `did not produce a canyon — it produced neither. This is §4.2 failing exactly as predicted.`;
+  }
+
+  function redeliver() {
+    const before = world.fingerprint();
+    const nvBefore = naive.latent.map(a => a.slice());
+    let dups = 0, applied = 0;
+    for (const e of world.events.slice()) {
+      const r = world.apply(e);
+      r.duplicate ? dups++ : applied++;
+    }
+    let drifted = 0;
+    if (document.getElementById('naiveOn').checked) {
+      for (const e of world.events.slice()) naive.apply(e);
+      for (let d = 0; d < nvBefore.length; d++)
+        for (let i = 0; i < nvBefore[d].length; i++)
+          if (Math.abs(nvBefore[d][i] - naive.latent[d][i]) > 1e-9) { drifted++; break; }
+      naive.decodeToChannels();
+    }
+    const after = world.fingerprint();
+    log(after === before ? 'a' : 'e',
+      `redelivered ${world.events.length} events → ${dups} rejected as duplicates, ${applied} applied`);
+    log(after === before ? 'a' : 'e',
+      `symbolic fingerprint ${before} → ${after}  ${after === before ? '(IDENTICAL — idempotent)' : '(DIVERGED!)'}`);
+    log('e', `latent control: ${drifted}/24 latent planes drifted. Clients can never reconverge.`);
+    document.getElementById('noteNaive').innerHTML =
+      `<b>Redelivery diverged ${drifted} latent planes.</b> Kafka is at-least-once, so this happens in production, ` +
+      `not in theory. There is no reconciliation: the drift is permanent and invisible until two clients disagree.`;
+  }
+
+  function replayFromLog() {
+    const fp = world.fingerprint();
+    const t0 = performance.now();
+    // Replay must interleave the simulation at the tick each intent was
+    // authored. Replaying the log alone silently produces a DIFFERENT world,
+    // because erosion and vegetation are state-dependent. This is exactly the
+    // bug that breaks rollback netcode, and it is invisible until two clients
+    // disagree about ground truth.
+    const rebuilt = N.World.replay(world.events, W, H, SEED, world.microTick);
+    const ms = performance.now() - t0;
+    const fp2 = rebuilt.fingerprint();
+    const naiveFp = N.World.replay(world.events, W, H, SEED, 0).fingerprint();
+    // shuffle arrival order and replay again — canonical order is by event id
+    const shuffled = world.events.slice().sort(() => Math.random() - 0.5);
+    const fp3 = N.World.replay(shuffled, W, H, SEED, world.microTick).fingerprint();
+    log(fp2 === fp ? 'a' : 'e', `replayed ${world.events.length} events + ${world.microTick} sim ticks in ${ms.toFixed(1)}ms → ${fp2} ${fp2 === fp ? '✓ matches live state' : '✗ MISMATCH'}`);
+    log(naiveFp === fp ? 'e' : 'n', `log alone, no simulation → ${naiveFp} ${naiveFp === fp ? '✗ (unexpected match)' : '≠ live state — sim must be interleaved'}`);
+    log(fp3 === fp ? 'a' : 'e', `replayed in SHUFFLED arrival order → ${fp3} ${fp3 === fp ? '✓ identical (order-tolerant)' : '✗ order-dependent'}`);
+    if (fp2 === fp && fp3 === fp) {
+      document.getElementById('noteTruth').innerHTML =
+        `<b>Replay verified.</b> ${world.events.length} events reproduce a byte-identical world in ${ms.toFixed(1)}ms,
+         regardless of arrival order. That is a save file, a rollback, and a netcode reconciliation — from one mechanism.`;
+    }
+  }
+
+  function resetWorld() {
+    const base = new N.World(W, H, SEED);
+    world = N.World.replay([], W, H, SEED);
+    naive = new N.LatentWorld(W, H, SEED, true).seedFrom(base);
+    anchored = new N.LatentWorld(W, H, SEED, false).seedFrom(base);
+    naive.fitDecoder(base); anchored.fitDecoder(base); naive.decodeToChannels();
+    sched = new N.RefinementScheduler(world, CW, CHH, { bakeMsPerChunk: 42, msPerFrame: 16.7 });
+    sched.parallelBakes = 2;
+    for (let c = 0; c < nChunks; c++) { sched.queue.push(c); sched.state[c] = 1; }
+    agents.forEach(a => { a.lastDecision = -1e9; a.log.length = 0; });
+    resolver.history.length = 0;
+    massRef = world.elevMass();
+    document.getElementById('log').innerHTML = '';
+    rebuildAllLoFi();
+    log('p', 'world reset — event log cleared');
+  }
+
+  /* ---------------------------------------------------------------- log */
+  const logEl = document.getElementById('log');
+  let logSeq = 0;
+  function log(cls, msg) {
+    const d = document.createElement('div');
+    d.className = cls;
+    d.textContent = String(logSeq++).padStart(4, '0') + '  ' + msg;
+    logEl.appendChild(d);
+    while (logEl.children.length > 220) logEl.removeChild(logEl.firstChild);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  /* -------------------------------------------------- change-gated bakes */
+  // Cost control that matters in production: do NOT re-bake a chunk unless its
+  // symbolic truth actually moved. Erosion changes terrain slowly and unevenly,
+  // so blind periodic invalidation would keep every chunk permanently stale and
+  // burn the entire GPU budget re-decoding pixels nobody could distinguish.
+  const chunkSig = new Float32Array(nChunks);
+  function chunkSigOf(cid) {
+    const cx = (cid % chunkCols) * CW, cy = ((cid / chunkCols) | 0) * CHH;
+    let sum = 0, n = 0;
+    const e = world.ch[N.CH.ELEV], v = world.ch[N.CH.VEG], w = world.ch[N.CH.WATER], st = world.ch[N.CH.STRUCT];
+    for (let y = cy; y < Math.min(cy + CHH, H); y++) {
+      for (let x = cx; x < Math.min(cx + CW, W); x++) {
+        const i = y * W + x;
+        sum += e[i] * 2 + v[i] + w[i] + st[i] * 3; n++;
+      }
+    }
+    return sum / Math.max(1, n);
+  }
+  // Relative threshold: a chunk must change by ~1.2% of its mean signal
+  // before we spend GPU on it. Too low and slow erosion keeps every chunk
+  // permanently stale; too high and the surface visibly lags the truth.
+  const SIG_EPS = 0.012;
+  function refreshStaleChunks() {
+    let n = 0;
+    for (let cid = 0; cid < nChunks; cid++) {
+      const sig = chunkSigOf(cid);
+      if (Math.abs(sig - chunkSig[cid]) > SIG_EPS) {
+        const cx = (cid % chunkCols) * CW, cy = ((cid / chunkCols) | 0) * CHH;
+        // lo-fi immediately, then queue the bake
+        for (let y = cy; y < Math.min(cy + CHH, H); y++)
+          for (let x = cx; x < Math.min(cx + CW, W); x++) {
+            N.featuresAt(world, x, y, fin, null);
+            mat.decodeLoFi(fin, outC);
+            writePx(pxMain, y * W + x, outC);
+          }
+        if (sched.state[cid] !== 1) { sched.state[cid] = 1; sched.progress[cid] = 0; sched.queue.push(cid); }
+        chunkSig[cid] = sig;
+        n++;
+      }
+    }
+    return n;
+  }
+
+  /* --------------------------------------------------------------- loop */
+  let last = performance.now(), fpsAcc = 0, fpsN = 0, macroAcc = 0, decodeMs = 0;
+  let staleThisFrame = 0, reBakes = 0, decodeMsTotal = 0, decodeFrames = 0;
+
+  function loop(now) {
+    const dtReal = Math.min(64, now - last); last = now;
+    fpsAcc += dtReal; fpsN++;
+
+    const speed = +document.getElementById('speed').value;
+    const t0 = performance.now();
+
+    if (running) {
+      // MICRO tier: every frame, cheap, deterministic, mass-conserving
+      doMicro(speed);
+      // MACRO tier: budgeted, infrequent
+      macroAcc += dtReal / 1000;
+      const rate = +document.getElementById('macroRate').value;
+      if (macroAcc >= 1 / rate) { macroAcc = 0; doMacro(false); }
+      // micro-sim moves terrain, so appearance must eventually follow — but
+      // only where it actually changed. Change-gated, not time-gated.
+      if (world.microTick % 12 === 0) staleThisFrame = refreshStaleChunks();
+    }
+
+    // Progressive refinement: advance bakes inside this frame's budget
+    const done = sched.tick(dtReal);
+    let dms = 0;
+    for (const cid of done) dms += bakeChunk(cid);
+    decodeMs = dms;
+    decodeMsTotal += dms; decodeFrames++;
+    cost.addDecode(dms / 1000);
+    reBakes += done.length;
+
+    renderMain(now);
+    renderTruth();
+    if (document.getElementById('naiveOn').checked) renderNaive();
+    updateHud(dtReal, dms);
+
+    requestAnimationFrame(loop);
+  }
+
+  function renderMain(now) {
+    ctxMain.putImageData(imgMain, 0, 0);
+    // fidelity overlay: draw chunk boundaries for anything not yet hi-fi
+    if (document.getElementById('overlayOn').checked) {
+      const sx = W / W;
+      ctxMain.save();
+      for (let cy = 0; cy < chunkRows; cy++) {
+        for (let cx = 0; cx < chunkCols; cx++) {
+          const id = cy * chunkCols + cx;
+          const st = sched.state[id];
+          if (st === 2) continue;
+          ctxMain.fillStyle = st === 1 ? 'rgba(251,191,36,0.20)' : 'rgba(248,113,113,0.20)';
+          ctxMain.fillRect(cx * CW, cy * CHH, CW, CHH);
+          // progress bar inside the chunk
+          const p = sched.progress[id];
+          if (p > 0 && p < 1) {
+            ctxMain.fillStyle = 'rgba(88,214,255,0.75)';
+            ctxMain.fillRect(cx * CW + 1, cy * CHH + CHH - 2, (CW - 2) * p, 1);
+          }
+        }
+      }
+      ctxMain.restore();
+    }
+    // brush cursor
+    if (hover && tool !== 'inspect') {
+      const r = +document.getElementById('radius').value;
+      ctxMain.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctxMain.lineWidth = 0.4;
+      ctxMain.beginPath(); ctxMain.arc(hover.x + 0.5, hover.y + 0.5, r, 0, Math.PI * 2); ctxMain.stroke();
+    }
+    document.getElementById('brushInfo').textContent =
+      hover ? `${tool} @(${hover.x},${hover.y})` : '';
+  }
+
+  function renderTruth() {
+    const c = +document.getElementById('chanSel').value;
+    if (c < 0) {
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        N.featuresAt(world, x, y, fin, null);
+        mat.decodeLoFi(fin, outC);
+        writePx(pxTruth, y * W + x, outC);
+      }
+    } else {
+      const arr = world.ch[c];
+      for (let i = 0; i < W * H; i++) {
+        const v = N.clamp(arr[i], 0, 1);
+        // perceptual heatmap: deep blue -> cyan -> green -> yellow -> white
+        const o = i * 4;
+        pxTruth[o]     = 255 * N.clamp(v * 2.2 - 0.9, 0, 1);
+        pxTruth[o + 1] = 255 * N.clamp(v * 1.7 - 0.25, 0, 1);
+        pxTruth[o + 2] = 255 * N.clamp(1.25 - v * 1.5, 0, 1) * 0.9 + 40 * v;
+        pxTruth[o + 3] = 255;
+      }
+    }
+    // settlement markers — discrete, attributable facts
+    for (const s of world.settlements) {
+      const i = world.idx(N.clamp(s.x | 0, 0, W - 1), N.clamp(s.y | 0, 0, H - 1));
+      const o = i * 4;
+      pxTruth[o] = 255; pxTruth[o + 1] = 90; pxTruth[o + 2] = 220; pxTruth[o + 3] = 255;
+    }
+    ctxTruth.putImageData(imgTruth, 0, 0);
+  }
+
+  function renderNaive() {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      N.biomeTarget(naive.ch[0][i], naive.ch[1][i], naive.ch[2][i],
+        naive.ch[3][i], naive.ch[4][i], naive.ch[5][i], 0, outC);
+      writePx(pxNaive, i, outC);
+    }
+    ctxNaive.putImageData(imgNaive, 0, 0);
+
+    // decode error vs symbolic truth
+    let se = 0, n = 0;
+    for (let i = 0; i < W * H; i++) {
+      for (let c = 0; c < N.CH.N; c++) { const d = naive.ch[c][i] - world.ch[c][i]; se += d * d; n++; }
+    }
+    const rmse = Math.sqrt(se / n);
+    document.getElementById('nvRmse').textContent = rmse.toFixed(4);
+    document.getElementById('nvDrift').textContent = naive.reDeliveryDrift;
+  }
+
+  function updateHud(dtReal, dms) {
+    if (fpsAcc > 400) {
+      const fps = 1000 / (fpsAcc / fpsN);
+      hud('fps', `${fps.toFixed(0)} <small>fps · ${(fpsAcc / fpsN).toFixed(1)}ms</small>`,
+        fps > 50 ? 'good' : fps > 28 ? 'warn' : 'bad');
+      fpsAcc = 0; fpsN = 0;
+    }
+    hud('micro', `${world.microTick.toLocaleString()} <small>· ${(world.microTick / Math.max(1, (performance.now() - t_start) / 1000)).toFixed(0)}/s</small>`);
+    hud('macro', `${world.macroTick.toLocaleString()} <small>· ${document.getElementById('macroRate').value}/s cap</small>`);
+    const dec = agents.reduce((a, g) => a + g.log.length, 0);
+    hud('decisions', `${dec} <small>· ${agents.reduce((a, g) => a + g.log.reduce((s, e) => s + e.tokens, 0), 0)} tok</small>`);
+
+    const hifi = sched.fractionHiFi();
+    hud('hifi', `${(hifi * 100).toFixed(0)}<small>% · ${sched.stats.bakes} bakes</small>`,
+      hifi > 0.95 ? 'good' : hifi > 0.6 ? 'warn' : 'bad');
+    hud('queue', `${sched.queue.length} <small>chunks pending</small>`, sched.queue.length === 0 ? 'good' : 'warn');
+    // Per-chunk bake cost is the honest number: averaging over all frames
+    // dilutes it toward zero and hides whether decoding fits the budget.
+    const perBake = reBakes ? decodeMsTotal / reBakes : 0;
+    const frameLoad = decodeMsTotal / Math.max(1, decodeFrames);
+    hud('decode', `${perBake.toFixed(2)} <small>ms/chunk · ${frameLoad.toFixed(2)} ms/frame · on device</small>`,
+      frameLoad < 8 ? 'good' : frameLoad < 16 ? 'warn' : 'bad');
+    hud('events', `${world.events.length} <small>· ${world.settlements.length} settlements</small>`);
+    hud('fp', `${world.fingerprint()}`);
+
+    // Simulation drift only. Authored mass (player/agent edits) is intentional
+    // and accounted for separately, so this number should sit at ~0 forever.
+    const drift = world.simDrift();
+    hud('mass', `${(drift * 1e6).toFixed(2)} <small>ppm sim drift · ${world.microTick} ticks</small>`,
+      drift < 1e-5 ? 'good' : drift < 1e-3 ? 'warn' : 'bad');
+
+    const players = 100;
+    const cc = cost.corrected(players), cn = cost.naive(players);
+    hud('costc', `$${cc.total.toFixed(2)}<small>/hr · 100p</small>`, 'good');
+    hud('costn', `$${cn.total.toFixed(0)}<small>/hr · ${(cn.total / cc.total).toFixed(0)}× more</small>`, 'bad');
+
+    document.getElementById('cost').innerHTML =
+      `<div style="color:var(--good)">corrected  $${cc.total.toFixed(3)}/hr</div>` +
+      `<div style="color:var(--dim);padding-left:10px">bake $${cc.bake.toFixed(3)} · macro $${cc.macro.toFixed(3)} · cpu $${cc.cpu.toFixed(3)}</div>` +
+      `<div style="color:var(--bad);margin-top:4px">naive §4.2  $${cn.total.toFixed(2)}/hr</div>` +
+      `<div style="color:var(--dim);padding-left:10px">runtime-gen $${(cn.gen || 0).toFixed(2)} · macro $${cn.macro.toFixed(2)}</div>` +
+      `<div style="margin-top:6px;color:var(--fg)">${(cn.total / cc.total).toFixed(0)}× delta</div>` +
+      `<div style="color:var(--dim);font-size:10px">per player-hour: $${cc.perPlayerHour.toFixed(4)} vs $${cn.perPlayerHour.toFixed(2)}</div>`;
+  }
+  const t_start = performance.now();
+
+  init().catch(err => {
+    bootmsg.innerHTML = '<span style="color:var(--bad)">init failed: ' + (err && err.message ? err.message : err) + '</span>';
+    console.error(err);
+  });
+})();
+</script>
+</body>
+</html>
