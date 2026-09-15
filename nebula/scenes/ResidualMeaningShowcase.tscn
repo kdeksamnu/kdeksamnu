@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://c3m7r2q4k1b8p"]
 
 [ext_resource type="Shader" path="res://shaders/cathedral_chroma_omega.gdshader" id="1_shader"]
-[ext_resource type="Script" path="res://scripts/CathedralTransductionBridge.cs" id="2_bridge"]
-[ext_resource type="Script" path="res://scripts/CathedralECTPipeline.cs" id="3_ect"]
+[ext_resource type="Script" path="res://scripts/CathedralTransductionBridge.gd" id="2_bridge"]
+[ext_resource type="Script" path="res://scripts/CathedralECTPipeline.gd" id="3_ect"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m1"]
 render_priority = 0

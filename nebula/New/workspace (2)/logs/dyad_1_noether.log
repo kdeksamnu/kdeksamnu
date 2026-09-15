@@ -1,0 +1,7 @@
+========================================================================
+PART 1 — invariance of the Lagrangian AS WRITTEN
+========================================================================
+real vectors, real rotation  : dL = -8.222e-04   -> BROKEN
+e^{i·eps·a} acting on a REAL vector leaves R^d only at eps·a in pi*Z  -> symmetry is discrete Z2, not U(1)
+complex, BILINEAR  x^T K s            : dL = +1.233e-02   -> BROKEN
+complex, SESQUILINEAR x^dag K s       : dL = -6.927e-04   -> BROKEN

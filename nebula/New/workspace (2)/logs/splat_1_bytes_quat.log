@@ -1,0 +1,22 @@
+==============================================================================
+CLAIM: 32 bytes per gaussian, quaternion as (q+1)*127.5 in uint8
+==============================================================================
+  field          n  bytes  subtotal
+  position       3      4        12
+  log-scale      3      4        12
+  rgba           4      1         4
+  quat           4      1         4
+  TOTAL                          32   -> exactly 32
+  107k gaussians: 3.42 MB   (the '0.5 GB over budget' is not the splat data)
+
+==============================================================================
+CLAIM: quaternion quantisation is free ('indifferent to your feelings')
+==============================================================================
+  encode (q+1)*127.5 -> uint8 -> decode -> RENORMALISE
+  angular error: mean 0.4281 deg   max 0.8604 deg   p99 0.7158
+  step size = 2/255 = 0.00784 per component; worst-case angle = 2*asin(step/sqrt2) = 0.6355 deg
+  relative rotation-matrix error: mean 0.6075%   max 1.0802%
+  => at a 150 m sector viewed on a 1000 px viewport, 0.428 deg of orientation
+     error moves a splat edge by roughly 7.47 px equivalent.
+     Fine for canopy. NOT fine for anything with straight architectural edges.
+  skipping renormalisation: |q| in [0.9929, 1.0070] (needs 1.0)

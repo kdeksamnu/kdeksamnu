@@ -1,0 +1,115 @@
+================================================================================
+BLOCK  T=12 tokens, D=32 residual, 4 heads, SwiGLU x4, float64
+  ||X0|| = 3.5002   mean row norm = 1.0000
+  ||f(X0)|| = 5.9102   relative residual growth = 1.338
+  exact Jacobian: (384, 384), computed by autograd (no finite differences)
+
+================================================================================
+JACOBIAN SPECTRUM  (the empirical version of the coupling G)
+================================================================================
+  sigma_max = 7.9103   sigma_min = 3.680e-03   cond = 2.150e+03
+  participation ratio PR = 74.50 of 384   (19.40% effective)
+  spectral entropy = 4.993 of 5.951 (uniform)
+  channels with sigma > 0.01*sigma_max :    377
+  channels with sigma > 0.05*sigma_max :    336
+  channels with sigma > 0.20*sigma_max :    116
+  ||J||_2 (local linear gain) = 7.9103
+  antisymmetry ||J - J^T||_max / ||J||_max = 1.2835
+    -> a Hermitian generator would make the flow a rotation. This J is
+       nowhere near symmetric, so the linearised flow is NOT symplectic
+       and the -i*Hbar*z picture is not what the block linearises to.
+
+================================================================================
+RADIUS OF VALIDITY  err(delta) = ||f(X0+d) - (f(X0) + J d)|| / ||f(X0)||
+================================================================================
+      delta    mean err     p90 err     max err    top-dir err  bottom-dir err
+   1.00e-04   1.078e-09   8.583e-10   9.875e-09      9.875e-09       3.904e-10
+   1.64e-04   2.892e-09   2.303e-09   2.649e-08      2.649e-08       1.047e-09
+   2.68e-04   7.758e-09   6.177e-09   7.108e-08      7.108e-08       2.810e-09
+   4.39e-04   2.081e-08   1.657e-08   1.907e-07      1.907e-07       7.537e-09
+   7.20e-04   5.584e-08   4.446e-08   5.117e-07      5.117e-07       2.022e-08
+   1.18e-03   1.498e-07   1.193e-07   1.373e-06      1.373e-06       5.424e-08
+   1.93e-03   4.019e-07   3.200e-07   3.685e-06      3.685e-06       1.455e-07
+   3.16e-03   1.079e-06   8.584e-07   9.892e-06      9.892e-06       3.904e-07
+   5.18e-03   2.895e-06   2.303e-06   2.657e-05      2.657e-05       1.047e-06
+   8.48e-03   7.771e-06   6.179e-06   7.140e-05      7.140e-05       2.809e-06
+   1.39e-02   2.087e-05   1.658e-05   1.921e-04      1.921e-04       7.534e-06
+   2.28e-02   5.608e-05   4.448e-05   5.178e-04      5.178e-04       2.021e-05
+   3.73e-02   1.509e-04   1.194e-04   1.400e-03      1.400e-03       5.419e-05
+   6.11e-02   4.064e-04   3.204e-04   3.799e-03      3.799e-03       1.453e-04
+   1.00e-01   1.097e-03   8.603e-04   1.037e-02      1.037e-02       3.892e-04
+   1.64e-01   2.967e-03   2.311e-03   2.843e-02      2.843e-02       1.042e-03
+   2.68e-01   8.004e-03   6.206e-03   7.758e-02      7.758e-02       2.782e-03
+   4.39e-01   2.122e-02   1.665e-02   2.029e-01      2.029e-01       7.394e-03
+   7.20e-01   5.336e-02   4.443e-02   4.636e-01      4.636e-01       1.945e-02
+   1.18e+00   1.256e-01   1.163e-01   8.782e-01      8.782e-01       5.010e-02
+   1.93e+00   2.835e-01   2.860e-01   1.542e+00      1.542e+00       1.241e-01
+   3.16e+00   6.006e-01   6.241e-01   2.767e+00      2.767e+00       2.892e-01
+  delta* at mean err < 1%   : 2.683e-01
+  delta* at mean err < 5%   : 4.394e-01
+  delta* at mean err < 10%  : 7.197e-01
+
+================================================================================
+THE COMPARISON THAT DECIDES EVERYTHING
+================================================================================
+  one appended token embedding row, ||e_v|| = 1.0000  (std = 1/sqrt(D))
+  ||X0|| over 12 tokens                     = 3.5002
+  so a single token changes the block input by 28.6%
+
+  delta* (5% tolerance) = 4.394e-01
+  one-token perturbation = 1.000e+00
+  ratio = 2.28
+  => a SINGLE TOKEN INSERTION EXCEEDS THE LINEARISATION RADIUS by this
+     factor. The Hermitian linear model does not describe the block even
+     across one token boundary, so it cannot be the substrate for a
+     per-token conservation law. It is at best a sub-token approximation.
+
+================================================================================
+SPARSE (SINGLE-ROW) PERTURBATION -- what appending/altering one token really is
+================================================================================
+
+  The isotropic sweep above asks the wrong question. A token does not perturb the
+  whole residual stream uniformly; it perturbs ONE row of it. Appending a token
+  changes T and so is not a perturbation of the fixed-T map at all -- the honest
+  object is the sparse update: replace one row by another embedding. Radius may
+  differ sharply between dense and sparse directions, and only the sparse one is
+  load-bearing for a per-token conservation law.
+
+      delta   dense err   sparse err    ratio    worst row   best row
+   1.00e-04   7.384e-10    1.778e-09    2.407    3.343e-09  6.901e-10
+   1.64e-04   1.981e-09    4.771e-09    2.408    1.046e-08  1.766e-09
+   2.68e-04   5.314e-09    1.318e-08    2.481    2.247e-08  5.174e-09
+   4.39e-04   1.426e-08    3.514e-08    2.465    5.493e-08  1.561e-08
+   7.20e-04   3.825e-08    9.468e-08    2.476    2.092e-07  3.544e-08
+   1.18e-03   1.026e-07    2.620e-07    2.553    4.037e-07  9.146e-08
+   1.93e-03   2.753e-07    6.599e-07    2.397    1.170e-06  2.840e-07
+   3.16e-03   7.384e-07    1.869e-06    2.531    3.078e-06  9.672e-07
+   5.18e-03   1.981e-06    5.009e-06    2.529    1.051e-05  2.143e-06
+   8.48e-03   5.314e-06    1.320e-05    2.483    2.335e-05  6.278e-06
+   1.39e-02   1.426e-05    3.696e-05    2.593    7.144e-05  1.248e-05
+   2.28e-02   3.825e-05    8.697e-05    2.274    1.587e-04  3.099e-05
+   3.73e-02   1.026e-04    2.386e-04    2.326    3.758e-04  1.013e-04
+   6.11e-02   2.752e-04    7.152e-04    2.599    1.452e-03  2.968e-04
+   1.00e-01   7.382e-04    1.801e-03    2.440    3.041e-03  6.635e-04
+   1.64e-01   1.979e-03    4.768e-03    2.409    8.077e-03  1.931e-03
+   2.68e-01   5.299e-03    1.234e-02    2.328    1.964e-02  5.470e-03
+   4.39e-01   1.414e-02    3.366e-02    2.380    7.239e-02  1.040e-02
+   7.20e-01   3.742e-02    8.454e-02    2.259    1.468e-01  3.388e-02
+   1.18e+00   9.671e-02    1.579e-01    1.632    2.968e-01  6.164e-02
+   1.93e+00   2.367e-01    3.552e-01    1.500    6.489e-01  1.839e-01
+   3.16e+00   5.255e-01    6.493e-01    1.236    1.296e+00  3.053e-01
+
+  delta* at mean err < 1%   :  dense = 2.683e-01   sparse = 1.638e-01   sparse/dense = 0.61
+  delta* at mean err < 5%   :  dense = 7.197e-01   sparse = 4.394e-01   sparse/dense = 0.61
+
+  One real token embedding row has norm 1.000 at std=1/sqrt(D) with the
+  rows of X0 normalised to unit norm, so the natural single-token perturbation is
+  delta ~ O(1) in these units -- compare against the SPARSE delta* above, not the
+  dense one. Which of the two the token scale exceeds is the actual verdict on
+  whether the linear model can carry a per-token conservation law.
+
+  Note also the row-to-row spread (worst/best columns): the radius is not a single
+  number for the block. Positions late in the sequence see more attention mixing and
+  linearise over a different range than early ones, so a single global delta* is
+  already an idealisation of the thing it is meant to validate.
+

@@ -1,0 +1,17 @@
+ n samples/turn    n/d  true r  mean rank_eff   corr(rank_eff,r)  corr(PR,r)
+----------------------------------------------------------------------------------------
+             40    5.0     1-8           2.98             +0.084      +0.283
+             80   10.0     1-8           2.83             +0.232      +0.429
+            160   20.0     1-8           2.73             +0.395      +0.456
+            400   50.0     1-8           2.48             +0.629      +0.724
+           1000  125.0     1-8           2.52             +0.602      +0.652
+
+At n=40 (the token count of one turn in validate.py) and d=8, n/d=5: the
+estimated spectrum is still noise-dominated and rank_eff is nearly
+uncorrelated with the truth. Pooling across turns, or tracking the spectrum
+on a trailing window of several hundred tokens, is not optional -- it is the
+difference between a measurement and a random number.
+
+Bias direction matters for a halt rule: at small n, rank_eff is biased LOW
+(noise floor eats real channels), so a dark-mode halt trigger would fire on
+healthy sessions -- false positives, not false negatives.

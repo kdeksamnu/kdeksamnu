@@ -1,0 +1,17 @@
+d_C=6, d_S=6.  Exchange bandwidth vs rank(G):
+ rank r  coupled pairs  dark modes    max |Im<a,Gb>| / |a||b|
+      1              1          10                     2.3305
+      2              2           8                     6.1083
+      3              3           6                     9.6092
+      6              6           0                    11.3548
+
+Singular values show the bandwidth structure directly (r=2 case):
+  sigma = [1.2383e+01 6.9930e+00 1.5348e-15 6.2453e-16 4.8385e-16 3.5842e-17]
+  -> 2 open channels, 4 blocked.
+
+CONSEQUENCE for the reframing's 'm_3 -> 0 component degradation':
+  rank collapse is not a binary switch. As sigma_min -> 0 the weakest channel
+  closes first, so bandwidth degrades GRACEFULLY and anisotropically: the modes
+  aligned with small singular values go dark while the strong ones still couple.
+  That predicts selective loss of grounding (some content drifts, some stays
+  anchored) rather than uniform hallucination onset -- a sharper, testable claim.
