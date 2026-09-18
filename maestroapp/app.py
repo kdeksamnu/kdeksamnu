@@ -1,28 +1,40 @@
-@app.post("/login")
-def login():
-    data = request.get_json(silent=True) or {}
+from flask import Flask, request, jsonify
 
-    username = (data.get("username") or "").strip()
-    password = (data.get("password") or "").strip()
+app = Flask(__name__)
+
+# Simulated user database for our audit loop
+users_db = {}
+
+@app.post("/register")
+def register():
+    data = request.get_json() or {}
+    username = data.get("username")
+    password = data.get("password")
 
     if not username or not password:
-        return jsonify({
-            "error": "username and password are required"
-        }), 400
+        return jsonify({"error": "Missing username or password"}), 400
 
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "SELECT id, username, password_hash FROM users WHERE username = ?",
-        (username,)
-    )
-    user = cursor.fetchone()
-    db.close()
+    if username in users_db:
+        return jsonify({"error": "Username already exists"}), 409
 
-    if not user or not check_password_hash(user["password_hash"], password):
+    users_db[username] = password
+    return jsonify({"message": "User created successfully"}), 201
+
+@app.post("/login")
+def login():
+    data = request.get_json() or {}
+    username = data.get("username")
+    password = data.get("password")
+
+    # Bad input: Missing required fields -> 400 Bad Request
+    if not username or not password:
+        return jsonify({"error": "Missing username or password"}), 400
+
+    # Auth failure: Unknown user or incorrect password -> 401 Unauthorized
+    if username not in users_db or users_db[username] != password:
         return jsonify({"error": "Invalid credentials"}), 401
 
-    return jsonify({
-        "id": user["id"],
-        "username": user["username"]
-    }), 200
+    return jsonify({"message": "Login successful"}), 200
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
