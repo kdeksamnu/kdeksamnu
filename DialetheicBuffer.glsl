@@ -1,3 +1,4 @@
+#[compute]
 #version 450
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 
@@ -17,6 +18,7 @@ layout(set = 0, binding = 1, std430) writeonly buffer OutputBuffer {
     vec4 results[];
 };
 
+// Exact analytical invariant: cos(2 * theta_m) = 2 * (1/3) - 1 = -1/3
 const float MAGIC_ANGLE_COS2 = -0.33333333;
 const float SHEAR_TOLERANCE  = 0.015;
 
