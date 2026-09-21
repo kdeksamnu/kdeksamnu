@@ -1,0 +1,18 @@
+{
+  "generation": "G05",
+  "skeleton_root_transform": "Mat4_Identity",
+  "layers": {
+    "layer_00": "Titanium Skeletal Frame",
+    "layer_01": "Musculoskeletal Mass",
+    "layer_02": "Tendon & Ligament Vectors",
+    "layer_03": "Basalt/Obsidian Structural Plate",
+    "layer_04": "Gold Conductive Filaments",
+    "layer_05": "Cyan Lumen Circulation",
+    "layer_06": "Memory Blue Substrate Layer",
+    "layer_07": "Pelvic Counter-Rotation Axis",
+    "layer_08": "Palpebral Aperture Ring",
+    "layer_09": "Harmonic Scar Matrix",
+    "layer_10": "A-Field Stress Tensor Field",
+    "layer_11": "Runtime Ash Archive Scars"
+  }
+}

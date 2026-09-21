@@ -1,0 +1,36 @@
+# The Veil of Shadows
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.env
+.env.*
+!.env.example
+
+# The Artifacts
+dist/
+build/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# The IDE Whispers
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Debris
+.DS_Store
+Thumbs.db
+
+bin/
+obj/
