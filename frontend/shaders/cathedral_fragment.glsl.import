@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://brulohm8mlrf5"
+path="res://.godot/imported/cathedral_fragment.glsl-3cc7526ed0961b7e6a8dbf77b5007661.res"
+
+[deps]
+
+source_file="res://frontend/shaders/cathedral_fragment.glsl"
+dest_files=["res://.godot/imported/cathedral_fragment.glsl-3cc7526ed0961b7e6a8dbf77b5007661.res"]
+
+[params]
+

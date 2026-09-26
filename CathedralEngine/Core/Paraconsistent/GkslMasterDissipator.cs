@@ -17,10 +17,6 @@ namespace CathedralEngine.Core.Paraconsistent
         public bool IsPermineralized;
     }
 
-    /// <summary>
-    /// Resolves logical collisions and non-Hermitian stress via GKSL jump dissipation
-    /// and Magic-Angle shear cancellation (M3: Dialetheic Buffer & M4: Null-Basin).
-    /// </summary>
     [GlobalClass]
     public partial class GkslMasterDissipator : Node
     {
@@ -35,6 +31,8 @@ namespace CathedralEngine.Core.Paraconsistent
         [Signal]
         public delegate void ScarPermineralizedEventHandler(int cellIndex, float meanStress, string merkleRoot);
 
+        public event Action<string, float, BelnapTruthValue> OnHarmonicScarCommitted;
+
         private readonly Queue<Vector2> _stateHistory = new();
         private const int HistoryDelayTicks = 11;
         private DialetheicShaderBridge _bridge;
@@ -43,22 +41,30 @@ namespace CathedralEngine.Core.Paraconsistent
 
         public override void _Ready()
         {
-            // Connect to DialetheicShaderBridge if present in the scene hierarchy
             _bridge = GetNodeOrNull<DialetheicShaderBridge>(ShaderBridgePath);
             if (_bridge != null)
             {
                 _bridge.MetamorphicSqueezeTriggered += OnMetamorphicSqueezeTriggered;
                 GD.Print("[GkslMasterDissipator] Connected to DialetheicShaderBridge GPU compute dispatch.");
             }
-            else
+        }
+
+        public float StepDissipation(float currentSpeed, BelnapTruthValue truth, double delta)
+        {
+            // GKSL Lindblad Dissipation: Contradictions (State B) suffer paraconsistent drag
+            if (truth == BelnapTruthValue.B)
             {
-                GD.Print("[GkslMasterDissipator] Running in standalone host mode.");
+                return currentSpeed * MathF.Max(0.0f, 1.0f - (PyragasGainK * 1.5f * (float)delta));
             }
+            if (truth == BelnapTruthValue.N)
+            {
+                return currentSpeed * MathF.Max(0.0f, 1.0f - (PyragasGainK * 0.5f * (float)delta));
+            }
+            return currentSpeed * MathF.Max(0.0f, 1.0f - (EpistemicRemainderDelta * (float)delta));
         }
 
         private void OnMetamorphicSqueezeTriggered(int cellIndex, float cos2Theta, float residualShear)
         {
-            // Synthesize cell payload from GPU trigger
             var cell = new DialetheicCell
             {
                 Truth = BelnapTruthValue.B,
@@ -70,46 +76,20 @@ namespace CathedralEngine.Core.Paraconsistent
 
             var crystallized = ExecuteMetamorphicSqueeze(cell, cellIndex);
             EmitSignal(SignalName.ScarPermineralized, cellIndex, crystallized.StressTensorPrincipal.X, CurrentMerkleRoot);
-        }
-
-        public bool IsMagicAngleAligned(float angle, float tolerance = 0.02f)
-        {
-            float delta = Mathf.Abs(angle - MagicAngle);
-            return delta <= tolerance;
-        }
-
-        public Vector2 ApplyPyragasStabilization(Vector2 currentCoordinate)
-        {
-            _stateHistory.Enqueue(currentCoordinate);
-            if (_stateHistory.Count < HistoryDelayTicks)
-                return Vector2.Zero;
-
-            Vector2 delayedCoordinate = _stateHistory.Dequeue();
-            float perturbationNormSq = currentCoordinate.DistanceSquaredTo(delayedCoordinate);
-            float saturatedGain = PyragasGainK / (1.0f + 2.5f * perturbationNormSq);
-
-            if (saturatedGain >= CriticalGainK)
-            {
-                saturatedGain = CriticalGainK - 0.05f;
-            }
-
-            return saturatedGain * (delayedCoordinate - currentCoordinate);
+            OnHarmonicScarCommitted?.Invoke(CurrentMerkleRoot, crystallized.StressTensorPrincipal.X, BelnapTruthValue.B);
         }
 
         public DialetheicCell ExecuteMetamorphicSqueeze(DialetheicCell cell, int cellIndex)
         {
             if (cell.Truth != BelnapTruthValue.B) return cell;
 
-            // Rotate into Magic Angle to eliminate off-diagonal shear
             cell.OrientationAngle = MagicAngle;
             cell.ShearStress = 0.0f;
 
-            // Compress principal components into isotropic load-bearing poise
             float meanStress = (cell.StressTensorPrincipal.X + cell.StressTensorPrincipal.Y) * 0.5f;
             cell.StressTensorPrincipal = new Vector2(meanStress, meanStress);
             cell.IsPermineralized = true;
 
-            // Inscribe irreversible state change into the append-only Ash Archive Merkle DAG
             CommitToAshArchive(cellIndex, cell);
             return cell;
         }
