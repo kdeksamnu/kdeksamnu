@@ -1,20 +1,30 @@
-import glob
-from engine.db.session import SessionLocal, DATABASE_URL
-from engine.db.models import ObserverNode, SpectralEvent
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from engine.db.session import Base
+from engine.db.models import ObserverNode, Faction, SpectralEvent
 
-print(f"[*] Active DATABASE_URL: {DATABASE_URL}")
+db_path = "./ash_archive.db"
+db_url = f"sqlite:///{db_path}"
+print(f"[*] Binding to Unified URL: {db_url}")
 
-db_files = glob.glob("*.db*") + glob.glob("*.sqlite*")
-print(f"[*] SQLite files found: {db_files}")
+engine = create_engine(db_url, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Explicitly bind and create tables across the shared metadata registry
+ObserverNode.__table__.create(bind=engine, checkfirst=True)
+Faction.__table__.create(bind=engine, checkfirst=True)
+SpectralEvent.__table__.create(bind=engine, checkfirst=True)
+
+print("[+] Ash Archive tables materialized via explicit table binding.")
 
 db = SessionLocal()
 try:
     observers = db.query(ObserverNode).all()
-    print(f"[*] Observers in active DB ({len(observers)}):")
-    for o in observers:
-        print(f"    - Designation: {o.designation} | ID: {o.observer_id} | Integrity: {o.somatic_integrity}")
-    
-    total_events = db.query(SpectralEvent).count()
-    print(f"[*] Total SpectralEvents in active DB: {total_events}")
+    print(f"[+] Successfully queried observer_nodes. Count: {len(observers)}")
+    for obs in observers:
+        print(f"    - Observer: {obs.designation} (Integrity: {obs.somatic_integrity})")
+except Exception as e:
+    print(f"[-] Diagnostic query exception: {e}")
 finally:
     db.close()

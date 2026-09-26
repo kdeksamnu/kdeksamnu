@@ -36,7 +36,7 @@ class ObserverNode(Base):
 
     observer_id = Column(Uuid, primary_key=True, default=uuid.uuid4)
     designation = Column(String(64), nullable=False, unique=True, index=True)
-    faction = Column(String(64), nullable=False, default="unaligned")
+    # faction = Column(String(64), nullable=False, default="unaligned") # Removed to resolve string/UUID serialization conflict
     
     faction_id = Column(Uuid, ForeignKey("factions.id"), nullable=True, index=True)
     faction_ref = relationship("Faction", back_populates="observers")
