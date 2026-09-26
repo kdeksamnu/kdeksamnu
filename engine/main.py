@@ -15,3 +15,9 @@ def health_check():
 @app.get("/visuals")
 def visuals_status():
     return {"visualizer": "Three.js voxel rendering pipeline online"}
+
+@app.get("/spatial/extract")
+def spatial_extract(resolution: int = 64):
+    from engine.spatial.extractor import SpatialExtractor
+    ext = SpatialExtractor(resolution=resolution)
+    return ext.extract_stratum()
