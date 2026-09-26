@@ -1,71 +1,28 @@
-from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from engine.db.session import SessionLocal
+from engine.db.models import ObserverNode
 
-from engine.db.session import get_db
-from engine.db.models import ObserverNode, SpectralEvent
-from engine.schemas.observer import ObserverProfileResponse, SpectralEventSummary
+router = APIRouter()
 
-router = APIRouter(prefix="/api/v1/observers", tags=["Somatic Observers"])
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-@router.get(
-    "/{observer_id}",
-    summary="Retrieve Somatic Observer Profile",
-    description="Returns the current integrity, scar count, and paginated history of a specific Warm Axis agent."
-)
-def get_observer_profile(
-    observer_id: UUID,
-    skip: int = Query(0, ge=0, description="Number of records to skip"),
-    limit: int = Query(20, ge=1, le=100, description="Max records to return"),
-    db: Session = Depends(get_db)
-) -> ObserverProfileResponse:
-    # 1. Fetch the observer
-    observer = db.query(ObserverNode).filter(ObserverNode.observer_id == observer_id).first()
-    if not observer:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Observer with ID {observer_id} not found in the Ash Archive."
-        )
-
-    # 2. Fetch paginated event history, ordered newest first
-    events = (
-        db.query(SpectralEvent)
-        .filter(SpectralEvent.observer_id == observer_id)
-        .order_by(SpectralEvent.timestamp.desc())
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
-
-    # 3. Map to Pydantic schemas
-    event_summaries = [
-        SpectralEventSummary(
-            event_id=event.event_id,
-            primary_constant=event.primary_constant,
-            secondary_constant=event.secondary_constant,
-            logic_state=event.logic_state,
-            harmonic_scar=event.harmonic_scar_applied,
-            magnitude=event.magnitude,
-            state_hash=event.state_hash,
-            timestamp=event.timestamp
-        )
-        for event in events
+@router.get("/observers/")
+def get_observers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    observers = db.query(ObserverNode).offset(skip).limit(limit).all()
+    return [
+        {
+            "observer_id": str(obs.observer_id),
+            "designation": obs.designation,
+            "somatic_integrity": obs.somatic_integrity,
+            "ego_density": obs.ego_density,
+            "harmonic_scars_total": obs.harmonic_scars_total,
+            "lineage_intact": obs.lineage_intact
+        }
+        for obs in observers
     ]
-
-    # 4. Calculate total witnessed (for pagination metadata)
-    total_witnessed = db.query(SpectralEvent).filter(SpectralEvent.observer_id == observer_id).count()
-
-    return ObserverProfileResponse(
-        observer_id=observer.observer_id,
-        designation=observer.designation,
-        faction=observer.faction,
-        ego_density=observer.ego_density,
-        somatic_integrity=observer.somatic_integrity,
-        harmonic_scars_total=observer.harmonic_scars_total,
-        quarantine_events_total=observer.quarantine_events_total,
-        created_at=observer.created_at,
-        updated_at=observer.updated_at,
-        event_history=event_summaries,
-        total_events_witnessed=total_witnessed
-    )
