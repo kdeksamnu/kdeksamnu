@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cathedral Engine: Dimension 8 - Self-Healing Mesh</title>
+    <style> body { margin: 0; overflow: hidden; background: #050508; font-family: monospace; color: #888; } #info { position: absolute; top: 10px; left: 10px; z-index: 10; pointer-events: none; } </style>
+</head>
+<body>
+    <div id="info">
+        <h2 style="color:#0ff; margin:0;">DIMENSION 8: SELF-HEALING MESH</h2>
+        <p>Click a node to simulate sensor failure (Ghost Node).<br>Watch the Fiedler value drop and the mesh re-route.</p>
+        <p id="stats">Nodes: 0 | Active Edges: 0 | xHebbian Bridges: 0</p>
+    </div>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- Configuration ---
+        const NODE_COUNT = 60;
+        const NEIGHBOR_RADIUS = 4.5;
+        const K_NEIGHBORS = 6;
+        const FIEDLER_THRESHOLD = 0.35; // Drop below this triggers re-routing
+        const BOUNDS = 15;
+
+        // --- Scene Setup ---
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050508, 0.03);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 15, 25);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // --- Data Structures ---
+        const nodes = [];
+        const nodeMeshes = [];
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let xHebbianCount = 0;
+
+        // Materials
+        const activeMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc });
+        const ghostMat = new THREE.MeshBasicMaterial({ color: 0x444455, transparent: true, opacity: 0.4 });
+        const stressedMat = new THREE.LineBasicMaterial({ color: 0xff3300, linewidth: 2 });
+        const normalMat = new THREE.LineBasicMaterial({ color: 0x0088ff, transparent: true, opacity: 0.4 });
+        const hebbianMat = new THREE.LineBasicMaterial({ color: 0xffcc00, linewidth: 3 });
+
+        // --- Initialization ---
+        const sphereGeo = new THREE.SphereGeometry(0.25, 16, 16);
+        for (let i = 0; i < NODE_COUNT; i++) {
+            const mesh = new THREE.Mesh(sphereGeo, activeMat.clone());
+            mesh.position.set(
+                (Math.random() - 0.5) * BOUNDS * 2,
+                (Math.random() - 0.5) * BOUNDS,
+                (Math.random() - 0.5) * BOUNDS * 2
+            );
+            scene.add(mesh);
+            nodeMeshes.push(mesh);
+            nodes.push({
+                pos: mesh.position,
+                vel: new THREE.Vector3((Math.random()-0.5)*0.05, 0, (Math.random()-0.5)*0.05),
+                isGhost: false,
+                neighbors: [],
+                hebbianTargets: []
+            });
+        }
+
+        // --- Interaction (Click to Kill Node) ---
+        window.addEventListener('click', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(nodeMeshes);
+            if (intersects.length > 0) {
+                const idx = nodeMeshes.indexOf(intersects[0].object);
+                if (!nodes[idx].isGhost) {
+                    nodes[idx].isGhost = true;
+                    nodeMeshes[idx].material = ghostMat;
+                    nodeMeshes[idx].scale.set(0.6, 0.6, 0.6);
+                    console.log(`[M11] Node ${idx} dropped offline. Ghost Node created.`);
+                }
+            }
+        });
+
+        // --- Physics & Flocking ---
+        function updatePhysics() {
+            for (let i = 0; i < NODE_COUNT; i++) {
+                if (nodes[i].isGhost) continue;
+                const n = nodes[i];
+                const separation = new THREE.Vector3();
+                const cohesion = new THREE.Vector3();
+                let count = 0;
+
+                for (let j = 0; j < NODE_COUNT; j++) {
+                    if (i === j || nodes[j].isGhost) continue;
+                    const dist = n.pos.distanceTo(nodes[j].pos);
+                    if (dist < 3.0) {
+                        separation.add(n.pos.clone().sub(nodes[j].pos).normalize().divideScalar(dist));
+                    }
+                    if (dist < NEIGHBOR_RADIUS) {
+                        cohesion.add(nodes[j].pos);
+                        count++;
+                    }
+                }
+
+                if (count > 0) {
+                    cohesion.divideScalar(count).sub(n.pos).multiplyScalar(0.002);
+                    n.vel.add(separation.multiplyScalar(0.05)).add(cohesion);
+                }
+
+                n.vel.multiplyScalar(0.98); // Damping
+                n.vel.clampLength(0, 0.15);
+                n.pos.add(n.vel);
+
+                // Bounds wrapping
+                ['x', 'y', 'z'].forEach(axis => {
+                    const limit = axis === 'y' ? BOUNDS : BOUNDS * 2;
+                    if (Math.abs(n.pos[axis]) > limit) n.pos[axis] *= -0.9;
+                });
+            }
+        }
+
+        // --- Topology & Fiedler Proxy ---
+        function updateTopology() {
+            let activeEdges = 0;
+            xHebbianCount = 0;
+
+            for (let i = 0; i < NODE_COUNT; i++) {
+                const n = nodes[i];
+                n.neighbors = [];
+                n.hebbianTargets = [];
+
+                if (n.isGhost) continue;
+
+                // Find K nearest active neighbors
+                const distances = [];
+                for (let j = 0; j < NODE_COUNT; j++) {
+                    if (i === j || nodes[j].isGhost) continue;
+                    distances.push({ idx: j, dist: n.pos.distanceTo(nodes[j].pos) });
+                }
+                distances.sort((a, b) => a.dist - b.dist);
+                n.neighbors = distances.slice(0, K_NEIGHBORS).filter(d => d.dist < NEIGHBOR_RADIUS);
+                
+                activeEdges += n.neighbors.length;
+
+                // Calculate Fiedler Proxy (Edge Density)
+                const maxPossibleEdges = K_NEIGHBORS;
+                const fiedlerProxy = n.neighbors.length / maxPossibleEdges;
+
+                // If connectivity drops below threshold, trigger self-healing
+                if (fiedlerProxy < FIEDLER_THRESHOLD && n.neighbors.length > 0) {
+                    // Find furthest active nodes in radius to bridge the gap (xHebbian)
+                    const farNodes = distances.filter(d => d.dist < NEIGHBOR_RADIUS && d.dist > NEIGHBOR_RADIUS * 0.6);
+                    n.hebbianTargets = farNodes.slice(0, 2).map(d => d.idx);
+                    xHebbianCount += n.hebbianTargets.length;
+                }
+            }
+            
+            document.getElementById('stats').innerText = 
+                `Active Nodes: ${NODE_COUNT - nodes.filter(n=>n.isGhost).length} | Active Edges: ${activeEdges/2} | xHebbian Bridges: ${xHebbianCount}`;
+        }
+
+        // --- Rendering Lines ---
+        let lineMesh = null;
+        function renderEdges() {
+            if (lineMesh) scene.remove(lineMesh);
+            const geometry = new THREE.BufferGeometry();
+            const positions = [];
+            const colors = [];
+
+            for (let i = 0; i < NODE_COUNT; i++) {
+                const n = nodes[i];
+                if (n.isGhost) continue;
+
+                // Standard active edges (Blue)
+                for (const neighbor of n.neighbors) {
+                    if (neighbor.idx > i) { // Avoid drawing twice
+                        positions.push(n.pos.x, n.pos.y, n.pos.z);
+                        positions.push(nodes[neighbor.idx].pos.x, nodes[neighbor.idx].pos.y, nodes[neighbor.idx].pos.z);
+                        colors.push(0, 0.5, 1, 0, 0.5, 1);
+                    }
+                }
+
+                // xHebbian self-healing bridges (Gold)
+                for (const targetIdx of n.hebbianTargets) {
+                    if (targetIdx > i) {
+                        positions.push(n.pos.x, n.pos.y, n.pos.z);
+                        positions.push(nodes[targetIdx].pos.x, nodes[targetIdx].pos.y, nodes[targetIdx].pos.z);
+                        colors.push(1, 0.8, 0, 1, 0.8, 0);
+                    }
+                }
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            
+            const material = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.8 });
+            lineMesh = new THREE.LineSegments(geometry, material);
+            scene.add(lineMesh);
+        }
+
+        // --- Animation Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+            updatePhysics();
+            updateTopology();
+            renderEdges();
+            
+            // Slow camera orbit
+            const time = Date.now() * 0.0001;
+            camera.position.x = Math.sin(time) * 30;
+            camera.position.z = Math.cos(time) * 30;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
