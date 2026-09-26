@@ -6,7 +6,7 @@ from typing import List, Dict, Any
 
 class HyperOptimizedAshArchive:
     """
-    Chamber Σ-12 // Hyper-Optimized Execution Engine
+    Chamber Σ-12 // Hyper-Optimized Execution Engine (Schema Aligned)
     Enforces Lex I absolute immutability, sub-1ms p99 latency loops, 
     and 16-worker multi-parent DAG concurrent stress ingestion.
     """
@@ -32,10 +32,8 @@ class HyperOptimizedAshArchive:
             )
         """)
         
-        # Hardcode Lex I Immutability Triggers (Strip soft update vulnerabilities)
-        cursor.execute("""
-            DROP TRIGGER IF EXISTS prevent_lex_i_update;
-        """)
+        # Hardcode Lex I Immutability Triggers
+        cursor.execute("DROP TRIGGER IF EXISTS prevent_lex_i_update;")
         cursor.execute("""
             CREATE TRIGGER prevent_lex_i_update
             BEFORE UPDATE ON ash_strata
@@ -44,9 +42,7 @@ class HyperOptimizedAshArchive:
             END;
         """)
         
-        cursor.execute("""
-            DROP TRIGGER IF EXISTS prevent_lex_i_delete;
-        """)
+        cursor.execute("DROP TRIGGER IF EXISTS prevent_lex_i_delete;")
         cursor.execute("""
             CREATE TRIGGER prevent_lex_i_delete
             BEFORE DELETE ON ash_strata
@@ -74,11 +70,10 @@ class HyperOptimizedAshArchive:
             conn.commit()
             conn.close()
 
-        # Run SQLite insertion in a non-blocking thread executor
         await asyncio.to_thread(_commit_db)
         
         end_time = time.perf_counter_ns()
-        return (end_time - start_time) / 1_000_000.0  # Convert to milliseconds
+        return (end_time - start_time) / 1_000_000.0  # Milliseconds
 
     async def run_stress_test(self, workers: int = 16, tx_per_worker: int = 250):
         print(f"=================================================================")
@@ -99,14 +94,12 @@ class HyperOptimizedAshArchive:
                 latencies.append(lat)
             return latencies
 
-        # Dispatch 16 concurrent worker tasks
         worker_tasks = [worker_routine(i) for i in range(workers)]
         results = await asyncio.gather(*worker_tasks)
         
         end_wall = time.perf_counter()
         total_time = end_wall - start_wall
         
-        # Flatten latencies and compute metrics
         flat_latencies = [lat for worker_lats in results for lat in worker_lats]
         flat_latencies.sort()
         
