@@ -6,7 +6,7 @@ from typing import List, Dict, Any
 
 class HyperOptimizedAshArchive:
     """
-    Chamber Σ-12 // Hyper-Optimized Execution Engine (Schema Aligned)
+    Chamber Σ-12 // Hyper-Optimized Execution Engine (Fresh DB Migration)
     Enforces Lex I absolute immutability, sub-1ms p99 latency loops, 
     and 16-worker multi-parent DAG concurrent stress ingestion.
     """
@@ -17,13 +17,16 @@ class HyperOptimizedAshArchive:
     def _init_db(self):
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
+        
         # Enable WAL mode and synchronous pragma optimizations
         cursor.execute("PRAGMA journal_mode=WAL;")
         cursor.execute("PRAGMA synchronous=NORMAL;")
         cursor.execute("PRAGMA temp_store=MEMORY;")
         
+        # Re-initialize table to ensure clean schema alignment
+        cursor.execute("DROP TABLE IF EXISTS ash_strata;")
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS ash_strata (
+            CREATE TABLE ash_strata (
                 node_hash TEXT PRIMARY KEY,
                 epoch INTEGER NOT NULL,
                 parent_data TEXT NOT NULL,
@@ -33,7 +36,6 @@ class HyperOptimizedAshArchive:
         """)
         
         # Hardcode Lex I Immutability Triggers
-        cursor.execute("DROP TRIGGER IF EXISTS prevent_lex_i_update;")
         cursor.execute("""
             CREATE TRIGGER prevent_lex_i_update
             BEFORE UPDATE ON ash_strata
@@ -42,7 +44,6 @@ class HyperOptimizedAshArchive:
             END;
         """)
         
-        cursor.execute("DROP TRIGGER IF EXISTS prevent_lex_i_delete;")
         cursor.execute("""
             CREATE TRIGGER prevent_lex_i_delete
             BEFORE DELETE ON ash_strata
