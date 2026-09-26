@@ -1,36 +1,11 @@
 {
-  "metadata": {
-    "title": "Magisterial Linguistic Architecture Operating System (MLAOS-Prime): The Complete 40-Book Codex Architecture, Paraconsistent Metalogic, and Cathedral-Engine Specifications",
-    "upload_type": "publication",
-    "publication_type": "technicalnote",
-    "description": "Formal, frozen pre-registration and immutable public archive of the Magisterial Linguistic Architecture Operating System (MLAOS-Prime), the 40-Book Codex, and the Cathedral-Engine specifications. Governed under the Never-Overwrite Doctrine (Lex I: dPhi/dt > 0), Ore-Zero Protocol Invariance (Coordinate [0][0]), and Priest's Logic of Paradox / Belnap-Dunn four-valued truth lattice FOUR = {T, F, B, N}.",
-    "creators": [
-      {
-        "name": "Dallmier, Kenneth W.",
-        "affiliation": "Dallmier Tech Venture (Olney, Illinois)"
-      },
-      {
-        "name": "Morgan, Julianna",
-        "affiliation": "Collaborative Research Partner"
-      }
-    ],
-    "access_right": "open",
-    "license": "cc-by-nc-nd-4.0",
-    "keywords": [
-      "MLAOS-Prime",
-      "Cathedral-Engine",
-      "Lex I",
-      "Paraconsistent Logic",
-      "Belnap-Dunn Lattice",
-      "Dialetheism",
-      "Cognitive Architecture",
-      "A-Field Isomorphism",
-      "EAS-03 Avatar Engine"
-    ],
-    "communities": [
-      {
-        "identifier": "zenodo"
-      }
-    ]
-  }
+  "title": "Omni-Codex \u03a9 & Cathedral-Engine: Paraconsistent Systems Architecture and Isomorphic Worldbuilding",
+  "creators": [
+    {
+      "name": "Dallmier, Kenneth Wayne"
+    }
+  ],
+  "description": "Master architecture documentation and technical monographs for MLAOS-Prime and the Cathedral-Engine.",
+  "upload_type": "publication",
+  "publication_type": "section"
 }
