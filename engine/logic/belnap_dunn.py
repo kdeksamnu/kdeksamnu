@@ -1,11 +1,9 @@
 class BelnapDunnState:
-    # Four values: None (Neither), True, False, Both (Contradiction)
     def __init__(self, value: str = "TRUE"):
         self.value = value.upper()
         print(f"[*] BelnapDunnState initialized with value: {self.value}")
 
     def evaluate_conjunction(self, other: "BelnapDunnState") -> "BelnapDunnState":
-        # Belnap-Dunn truth matrix for Conjunction (AND)
         matrix = {
             ("TRUE", "TRUE"): "TRUE",
             ("TRUE", "FALSE"): "FALSE",
@@ -26,12 +24,6 @@ class BelnapDunnState:
         }
         res = matrix.get((self.value, other.value), "NEITHER")
         return BelnapDunnState(res)
-
-if __name__ == "__main__":
-    a = BelnapDunnState("BOTH")
-    b = BelnapDunnState("TRUE")
-    c = a.evaluate_conjunction(b)
-    print(f"[+] Conjunction result (BOTH AND TRUE) -> {c.value}")
 
     def evaluate_disjunction(self, other: "BelnapDunnState") -> "BelnapDunnState":
         matrix = {
@@ -66,7 +58,13 @@ if __name__ == "__main__":
         return BelnapDunnState(res)
 
 if __name__ == "__main__":
+    a = BelnapDunnState("BOTH")
+    b = BelnapDunnState("TRUE")
+    c = a.evaluate_conjunction(b)
+    print(f"[+] Conjunction result (BOTH AND TRUE) -> {c.value}")
+    
     d = BelnapDunnState("BOTH").evaluate_disjunction(BelnapDunnState("FALSE"))
-    print(f"[+] Disjunction result (BOTH V FALSE) -> {d.value}")
+    print(f"[+] Disjunction result (BOTH OR FALSE) -> {d.value}")
+    
     n = BelnapDunnState("BOTH").evaluate_negation()
     print(f"[+] Negation result (~BOTH) -> {n.value}")
