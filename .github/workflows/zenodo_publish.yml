@@ -1,0 +1,19 @@
+name: Validate and Publish Codex
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Verify Metadata Schema
+        run: |
+          python3 -c "import json; json.load(open('build/zenodo/metadata.json'))"
+          echo "Metadata verification passed."
