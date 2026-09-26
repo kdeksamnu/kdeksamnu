@@ -1,176 +1,132 @@
+import asyncio
+import hmac
 import hashlib
 import json
 import time
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, Any, List
 
-class MerkleTree:
-    """Utility class to construct Merkle trees and generate inclusion proofs."""
-    def __init__(self, leaves: List[str]):
-        self.leaves = [self._hash(leaf) for leaf in leaves]
-        self.tree = [self.leaves]
-        self._build_tree()
+# Secret key for signing Collapse Certificates
+GATEKEEPER_SECRET = b"CATHEDRAL_SIGMA_12_ACTUATOR_KEY_2026"
 
-    @staticmethod
-    def _hash(data: str) -> str:
-        return hashlib.sha256(data.encode('utf-8')).hexdigest()
+class SimulatedGPIOPin:
+    """Simulates a physical hardware GPIO pin connected to a relay or LED indicator."""
+    def __init__(self, pin_number: int, label: str):
+        self.pin_number = pin_number
+        self.label = label
+        self.state = False  # False = LOW, True = HIGH
 
-    def _build_tree(self):
-        while len(self.tree[-1]) > 1:
-            current_layer = self.tree[-1]
-            next_layer = []
-            for i in range(0, len(current_layer), 2):
-                left = current_layer[i]
-                right = current_layer[i + 1] if i + 1 < len(current_layer) else left
-                combined = hashlib.sha256((left + right).encode('utf-8')).hexdigest()
-                next_layer.append(combined)
-            self.tree.append(next_layer)
-
-    def get_root(self) -> str:
-        return self.tree[-1][0] if self.tree and self.tree[-1] else ""
-
-    def get_proof(self, index: int) -> List[Tuple[str, str]]:
-        """Generates proof path tuple: (sibling_hash, direction 'LEFT'|'RIGHT')."""
-        proof = []
-        for layer in range(len(self.tree) - 1):
-            current_layer = self.tree[layer]
-            is_right = (index % 2 == 1)
-            sibling_index = index - 1 if is_right else index + 1
-            
-            if sibling_index < len(current_layer):
-                sibling_hash = current_layer[sibling_index]
-                direction = "LEFT" if is_right else "RIGHT"
-                proof.append((sibling_hash, direction))
-            else:
-                proof.append((current_layer[index], "RIGHT"))
-                
-            index //= 2
-        return proof
+    async def pulse(self, duration_ms: int):
+        """Asynchronously toggles the pin HIGH for a specified duration, then LOW."""
+        self.state = True
+        print(f"  [GPIO PIN {self.pin_number:02d} // HIGH] ---> {self.label:<25} | Triggered at {time.strftime('%H:%M:%S')}.{int(time.time()*1000)%1000:03d}")
+        await asyncio.sleep(duration_ms / 1000.0)
+        self.state = False
+        print(f"  [GPIO PIN {self.pin_number:02d} // LOW ] ---> {self.label:<25} | Reset complete")
 
 
-class ActuatorSafetyGatekeeper:
+class ActuatorGatekeeper:
     """
-    Actuator Safety Gatekeeper for Chamber Sigma-12.
-    Verifies Merkle inclusion proofs against anchored ledger roots 
-    prior to issuing hardware execution signals.
+    Validates Collapse Certificates and orchestrates non-blocking hardware pulses
+    across asynchronous GPIO relays upon state stabilization.
     """
-    def __init__(self, anchored_roots: Optional[List[str]] = None):
-        self.anchored_roots = set(anchored_roots or [])
-
-    def register_anchored_root(self, root_hash: str):
-        self.anchored_roots.add(root_hash)
-        print(f"[GATEKEEPER ARCHIVE] Registered Anchored Merkle Root: {root_hash[:16]}...")
-
-    @staticmethod
-    def compute_leaf_hash(payload: Dict) -> str:
-        serialized = json.dumps(payload, sort_keys=True)
-        return hashlib.sha256(serialized.encode('utf-8')).hexdigest()
-
-    def verify_inclusion_proof(
-        self, 
-        leaf_hash: str, 
-        proof_path: List[Tuple[str, str]], 
-        target_root: str
-    ) -> bool:
-        current_hash = leaf_hash
-        for sibling_hash, direction in proof_path:
-            if direction == "LEFT":
-                combined = sibling_hash + current_hash
-            else:
-                combined = current_hash + sibling_hash
-            current_hash = hashlib.sha256(combined.encode('utf-8')).hexdigest()
-        return current_hash == target_root
-
-    def authorize_actuation(
-        self, 
-        actuator_id: str, 
-        payload: Dict, 
-        proof_path: List[Tuple[str, str]], 
-        target_root: str
-    ) -> Dict:
-        leaf_hash = self.compute_leaf_hash(payload)
-        print(f"\n[ACTUATOR GATEKEEPER] Evaluating Access Request for Hardware: {actuator_id}")
-        print(f" - Payload Hash : {leaf_hash[:16]}...")
-        print(f" - Target Root  : {target_root[:16]}...")
-
-        if target_root not in self.anchored_roots:
-            print(f"[SECURITY ALERT] Target Root {target_root[:16]}... NOT found in Anchored Ash Archive!")
-            return {
-                "status": "DENIED",
-                "reason": "UNANCHORED_MERKLE_ROOT",
-                "actuator_id": actuator_id,
-                "timestamp": time.time()
-            }
-
-        is_valid = self.verify_inclusion_proof(leaf_hash, proof_path, target_root)
-        if not is_valid:
-            print(f"[SECURITY ALERT] Inclusion proof verification FAILED for {actuator_id}!")
-            return {
-                "status": "DENIED",
-                "reason": "INVALID_MERKLE_INCLUSION_PROOF",
-                "actuator_id": actuator_id,
-                "timestamp": time.time()
-            }
-
-        collapse_certificate = hashlib.sha256(
-            f"{leaf_hash}:{target_root}:{time.time()}".encode('utf-8')
-        ).hexdigest()
-
-        print(f"[ACCESS GRANTED] Merkle Proof Validated. Hardware Latch Engaged.")
-        print(f" - Collapse Certificate (C_collapse): {collapse_certificate[:16]}...")
-
-        return {
-            "status": "AUTHORIZED",
-            "actuator_id": actuator_id,
-            "collapse_certificate": collapse_certificate,
-            "target_root": target_root,
-            "timestamp": time.time(),
-            "hardware_signal": {
-                "latch_voltage_mv": 3300,
-                "duration_ms": 500,
-                "state": "ACTIVE"
-            }
+    def __init__(self):
+        # Configure simulated hardware relay board pins
+        self.relays = {
+            "BASALT_LATCH": SimulatedGPIOPin(18, "Basalt Latch Relay"),
+            "HARMONIC_SCAR": SimulatedGPIOPin(23, "Harmonic Scar Indicator"),
+            "LEX_I_CUTOUT": SimulatedGPIOPin(24, "Lex I Safety Lockout")
         }
 
-if __name__ == "__main__":
-    payload_0 = {"actuator": "VALVE_SIGMA_01", "command": "OPEN", "pressure_target": 1.42}
-    payload_1 = {"actuator": "PULSE_MOTOR_02", "command": "LATCH", "angle": 90.0}
-    payload_2 = {"actuator": "RELAY_CATHEDRAL_04", "command": "DISCHARGE", "voltage": 24.0}
-    payload_3 = {"actuator": "STASIS_FIELD_12", "command": "ENGAGE", "power_level": 0.85}
+    def generate_collapse_certificate(self, node_hash: str, epoch: int, logical_state: str) -> Dict[str, Any]:
+        """Generates a cryptographically signed Collapse Certificate payload."""
+        timestamp = time.time()
+        message = f"{node_hash}:{epoch}:{logical_state}:{timestamp}".encode('utf-8')
+        signature = hmac.new(GATEKEEPER_SECRET, message, hashlib.sha256).hexdigest()
 
-    leaves_raw = [
-        json.dumps(payload_0, sort_keys=True),
-        json.dumps(payload_1, sort_keys=True),
-        json.dumps(payload_2, sort_keys=True),
-        json.dumps(payload_3, sort_keys=True)
-    ]
+        return {
+            "version": "1.0-SIGMA12",
+            "epoch": epoch,
+            "node_hash": node_hash,
+            "logical_state": logical_state,
+            "timestamp": timestamp,
+            "signature": signature
+        }
 
-    tree = MerkleTree(leaves_raw)
-    root = tree.get_root()
+    def verify_certificate(self, cert: Dict[str, Any]) -> bool:
+        """Verifies HMAC signature on incoming Collapse Certificates."""
+        message = f"{cert['node_hash']}:{cert['epoch']}:{cert['logical_state']}:{cert['timestamp']}".encode('utf-8')
+        expected_sig = hmac.new(GATEKEEPER_SECRET, message, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(cert['signature'], expected_sig)
 
-    gatekeeper = ActuatorSafetyGatekeeper()
-    gatekeeper.register_anchored_root(root)
+    async def process_certificate(self, cert: Dict[str, Any]):
+        """Parses certificate and dispatches concurrent GPIO pulse tasks."""
+        if not self.verify_certificate(cert):
+            print(f"[GATEKEEPER SECURITY ALERT] Invalid certificate signature for hash {cert['node_hash'][:16]}... REJECTING!")
+            return
 
-    target_payload = payload_1
-    proof = tree.get_proof(index=1)
-    
-    result_valid = gatekeeper.authorize_actuation(
-        actuator_id="PULSE_MOTOR_02",
-        payload=target_payload,
-        proof_path=proof,
-        target_root=root
+        print(f"\n[ACTUATOR GATEKEEPER] Valid Certificate Accepted | Node: {cert['node_hash'][:16]}... | State: {cert['logical_state']}")
+
+        tasks = []
+        state = cert["logical_state"]
+
+        if state == "SOLIDIFIED_LEX_I" or state == "PARACONSISTENT_RECONCILED":
+            # Pulse Basalt Latch Relay for 120ms
+            tasks.append(self.relays["BASALT_LATCH"].pulse(120))
+
+        if "SCAR" in state or "RECONCILED" in state:
+            # Pulse Harmonic Scar LED for 200ms
+            tasks.append(self.relays["HARMONIC_SCAR"].pulse(200))
+
+        if state == "LEX_I_VIOLATION_INTERCEPTED":
+            # Rapid pulse Safety Cutout Relay for 50ms
+            tasks.append(self.relays["LEX_I_CUTOUT"].pulse(50))
+
+        # Execute all relay pulses asynchronously without blocking main thread
+        await asyncio.gather(*tasks)
+
+
+async def main():
+    print("=================================================================")
+    print("     CHAMBER Σ-12 // ASYNCHRONOUS HARDWARE RELAY SIMULATOR       ")
+    print("=================================================================")
+
+    gatekeeper = ActuatorGatekeeper()
+
+    # Event 1: Reconciled Strata Collapse Certificate
+    cert1 = gatekeeper.generate_collapse_certificate(
+        node_hash="e81b29a40f7d312e0000000000000000",
+        epoch=3,
+        logical_state="PARACONSISTENT_RECONCILED"
     )
 
-    tampered_payload = {"actuator": "PULSE_MOTOR_02", "command": "OVERRIDE_MAX", "angle": 180.0}
-    result_tampered = gatekeeper.authorize_actuation(
-        actuator_id="PULSE_MOTOR_02",
-        payload=tampered_payload,
-        proof_path=proof,
-        target_root=root
+    # Event 2: Lex I Violation Intercept Event
+    cert2 = gatekeeper.generate_collapse_certificate(
+        node_hash="f4091a2d80e3518a0000000000000000",
+        epoch=3,
+        logical_state="LEX_I_VIOLATION_INTERCEPTED"
     )
+
+    # Event 3: Final Lithic Solidification Certificate
+    cert3 = gatekeeper.generate_collapse_certificate(
+        node_hash="a1c9e802f34511c90000000000000000",
+        epoch=3,
+        logical_state="SOLIDIFIED_LEX_I"
+    )
+
+    # Dispatch events into async event loop
+    print("\n--- Dispatching Event 1: Epoch 3 Reconciliation ---")
+    await gatekeeper.process_certificate(cert1)
+
+    print("\n--- Dispatching Event 2: Lex I Security Intercept ---")
+    await gatekeeper.process_certificate(cert2)
+
+    print("\n--- Dispatching Event 3: Lithic Solidification ---")
+    await gatekeeper.process_certificate(cert3)
 
     print("\n=================================================================")
-    print("                    ACTUATION AUDIT SUMMARY                      ")
+    print("                HARDWARE PULSE SIMULATION COMPLETE               ")
     print("=================================================================")
-    print(f" Valid Request Status   : {result_valid['status']}")
-    print(f" Tampered Request Status: {result_tampered['status']} ({result_tampered['reason']})")
-    print("=================================================================")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
