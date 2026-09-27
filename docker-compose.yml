@@ -1,18 +1,14 @@
+version: '3.8'
+
 services:
-  engine:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: dallmier/mlaos-prime:latest
-    container_name: mlaos-prime-engine
-    restart: unless-stopped
+  cathedral-engine:
+    build: .
+    container_name: mlaos_cathedral_node
     ports:
       - "8000:8000"
-    environment:
-      - DATABASE_URL=sqlite:////app/data/ash_archive.db
     volumes:
-      - ash_archive_data:/app/data
-
-volumes:
-  ash_archive_data:
-    name: mlaos_ash_archive_data
+      - ./ash_archive:/app/ash_archive
+      - ./cathedral_ash_archive.db:/app/cathedral_ash_archive.db
+    environment:
+      - ENVIRONMENT=production
+    restart: always

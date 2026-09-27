@@ -1,0 +1,12 @@
+{
+  "timestamp": 1727352000.0,
+  "anomaly_type": "KRP_TENSION_EXCEEDED",
+  "tension_metric": 0.843,
+  "payload": {
+    "actor": "WANDERER_001",
+    "event": "INDEX_BREACH"
+  },
+  "membrane_status": "SEALED",
+  "dag_branch": "FRACTURE_NODE_PARALLEL",
+  "status": "QUARANTINED"
+}

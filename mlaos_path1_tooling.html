@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLAOS-Prime // Path 1 Master Engine & Tooling</title>
+  <style>
+    :root {
+      --bg-color: #030508;
+      --panel-bg: rgba(10, 14, 24, 0.95);
+      --border-color: #1e293b;
+      --accent-blue: #00d2ff;
+      --accent-purple: #a855f7;
+      --accent-gold: #fbbf24;
+      --accent-green: #22c55e;
+      --accent-red: #ff2a55;
+      --text-color: #f1f5f9;
+      --font-code: 'Courier New', Courier, monospace;
+    }
+
+    body {
+      margin: 0;
+      padding: 10px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-code);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--accent-blue);
+      margin-bottom: 6px;
+    }
+
+    h1 { margin: 0; font-size: 1.05rem; color: var(--accent-blue); letter-spacing: 1px; }
+    .badge { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 3px 6px; border-radius: 4px; font-size: 0.68rem; }
+
+    .master-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 10px;
+      flex-grow: 1;
+      height: calc(100vh - 65px);
+    }
+
+    .viewport-column {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #viewport-container {
+      position: relative;
+      background: #000;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      flex-grow: 1;
+    }
+
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-title {
+      font-size: 0.72rem;
+      font-weight: bold;
+      color: var(--accent-gold);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 3px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cmd-btn {
+      background: rgba(0, 210, 255, 0.08);
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      padding: 5px 8px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-code);
+      font-size: 0.68rem;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .cmd-btn:hover { background: var(--accent-blue); color: #000; font-weight: bold; }
+
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px; }
+
+    /* Level Editor Tile Palette */
+    .palette-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 6px; }
+    .tile-option {
+      background: #0f172a; border: 1px solid var(--border-color); padding: 6px; text-align: center;
+      font-size: 0.65rem; cursor: pointer; border-radius: 3px;
+    }
+    .tile-option.selected { border-color: var(--accent-gold); background: rgba(251, 191, 36, 0.15); font-weight: bold; }
+
+    #log-output {
+      flex-grow: 1;
+      min-height: 110px;
+      max-height: 160px;
+      background: #020408;
+      border: 1px solid var(--border-color);
+      padding: 5px;
+      font-size: 0.65rem;
+      overflow-y: auto;
+      line-height: 1.3;
+    }
+    .log-entry { margin-bottom: 3px; border-bottom: 1px dashed #111827; padding-bottom: 2px; }
+
+    #dialogue-overlay {
+      position: absolute; bottom: 10px; left: 10px; right: 10px;
+      background: rgba(5, 8, 15, 0.95); border: 2px solid var(--accent-blue);
+      border-radius: 6px; padding: 8px; display: none; z-index: 10;
+    }
+    #dialogue-speaker { color: var(--accent-gold); font-weight: bold; font-size: 0.75rem; margin-bottom: 2px; }
+    #dialogue-text { font-size: 0.7rem; color: var(--text-color); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>MLAOS-PRIME // PATH 1 TOOLING MASTER ENGINE</h1>
+    <span style="font-size: 0.68rem; color: #64748b;">CRT SHADERS • WEB AUDIO SYNTH • EMBEDDED MAP EDITOR</span>
+  </div>
+  <div>
+    <span class="badge" style="color: var(--accent-blue);">MODE: <span id="mode-indicator">OVERWORLD</span></span>
+    <span class="badge" style="color: var(--accent-purple);">FPS: <span id="fps">60</span></span>
+  </div>
+</header>
+
+<div class="master-grid">
+  <!-- VIEWPORT COLUMN -->
+  <div class="viewport-column">
+    <div id="viewport-container">
+      <canvas id="path1-canvas"></canvas>
+      <div id="dialogue-overlay">
+        <div id="dialogue-speaker">System Registrar</div>
+        <div id="dialogue-text">Path 1 Engine Initialized. Use the Map Editor below to paint custom tile vectors.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROL & TOOLING SIDEBAR -->
+  <div class="sidebar">
+    <!-- WEB AUDIO SYNTHESIZER -->
+    <div class="panel">
+      <div class="panel-title">Web Audio Synthesizer</div>
+      <div class="btn-group">
+        <button class="cmd-btn" onclick="audioEngine.toggleAudio()">Toggle Audio Engine</button>
+        <button class="cmd-btn" onclick="audioEngine.switchTheme()">Switch Theme (Exploration/Combat)</button>
+      </div>
+    </div>
+
+    <!-- EMBEDDED LEVEL EDITOR -->
+    <div class="panel">
+      <div class="panel-title">Embedded Tilemap Editor</div>
+      <div style="font-size: 0.65rem; color: #94a3b8; margin-bottom: 4px;">Select Tile Type & Paint Canvas:</div>
+      <div class="palette-grid">
+        <div class="tile-option selected" onclick="setTileType(0, 'Floor (0)')">Floor (0)</div>
+        <div class="tile-option" onclick="setTileType(1, 'Basalt Wall (1)')">Wall (1)</div>
+        <div class="tile-option" onclick="setTileType(2, 'Scar Node (2)')">Scar (2)</div>
+        <div class="tile-option" onclick="setTileType(3, 'WAL Conduit (3)')">Conduit (3)</div>
+      </div>
+      <div class="btn-group">
+        <button class="cmd-btn" onclick="editorExportJSON()">Export JSON</button>
+        <button class="cmd-btn" onclick="editorClearGrid()">Clear Canvas</button>
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="panel">
+      <div class="panel-title">Engine Navigation</div>
+      <div class="btn-group">
+        <button class="cmd-btn" onclick="movePlayer(0, -1)">W: Move Up</button>
+        <button class="cmd-btn" onclick="movePlayer(0, 1)">S: Move Down</button>
+      </div>
+      <div class="btn-group">
+        <button class="cmd-btn" onclick="movePlayer(-1, 0)">A: Move Left</button>
+        <button class="cmd-btn" onclick="movePlayer(1, 0)">D: Move Right</button>
+      </div>
+    </div>
+
+    <!-- IMMUTABLE LOG -->
+    <div class="panel" style="flex-grow: 1;">
+      <div class="panel-title">Ash Archive Ledger</div>
+      <div id="log-output"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // WEB AUDIO SYNTHESIZER ENGINE
+  class MLAOSAudioEngine {
+    constructor() {
+      this.ctx = null;
+      this.isPlaying = false;
+      this.theme = "EXPLORATION"; // EXPLORATION or COMBAT
+      this.osc = null;
+      this.gain = null;
+    }
+    toggleAudio() {
+      if (!this.ctx) {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (this.isPlaying) {
+        this.stop();
+      } else {
+        this.start();
+      }
+    }
+    start() {
+      if (!this.ctx) return;
+      this.isPlaying = true;
+      this.osc = this.ctx.createOscillator();
+      this.gain = this.ctx.createGain();
+      
+      this.osc.type = this.theme === "EXPLORATION" ? "sine" : "sawtooth";
+      this.osc.frequency.setValueAtTime(this.theme === "EXPLORATION" ? 110 : 220, this.ctx.currentTime);
+      this.gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+
+      this.osc.connect(this.gain);
+      this.gain.connect(this.ctx.destination);
+      this.osc.start();
+      addLog("AUDIO_ENGINE", `Synthesizer started (${this.theme} theme active).`);
+    }
+    stop() {
+      if (this.osc) {
+        this.osc.stop();
+        this.osc.disconnect();
+        this.isPlaying = false;
+        addLog("AUDIO_ENGINE", "Synthesizer halted.");
+      }
+    }
+    switchTheme() {
+      this.theme = this.theme === "EXPLORATION" ? "COMBAT" : "EXPLORATION";
+      if (this.isPlaying && this.osc) {
+        this.osc.type = this.theme === "EXPLORATION" ? "sine" : "sawtooth";
+        this.osc.frequency.setValueAtTime(this.theme === "EXPLORATION" ? 110 : 220, this.ctx.currentTime);
+      }
+      addLog("AUDIO_THEME", `Audio crossfaded to ${this.theme} theme.`);
+    }
+  }
+
+  const audioEngine = new MLAOSAudioEngine();
+
+  // LEVEL EDITOR STATE
+  let selectedTile = 0;
+  const gridMap = Array(12).fill(0).map(() => Array(16).fill(0));
+
+  function setTileType(id, name) {
+    selectedTile = id;
+    document.querySelectorAll(".tile-option").forEach((el, i) => {
+      if (i === id) el.classList.add("selected");
+      else el.classList.remove("selected");
+    });
+    addLog("EDITOR_TOOL", `Selected tile brush: ${name}`);
+  }
+
+  function editorExportJSON() {
+    const json = JSON.stringify(gridMap);
+    addLog("EDITOR_EXPORT", `Exported map JSON: ${json.substring(0, 40)}...`);
+    alert("Map JSON exported to Ash Archive Log.");
+  }
+
+  function editorClearGrid() {
+    for (let r = 0; r < 12; r++) {
+      for (let c = 0; c < 16; c++) {
+        gridMap[r][c] = 0;
+      }
+    }
+    addLog("EDITOR_CLEAR", "Canvas cleared to default floor.");
+  }
+
+  // RENDER & STATE
+  const state = { mode: "OVERWORLD", player: { x: 4, y: 4 } };
+  let gl, program, uTime, uMode;
+  let frameCount = 0, lastTime = performance.now();
+
+  const vsSource = `#version 300 es
+    in vec2 a_position;
+    in vec2 a_texcoord;
+    out vec2 v_texcoord;
+    void main() {
+      v_texcoord = a_texcoord;
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+  `;
+
+  const fsSource = `#version 300 es
+    precision highp float;
+    in vec2 v_texcoord;
+    out vec4 fragColor;
+    uniform float u_time;
+    uniform float u_mode;
+
+    void main() {
+      vec2 uv = v_texcoord;
+      
+      // CRT Screen Curvature Distortion
+      uv = uv * 2.0 - 1.0;
+      uv *= 1.0 + (pow(abs(uv.yx), vec2(2.0)) * 0.08);
+      uv = uv * 0.5 + 0.5;
+
+      if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+        fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        return;
+      }
+
+      vec2 grid = vec2(16.0, 12.0);
+      vec2 st_grid = fract(uv * grid);
+      vec2 edge = smoothstep(0.0, 0.04, st_grid) - smoothstep(0.96, 1.0, st_grid);
+      float gridLine = 1.0 - (edge.x * edge.y);
+
+      vec3 bg = vec3(0.02, 0.05, 0.09);
+      vec3 gridCol = vec3(0.0, 0.5, 0.9) * gridLine * 0.35;
+
+      // CRT Scanlines
+      float scanline = sin(uv.y * 400.0 + u_time * 5.0) * 0.08 + 0.92;
+
+      vec3 finalCol = (bg + gridCol) * scanline;
+      fragColor = vec4(finalCol, 1.0);
+    }
+  `;
+
+  function initWebGL() {
+    const canvas = document.getElementById("path1-canvas");
+    gl = canvas.getContext("webgl2");
+    if (!gl) return;
+
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+
+    const vs = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs, vsSource); gl.compileShader(vs);
+
+    const fs = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fs, fsSource); gl.compileShader(fs);
+
+    program = gl.createProgram();
+    gl.attachShader(program, vs); gl.attachShader(program, fs);
+    gl.linkProgram(program);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      -1, -1, 0, 0,  1, -1, 1, 0, -1,  1, 0, 1,
+      -1,  1, 0, 1,  1, -1, 1, 0,  1,  1, 1, 1
+    ]), gl.STATIC_DRAW);
+
+    const posLoc = gl.getAttribLocation(program, "a_position");
+    const texLoc = gl.getAttribLocation(program, "a_texcoord");
+    gl.enableVertexAttribArray(posLoc); gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 16, 0);
+    gl.enableVertexAttribArray(texLoc); gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 16, 8);
+
+    gl.useProgram(program);
+    uTime = gl.getUniformLocation(program, "u_time");
+    uMode = gl.getUniformLocation(program, "u_mode");
+
+    requestAnimationFrame(render);
+    initEditorCanvasMouse();
+  }
+
+  function render(now) {
+    frameCount++;
+    if (now - lastTime >= 1000) {
+      document.getElementById("fps").innerText = frameCount;
+      frameCount = 0; lastTime = now;
+    }
+
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.uniform1f(uTime, now * 0.001);
+    gl.uniform1f(uMode, state.mode === "OVERWORLD" ? 0.0 : 1.0);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    requestAnimationFrame(render);
+  }
+
+  function initEditorCanvasMouse() {
+    const canvas = document.getElementById("path1-canvas");
+    canvas.addEventListener("click", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.floor(((e.clientX - rect.left) / rect.width) * 16);
+      const y = Math.floor(((e.clientY - rect.top) / rect.height) * 12);
+      if (x >= 0 && x < 16 && y >= 0 && y < 12) {
+        gridMap[y][x] = selectedTile;
+        addLog("TILE_PAINT", `Painted tile type ${selectedTile} at (${x}, ${y})`);
+      }
+    });
+  }
+
+  function addLog(event, details) {
+    const log = document.getElementById("log-output");
+    const hash = "0x" + Math.floor(Math.random() * 16777215).toString(16);
+    const entry = document.createElement("div");
+    entry.className = "log-entry";
+    entry.innerHTML = `<span style="color: var(--accent-gold);">${hash}</span> <strong>[${event}]</strong> ${details}`;
+    log.prepend(entry);
+  }
+
+  function movePlayer(dx, dy) {
+    state.player.x = Math.max(0, Math.min(15, state.player.x + dx));
+    state.player.y = Math.max(0, Math.min(11, state.player.y + dy));
+    addLog("PLAYER_MOVE", `Position updated to (${state.player.x}, ${state.player.y})`);
+  }
+
+  window.onload = () => {
+    initWebGL();
+    addLog("PATH1_INIT", "Path 1 Master Engine & Tooling Suite Initialized.");
+  };
+</script>
+</body>
+</html>

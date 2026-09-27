@@ -1,0 +1,14 @@
+{
+  "certificate_id": "sha256_sub_threshold",
+  "origin_logical_state": "BOTH",
+  "target_node_hash": "node_hash_in_active_dag",
+  "resolution_mechanism": "CONFLUENT_LCA_COLLAPSE",
+  "symmetry_breaking_metric": {
+    "metric": "sensor_consensus_delta",
+    "value": 0.71,
+    "threshold": 0.85
+  },
+  "authorized_action": "OPEN_HIGH_PRESSURE_VALVE",
+  "risk_index": 0.88,
+  "failsafe_action": "HOLD_AND_QUARANTINE"
+}

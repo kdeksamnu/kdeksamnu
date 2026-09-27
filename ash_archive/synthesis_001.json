@@ -1,0 +1,10 @@
+{
+  "node_type": "SYNTHESIS_BLOCK",
+  "parent_dag_head": "DAG_HEAD_MAIN_LATEST",
+  "quarantine_branch_reference": "FRACTURE_NODE_PARALLEL",
+  "proof": {
+    "arbiter_id": "ARBITER_MAGISTER_01",
+    "source_fracture_hash": "4a2f8b91c0e3571d0000000000000000",
+    "status": "RECONCILED_LEX_I_COMPLIANT"
+  }
+}
