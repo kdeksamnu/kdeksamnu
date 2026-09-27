@@ -1,0 +1,31 @@
+{
+  "data": {
+    "type": "registrations",
+    "attributes": {
+      "title": "MLAOS-Prime Global Institutional Archive",
+      "description": "Collaborative research and development environment for the preservation and iteration of the MLAOS-Prime framework and the Cathedral-Engine. Serves as the centralized nexus for all public-facing documentation, pre-geometric topology, and version control metadata.",
+      "category": "project",
+      "tags": [
+        "MLAOS-Prime",
+        "Cathedral-Engine",
+        "Computer Sciences",
+        "Paraconsistent Logic",
+        "Philosophy of Mind",
+        "Lex I"
+      ],
+      "license": "CC-By Attribution-NonCommercial-NoDerivatives 4.0 International",
+      "contributors": [
+        {
+          "name": "Kenneth W. Dallmier",
+          "role": "Primary Architect & Author",
+          "bibliographic": true
+        },
+        {
+          "name": "Julianna Morgan",
+          "role": "Collaborative Strategist",
+          "bibliographic": true
+        }
+      ]
+    }
+  }
+}
