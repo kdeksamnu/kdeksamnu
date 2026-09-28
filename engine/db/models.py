@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from sqlalchemy import Boolean, Column, DateTime, Enum, Float, String, Uuid, ForeignKey, Integer
 from sqlalchemy.orm import declarative_base, relationship
 
-Base = declarative_base()
+from engine.db.session import Base  # single shared Base, so init_db() sees these tables
 
 class LogicStateEnum(str, enum.Enum):
     TRUE = "True"

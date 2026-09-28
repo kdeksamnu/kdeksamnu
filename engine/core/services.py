@@ -107,6 +107,7 @@ class SpectralIntegrationService:
                         "logic_state": logic_state.value,
                         "magnitude": float(payload.magnitude),
                         "somatic_integrity": float(observer.somatic_integrity),
+                        "harmonic_scar": harmonic_scar_applied,
                         "harmonic_scars": int(observer.harmonic_scars_total),
                         "damping_factor": round(damping_factor, 4),
                         "quarantined": quarantine_applied

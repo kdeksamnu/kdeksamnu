@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 
 class AppendOnlyLedger:
     def __init__(self, db_path: str = "ash_archive.db"):
@@ -25,5 +25,5 @@ class AppendOnlyLedger:
             conn.execute("""
                 INSERT OR IGNORE INTO event_log (event_id, payload, parent_hash, current_hash, timestamp)
                 VALUES (?, ?, ?, ?, ?)
-            """, (event_id, payload, parent_hash, current_hash, datetime.utcnow().isoformat()))
+            """, (event_id, payload, parent_hash, current_hash, datetime.now(timezone.utc).isoformat()))
             conn.commit()

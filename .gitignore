@@ -47,3 +47,8 @@ Thumbs.db
 bin/
 obj/
 >>>>>>> 04db736 (feat(core): initialize mlaos-prime repository with Revision Ω-07 compute layer)
+target/
+cathedral_mesh_router/target/
+target/
+cathedral_mesh_router/target/
+cathedral_mesh_router/target/

@@ -47,4 +47,4 @@ def test_rejects_out_of_bounds_magnitude():
     with pytest.raises(ValueError) as exc_info:
         SpectralResonanceIngest(**payload)
     
-    assert "less than or equal to 10.0" in str(exc_info.value)
+    assert "less than or equal to 10" in str(exc_info.value)

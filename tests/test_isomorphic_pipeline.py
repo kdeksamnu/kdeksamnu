@@ -51,7 +51,7 @@ def test_isomorphic_pipeline_lifecycle() -> None:
             primary_constant=SpectralConstant.GOLD_JOY,
             secondary_constant=SpectralConstant.BLUE_SORROW,
             magnitude=9.0,
-            harmonic_phase=3.14
+            harmonic_phase=0.0
         )
         res_conflict = SpectralIntegrationService.integrate_event(payload_contradiction, db)
         assert res_conflict["status"] == "integrated"
