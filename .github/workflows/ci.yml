@@ -1,0 +1,37 @@
+name: MLAOS Master Architecture CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Lint Invariants
+        run: |
+          echo "Validating Decalogue invariants and boundary conditions..."
+          python compiler/validate_invariants.py --strict
+
+      - name: Compile Targets
+        run: |
+          echo "Compiling target: --target codex"
+          python compiler/build.py --target codex
+          echo "Compiling target: --target concordance"
+          python compiler/build.py --target concordance
+
+      - name: Verify Stress Tests
+        run: |
+          echo "Executing empirical verification suite and stress test boundaries..."
+          python appendices/run_verification_suite.py --target empirical
