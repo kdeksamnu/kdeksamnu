@@ -48,7 +48,7 @@ export function executeInstrumentedRun(params: RunParameters): TelemetryRecord {
   // Compute workload simulation
   let checksum = 0;
   const iterations = 500000;
-  
+
   if (params.treatment) {
     const a = true;
     const notA = true;

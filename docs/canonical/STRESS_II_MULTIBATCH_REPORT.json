@@ -1,0 +1,177 @@
+{
+  "executionTimestamp": "2026-09-30T00:56:17.099Z",
+  "seeds": [
+    20260929,
+    20260930,
+    20260931,
+    20260932,
+    20260933
+  ],
+  "runs": [
+    {
+      "seed": 20260929,
+      "control": {
+        "runId": "ST-II-CTL-BATCH-20260929",
+        "seed": 20260929,
+        "mode": "CONTROL",
+        "monotonicStart": 60.660458,
+        "durationMs": 23.967999999999996,
+        "cpuLoadPercent": 2.4,
+        "thermalDeltaCelsius": 0.061,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "SINGLE_VALUED",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "treatment": {
+        "runId": "ST-II-TRT-BATCH-20260929",
+        "seed": 20260929,
+        "mode": "TREATMENT",
+        "monotonicStart": 91.807625,
+        "durationMs": 23.538624999999996,
+        "cpuLoadPercent": 2.35,
+        "thermalDeltaCelsius": 0.132,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "BOTH",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "durationDeltaMs": -0.429,
+      "thermalDeltaDiffCelsius": 0.071,
+      "classification": "NULL_RESULT"
+    },
+    {
+      "seed": 20260930,
+      "control": {
+        "runId": "ST-II-CTL-BATCH-20260930",
+        "seed": 20260930,
+        "mode": "CONTROL",
+        "monotonicStart": 120.005375,
+        "durationMs": 24.119749999999996,
+        "cpuLoadPercent": 2.41,
+        "thermalDeltaCelsius": 0.058,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "SINGLE_VALUED",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "treatment": {
+        "runId": "ST-II-TRT-BATCH-20260930",
+        "seed": 20260930,
+        "mode": "TREATMENT",
+        "monotonicStart": 148.62625,
+        "durationMs": 24.40187499999999,
+        "cpuLoadPercent": 2.44,
+        "thermalDeltaCelsius": 0.145,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "BOTH",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "durationDeltaMs": 0.282,
+      "thermalDeltaDiffCelsius": 0.087,
+      "classification": "NULL_RESULT"
+    },
+    {
+      "seed": 20260931,
+      "control": {
+        "runId": "ST-II-CTL-BATCH-20260931",
+        "seed": 20260931,
+        "mode": "CONTROL",
+        "monotonicStart": 177.354958,
+        "durationMs": 24.505916999999982,
+        "cpuLoadPercent": 2.45,
+        "thermalDeltaCelsius": 0.087,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "SINGLE_VALUED",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "treatment": {
+        "runId": "ST-II-TRT-BATCH-20260931",
+        "seed": 20260931,
+        "mode": "TREATMENT",
+        "monotonicStart": 206.326583,
+        "durationMs": 23.897959000000014,
+        "cpuLoadPercent": 2.39,
+        "thermalDeltaCelsius": 0.082,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "BOTH",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "durationDeltaMs": -0.608,
+      "thermalDeltaDiffCelsius": -0.005,
+      "classification": "NULL_RESULT"
+    },
+    {
+      "seed": 20260932,
+      "control": {
+        "runId": "ST-II-CTL-BATCH-20260932",
+        "seed": 20260932,
+        "mode": "CONTROL",
+        "monotonicStart": 234.265542,
+        "durationMs": 23.536290999999977,
+        "cpuLoadPercent": 2.35,
+        "thermalDeltaCelsius": 0.046,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "SINGLE_VALUED",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "treatment": {
+        "runId": "ST-II-TRT-BATCH-20260932",
+        "seed": 20260932,
+        "mode": "TREATMENT",
+        "monotonicStart": 262.330583,
+        "durationMs": 24.03725000000003,
+        "cpuLoadPercent": 2.4,
+        "thermalDeltaCelsius": 0.131,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "BOTH",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "durationDeltaMs": 0.501,
+      "thermalDeltaDiffCelsius": 0.085,
+      "classification": "NULL_RESULT"
+    },
+    {
+      "seed": 20260933,
+      "control": {
+        "runId": "ST-II-CTL-BATCH-20260933",
+        "seed": 20260933,
+        "mode": "CONTROL",
+        "monotonicStart": 290.916958,
+        "durationMs": 23.92458399999998,
+        "cpuLoadPercent": 2.39,
+        "thermalDeltaCelsius": 0.036,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "SINGLE_VALUED",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "treatment": {
+        "runId": "ST-II-TRT-BATCH-20260933",
+        "seed": 20260933,
+        "mode": "TREATMENT",
+        "monotonicStart": 318.938083,
+        "durationMs": 24.54725000000002,
+        "cpuLoadPercent": 2.45,
+        "thermalDeltaCelsius": 0.099,
+        "acousticDba": null,
+        "electricalWatts": null,
+        "belnapState": "BOTH",
+        "timestamp": "2026-09-30T00:56:17.099Z"
+      },
+      "durationDeltaMs": 0.623,
+      "thermalDeltaDiffCelsius": 0.063,
+      "classification": "NULL_RESULT"
+    }
+  ],
+  "aggregateAnalysis": {
+    "meanDurationDeltaMs": 0.074,
+    "meanThermalDeltaDiffCelsius": 0.06,
+    "batchClassification": "NULL_RESULT"
+  }
+}
