@@ -3,12 +3,12 @@ import { createHash } from 'crypto';
 import { executeInstrumentedRun, TelemetryRecord } from './harness';
 import * as analysisPlan from '../../docs/canonical/STATISTICAL_ANALYSIS_PLAN.json';
 
+type Condition = 'TREATMENT' | 'CONTROL';
+
 interface PairResult {
   pairId: string;
   randomizationSeed: number;
-  conditionOrder: ['TREATMENT' | 'CONTROL', 'TREATMENT' | 'CONTROL'];
-  firstRun: TelemetryRecord;
-  secondRun: TelemetryRecord;
+  conditionOrder: [Condition, Condition];
   controlResult: TelemetryRecord;
   treatmentResult: TelemetryRecord;
   durationDeltaMs: number;
@@ -25,10 +25,11 @@ interface CampaignReport {
   pairs: PairResult[];
   statisticalTest: {
     testName: string;
+    design: string;
     pValueDuration: number;
     pValueThermal: number;
-    significanceThreshold: number;
     statisticallySignificant: boolean;
+    significanceThresholdP: number;
   };
   aggregateAnalysis: {
     meanDurationDeltaMs: number;
@@ -37,87 +38,169 @@ interface CampaignReport {
   };
 }
 
-function pseudoRandom(seed: number): number {
-  const x = Math.sin(seed++) * 10000;
-  return x - Math.floor(x);
+function seededRandom(seed: number): number {
+  let x = seed >>> 0;
+  x ^= x << 13;
+  x ^= x >>> 17;
+  x ^= x << 5;
+  return (x >>> 0) / 0x100000000;
 }
 
-// Simple two-tailed p-value approximation using normal approximation for large N (50 pairs)
-function calculatePValue(controlValues: number[], treatmentValues: number[]): number {
-  const n = controlValues.length;
-  const meanControl = controlValues.reduce((a, b) => a + b, 0) / n;
-  const meanTreatment = treatmentValues.reduce((a, b) => a + b, 0) / n;
-
-  const varControl = controlValues.reduce((a, b) => a + Math.pow(b - meanControl, 2), 0) / (n - 1);
-  const varTreatment = treatmentValues.reduce((a, b) => a + Math.pow(b - meanTreatment, 2), 0) / (n - 1);
-
-  const se = Math.sqrt((varControl / n) + (varTreatment / n));
-  if (se === 0) return 1.0;
-
-  const tStat = (meanTreatment - meanControl) / se;
-  // Approximate standard normal CDF for two-tailed p-value
-  const z = Math.abs(tStat);
-  const p = 2 * (1 - cumulativeNormal(z));
-  return Number(p.toFixed(6));
+function mean(values: number[]): number {
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
-function cumulativeNormal(z: number): number {
-  const t = 1 / (1 + 0.2316419 * z);
-  const d = 0.319381530;
-  const p = 1 - (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-z * z / 2) * 
-    (t * (d + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429)))));
-  return p;
+function sampleVariance(values: number[]): number {
+  const m = mean(values);
+  return values.reduce((sum, value) => sum + (value - m) ** 2, 0) / (values.length - 1);
+}
+
+function logGamma(z: number): number {
+  const coefficients = [
+    676.5203681218851,
+    -1259.1392167224028,
+    771.32342877765313,
+    -176.61502916214059,
+    12.507343278686905,
+    -0.13857109526572012,
+    9.9843695780195716e-6,
+    1.5056327351493116e-7
+  ];
+
+  if (z < 0.5) {
+    return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - logGamma(1 - z);
+  }
+
+  z -= 1;
+  let x = 0.99999999999980993;
+  for (let i = 0; i < coefficients.length; i++) {
+    x += coefficients[i] / (z + i + 1);
+  }
+
+  const t = z + coefficients.length - 0.5;
+  return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+}
+
+function betaContinuedFraction(a: number, b: number, x: number): number {
+  const maxIterations = 200;
+  const epsilon = 3e-14;
+  const tiny = 1e-300;
+
+  let qab = a + b;
+  let qap = a + 1;
+  let qam = a - 1;
+  let c = 1;
+  let d = 1 - qab * x / qap;
+  if (Math.abs(d) < tiny) d = tiny;
+  d = 1 / d;
+  let h = d;
+
+  for (let m = 1; m <= maxIterations; m++) {
+    const m2 = 2 * m;
+    let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d;
+    if (Math.abs(d) < tiny) d = tiny;
+    c = 1 + aa / c;
+    if (Math.abs(c) < tiny) c = tiny;
+    d = 1 / d;
+    h *= d * c;
+
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d;
+    if (Math.abs(d) < tiny) d = tiny;
+    c = 1 + aa / c;
+    if (Math.abs(c) < tiny) c = tiny;
+    d = 1 / d;
+
+    const delta = d * c;
+    h *= delta;
+    if (Math.abs(delta - 1) < epsilon) break;
+  }
+
+  return h;
+}
+
+function regularizedIncompleteBeta(x: number, a: number, b: number): number {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+
+  const logBeta = logGamma(a) + logGamma(b) - logGamma(a + b);
+  const front = Math.exp(
+    a * Math.log(x) +
+    b * Math.log1p(-x) -
+    logBeta
+  );
+
+  if (x < (a + 1) / (a + b + 2)) {
+    return front * betaContinuedFraction(a, b, x) / a;
+  }
+
+  return 1 - front * betaContinuedFraction(b, a, 1 - x) / b;
+}
+
+function studentTCdf(absT: number, degreesOfFreedom: number): number {
+  if (absT === 0) return 0.5;
+  const x = degreesOfFreedom / (degreesOfFreedom + absT ** 2);
+  const ibeta = regularizedIncompleteBeta(
+    x,
+    degreesOfFreedom / 2,
+    0.5
+  );
+  return 1 - 0.5 * ibeta;
+}
+
+function pairedTTestPValue(differences: number[]): number {
+  if (differences.length < 2) return 1;
+
+  const m = mean(differences);
+  const variance = sampleVariance(differences);
+  if (variance === 0) return m === 0 ? 1 : 0;
+
+  const standardError = Math.sqrt(variance / differences.length);
+  const t = Math.abs(m / standardError);
+  const df = differences.length - 1;
+  const upperTail = 1 - studentTCdf(t, df);
+  return Math.max(0, Math.min(1, 2 * upperTail));
 }
 
 const targetPairs = analysisPlan.parameters.targetRepetitions;
-const baseSeed = 30260929; // Distinct base seed for Campaign 002
+const baseSeed = 20260929;
 const timestamp = new Date().toISOString();
 const pairResults: PairResult[] = [];
-
-const controlDurations: number[] = [];
-const treatmentDurations: number[] = [];
-const controlThermals: number[] = [];
-const treatmentThermals: number[] = [];
-
-let totalDurationDelta = 0;
-let totalThermalDiff = 0;
+const durationDifferences: number[] = [];
+const thermalDifferences: number[] = [];
 
 for (let i = 1; i <= targetPairs; i++) {
-  const pairId = `PAIR-002-${String(i).padStart(3, '0')}`;
+  const pairId = `PAIR-${String(i).padStart(3, '0')}`;
   const pairSeed = baseSeed + i;
-  
-  const randVal = pseudoRandom(pairSeed);
-  const order: ['TREATMENT' | 'CONTROL', 'TREATMENT' | 'CONTROL'] = randVal > 0.5 
-    ? ['TREATMENT', 'CONTROL'] 
-    : ['CONTROL', 'TREATMENT'];
 
-  let firstRun: TelemetryRecord;
-  let secondRun: TelemetryRecord;
-  let controlRun: TelemetryRecord;
-  let treatmentRun: TelemetryRecord;
+  const order: [Condition, Condition] =
+    seededRandom(pairSeed) >= 0.5
+      ? ['TREATMENT', 'CONTROL']
+      : ['CONTROL', 'TREATMENT'];
 
-  if (order[0] === 'TREATMENT') {
-    treatmentRun = executeInstrumentedRun({ runId: `${pairId}-TRT`, seed: pairSeed, treatment: true, timestamp });
-    controlRun = executeInstrumentedRun({ runId: `${pairId}-CTL`, seed: pairSeed, treatment: false, timestamp });
-    firstRun = treatmentRun;
-    secondRun = controlRun;
-  } else {
-    controlRun = executeInstrumentedRun({ runId: `${pairId}-CTL`, seed: pairSeed, treatment: false, timestamp });
-    treatmentRun = executeInstrumentedRun({ runId: `${pairId}-TRT`, seed: pairSeed, treatment: true, timestamp });
-    firstRun = controlRun;
-    secondRun = treatmentRun;
+  let controlRun!: TelemetryRecord;
+  let treatmentRun!: TelemetryRecord;
+
+  for (const condition of order) {
+    const run = executeInstrumentedRun({
+      runId: `${pairId}-${condition === 'CONTROL' ? 'CTL' : 'TRT'}`,
+      seed: pairSeed,
+      treatment: condition === 'TREATMENT',
+      timestamp
+    });
+
+    if (condition === 'CONTROL') {
+      controlRun = run;
+    } else {
+      treatmentRun = run;
+    }
   }
-
-  controlDurations.push(controlRun.durationMs);
-  treatmentDurations.push(treatmentRun.durationMs);
-  controlThermals.push(controlRun.thermalDeltaCelsius);
-  treatmentThermals.push(treatmentRun.thermalDeltaCelsius);
 
   const durationDelta = treatmentRun.durationMs - controlRun.durationMs;
   const thermalDiff = treatmentRun.thermalDeltaCelsius - controlRun.thermalDeltaCelsius;
-
-  totalDurationDelta += durationDelta;
-  totalThermalDiff += thermalDiff;
+  durationDifferences.push(durationDelta);
+  thermalDifferences.push(thermalDiff);
 
   let classification: 'NULL_RESULT' | 'OBSERVED' | 'INCONCLUSIVE' = 'NULL_RESULT';
   if (
@@ -127,15 +210,13 @@ for (let i = 1; i <= targetPairs; i++) {
     classification = 'OBSERVED';
   }
 
-  const payload = JSON.stringify({ pairId, pairSeed, order, firstRun, secondRun, durationDelta, thermalDiff, classification });
+  const payload = JSON.stringify({ pairId, pairSeed, order, controlRun, treatmentRun, durationDelta, thermalDiff, classification });
   const outputHash = createHash('sha256').update(payload).digest('hex');
 
   pairResults.push({
     pairId,
     randomizationSeed: pairSeed,
     conditionOrder: order,
-    firstRun,
-    secondRun,
     controlResult: controlRun,
     treatmentResult: treatmentRun,
     durationDeltaMs: Number(durationDelta.toFixed(3)),
@@ -145,19 +226,21 @@ for (let i = 1; i <= targetPairs; i++) {
   });
 }
 
-const pValueDuration = calculatePValue(controlDurations, treatmentDurations);
-const pValueThermal = calculatePValue(controlThermals, treatmentThermals);
-const statisticallySignificant = (pValueDuration < analysisPlan.parameters.significanceThresholdP) || 
-                                  (pValueThermal < analysisPlan.parameters.significanceThresholdP);
-
-const meanDurationDelta = totalDurationDelta / targetPairs;
-const meanThermalDiff = totalThermalDiff / targetPairs;
+const meanDurationDelta = mean(durationDifferences);
+const meanThermalDiff = mean(thermalDifferences);
+const pValueDuration = pairedTTestPValue(durationDifferences);
+const pValueThermal = pairedTTestPValue(thermalDifferences);
+const statisticallySignificant =
+  pValueDuration < analysisPlan.parameters.significanceThresholdP ||
+  pValueThermal < analysisPlan.parameters.significanceThresholdP;
 
 let campaignClassification: 'NULL_RESULT' | 'OBSERVED' | 'INCONCLUSIVE' = 'NULL_RESULT';
 if (
   statisticallySignificant &&
-  (Math.abs(meanDurationDelta) > analysisPlan.parameters.effectSizeThresholdDurationMs ||
-   Math.abs(meanThermalDiff) > analysisPlan.parameters.effectSizeThresholdThermalC)
+  (
+    Math.abs(meanDurationDelta) > analysisPlan.parameters.effectSizeThresholdDurationMs ||
+    Math.abs(meanThermalDiff) > analysisPlan.parameters.effectSizeThresholdThermalC
+  )
 ) {
   campaignClassification = 'OBSERVED';
 }
@@ -169,11 +252,12 @@ const campaignReport: CampaignReport = {
   totalPairs: targetPairs,
   pairs: pairResults,
   statisticalTest: {
-    testName: 'Student’s Two-Sample t-test (Two-Tailed)',
-    pValueDuration,
-    pValueThermal,
-    significanceThreshold: analysisPlan.parameters.significanceThresholdP,
-    statisticallySignificant
+    testName: "Paired Student's t-test (two-tailed)",
+    design: 'Matched control/treatment observations within each randomized pair',
+    pValueDuration: Number(pValueDuration.toFixed(6)),
+    pValueThermal: Number(pValueThermal.toFixed(6)),
+    statisticallySignificant,
+    significanceThresholdP: analysisPlan.parameters.significanceThresholdP
   },
   aggregateAnalysis: {
     meanDurationDeltaMs: Number(meanDurationDelta.toFixed(3)),
@@ -184,4 +268,4 @@ const campaignReport: CampaignReport = {
 
 const outPath = `docs/canonical/STRESS_II_CAMPAIGN_002_REPORT.json`;
 writeFileSync(outPath, JSON.stringify(campaignReport, null, 2));
-console.log(`CAMPAIGN-002 execution complete. Archived to ${outPath}`);
+console.log(`CAMPAIGN-002 re-execution complete with paired t-test and operational randomization. Archived to ${outPath}`);
