@@ -262,6 +262,33 @@ const meanDurationDelta = mean(durationDifferences);
 const meanThermalDiff = mean(thermalDifferences);
 const pValueDuration = pairedTTestPValue(durationDifferences);
 const pValueThermal = pairedTTestPValue(thermalDifferences);
+const observedOrders = new Set(
+  pairResults.map(pair => pair.conditionOrder.join('→'))
+);
+
+if (!observedOrders.has('CONTROL→TREATMENT')) {
+  throw new Error('Campaign 002: CONTROL→TREATMENT was never executed');
+}
+
+if (!observedOrders.has('TREATMENT→CONTROL')) {
+  throw new Error('Campaign 002: TREATMENT→CONTROL was never executed');
+}
+
+for (const pair of pairResults) {
+  if (pair.controlResult.seed !== pair.randomizationSeed) {
+    throw new Error(`${pair.pairId}: control seed mismatch`);
+  }
+  if (pair.treatmentResult.seed !== pair.randomizationSeed) {
+    throw new Error(`${pair.pairId}: treatment seed mismatch`);
+  }
+  if (pair.controlResult.mode !== 'CONTROL') {
+    throw new Error(`${pair.pairId}: serialized control result is not CONTROL`);
+  }
+  if (pair.treatmentResult.mode !== 'TREATMENT') {
+    throw new Error(`${pair.pairId}: serialized treatment result is not TREATMENT`);
+  }
+}
+
 const statisticallySignificant =
   pValueDuration < analysisPlan.parameters.significanceThresholdP ||
   pValueThermal < analysisPlan.parameters.significanceThresholdP;
