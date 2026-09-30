@@ -204,6 +204,18 @@ for (let i = 1; i <= targetPairs; i++) {
   const treatmentRun =
     order[0] === 'TREATMENT' ? firstRun : secondRun;
 
+  if (controlRun.treatment !== false) {
+    throw new Error(`${pairId}: control observation is not CONTROL`);
+  }
+
+  if (treatmentRun.treatment !== true) {
+    throw new Error(`${pairId}: treatment observation is not TREATMENT`);
+  }
+
+  if (controlRun.seed !== pairSeed || treatmentRun.seed !== pairSeed) {
+    throw new Error(`${pairId}: paired observations do not share pair seed`);
+  }
+
 const durationDelta = treatmentRun.durationMs - controlRun.durationMs;
   const thermalDiff = treatmentRun.thermalDeltaCelsius - controlRun.thermalDeltaCelsius;
   durationDifferences.push(durationDelta);
