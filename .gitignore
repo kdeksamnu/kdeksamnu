@@ -47,3 +47,4 @@ Thumbs.db
 bin/
 obj/
 >>>>>>> 04db736 (feat(core): initialize mlaos-prime repository with Revision Ω-07 compute layer)
+node_modules/
