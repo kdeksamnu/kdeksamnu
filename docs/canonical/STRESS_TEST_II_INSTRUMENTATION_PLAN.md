@@ -107,11 +107,28 @@ The experiment must account for:
 ## 8. Result Classes
 
 NOT_YET_TESTED
+
+No physical measurement has been acquired.
+
 NULL_RESULT
+
+Instrumentation completed successfully but no predefined physical effect was detected.
+
 INCONCLUSIVE
+
+Measurement occurred, but data quality or experimental control was insufficient for a determination.
+
 OBSERVED
+
+A predefined signal was detected.
+
 REPRODUCED
+
+The predefined signal was observed across independent repeated runs under controlled conditions.
+
 FALSIFIED
+
+The experiment provides evidence inconsistent with the stated hypothesis.
 
 Failed instrumentation is not a NULL_RESULT.
 
@@ -132,13 +149,25 @@ It may not become SUPPORTED merely because:
 - temperature changes
 - power consumption changes
 
-Promotion requires traceable measurements, predefined analysis, appropriate controls, reproducibility where required, and evidence review.
+Promotion requires traceable measurements, predefined analysis, appropriate controls, adequate data quality, reproducibility where required, and evidence review.
 
 ## 10. Physical Harmonic Scar Boundary
 
 The term "Harmonic Scar" remains a canonical hypothesis.
 
 No physical phenomenon is assumed to correspond to the term before measurement establishes an operationally defined observable.
+
+The required chain is:
+
+canonical term
+→ operational definition
+→ measurable variable
+→ controlled observation
+→ analysis
+→ replication
+→ evidence review
+
+The canonical term itself does not constitute a measurement.
 
 ## 11. Archive Requirements
 
@@ -153,11 +182,15 @@ Raw data must be retained alongside:
 
 Derived summaries must never replace raw measurements.
 
+Every derived result must remain traceable to its source measurements.
+
 ## 12. Failure Policy
 
 Failed instrumentation does not count as a NULL_RESULT.
 
 A missing sensor, unavailable API, malformed dataset, timestamp failure, or corrupted recording is recorded as FAILED / INVALID RUN.
+
+An invalid run must not be used as positive or negative physical evidence.
 
 ## 13. Verification Output
 
@@ -171,7 +204,13 @@ INTERPRETATION
 
 No interpretation may be promoted into observation.
 
+No correlation may be promoted into causation.
+
+No observation may be promoted into replication without independent repeated runs.
+
 ## 14. Evidence Boundary
+
+The current canonical evidence boundary is:
 
 CE-XIX-001  SUPPORTED
 CE-XIX-002  SUPPORTED
@@ -179,27 +218,78 @@ CE-XIX-003  HYPOTHESIS / NOT_YET_TESTED
 
 This protocol does not modify that classification.
 
+Stress Test I establishes computational evidence concerning deterministic Belnap contradiction handling and runtime containment.
+
+Stress Test II defines the boundary at which physical measurements may begin.
+
+The existence of this protocol is not physical evidence.
+
+The existence of telemetry infrastructure is not physical evidence.
+
+A successful Stress Test II execution is not, by itself, evidence of a Harmonic Scar.
+
 ## 15. Falsification Requirement
 
 The experiment must specify in advance what observations would count against the hypothesis.
 
-No protocol may be rewritten after observing the data merely to make an outcome appear confirmatory.
+Examples include:
+
+- no measurable difference between controlled treatment and control
+- observed effects disappearing under repeated runs
+- effects attributable to known thermal drift
+- effects attributable to scheduler/runtime variance
+- effects attributable to measurement noise
+- effects disappearing when the contradiction condition is removed
+- failure to reproduce a predefined signal under controlled conditions
+
+The protocol must not be rewritten after observing the data merely to make an outcome appear confirmatory.
 
 ## 16. Correlation and Causation
 
-Correlation analysis may quantify relationships between runtime events and measured variables.
+Correlation analysis is permitted where appropriate.
+
+Possible predefined methods include:
+
+- Pearson correlation
+- rank correlation
+- cross-correlation
+- event-window analysis
+- treatment/control distribution comparison
 
 A strong correlation does not by itself establish that the contradiction event caused the measured physical signal.
 
-The primary comparison is between controlled treatment and control distributions.
+The primary comparison is between controlled treatment and control distributions, with the contradiction event providing the temporal reference point.
 
 ## 17. Reproducibility
 
-Promotion beyond OBSERVED requires independent repeated runs, preserved identifiers, commit hashes, configurations, instrument metadata, raw measurements, reproducible analysis, and output hashes.
+A result considered for promotion beyond OBSERVED must include:
+
+- independent repeated runs
+- preserved run identifiers
+- preserved code commit
+- preserved configuration
+- preserved instrument metadata
+- preserved raw measurements
+- deterministic identification of the contradiction event
+- reproducible analysis
+- output hashes
+
+Reproduction must not silently reuse the same output artifact as an independent measurement.
 
 ## 18. Canonical Interpretation Rule
 
-An unmeasured physical Harmonic Scar may not be described as an established physical fact.
+The canonical report may describe:
+
+- the architecture
+- the hypothesis
+- the computational implementation
+- the instrumentation procedure
+- the measurements
+- the statistical analysis
+- the observed results
+- the limitations
+
+It may not describe an unmeasured physical Harmonic Scar as an established physical fact.
 
 Until the evidence gate is crossed, all physical Harmonic Scar language remains explicitly hypothetical.
 
@@ -208,5 +298,7 @@ Until the evidence gate is crossed, all physical Harmonic Scar language remains 
 Protocol: COMPLETE
 Physical instrumentation: NOT_YET_TESTED
 CE-XIX-003: HYPOTHESIS / NOT_YET_TESTED
+
+The next engineering task is implementation of the actual Stress Test II measurement boundary.
 
 No canonical evidence promotion occurs as a consequence of this protocol alone.
