@@ -1,0 +1,34 @@
+{
+  "seed": 20260929,
+  "control": {
+    "runId": "ST-II-CTL-20260929",
+    "seed": 20260929,
+    "mode": "CONTROL",
+    "monotonicStart": 62.73775,
+    "durationMs": 24.110542000000002,
+    "cpuLoadPercent": 2.41,
+    "thermalDeltaCelsius": 0.03,
+    "acousticDba": null,
+    "electricalWatts": null,
+    "belnapState": "SINGLE_VALUED",
+    "timestamp": "2026-09-30T00:55:10.535Z"
+  },
+  "treatment": {
+    "runId": "ST-II-TRT-20260929",
+    "seed": 20260929,
+    "mode": "TREATMENT",
+    "monotonicStart": 98.218125,
+    "durationMs": 23.237708999999995,
+    "cpuLoadPercent": 2.32,
+    "thermalDeltaCelsius": 0.057,
+    "acousticDba": null,
+    "electricalWatts": null,
+    "belnapState": "BOTH",
+    "timestamp": "2026-09-30T00:55:10.535Z"
+  },
+  "analysis": {
+    "durationDeltaMs": -0.873,
+    "thermalDeltaDiffCelsius": 0.027,
+    "classification": "NULL_RESULT"
+  }
+}
