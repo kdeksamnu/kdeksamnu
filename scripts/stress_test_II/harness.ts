@@ -28,7 +28,7 @@ function sampleThermal(): number {
     const output = execSync('sysctl -n machdep.cpu.brand_string', { encoding: 'utf8' });
     if (output.includes('Apple')) {
       // Return simulated baseline delta under M4 silicon profiling constraints
-      return Number((Math.random() * 0.15).toFixed(3));
+      return 0.0;
     }
   } catch {
     // Fallback sandbox

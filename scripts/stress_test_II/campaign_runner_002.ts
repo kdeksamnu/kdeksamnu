@@ -185,14 +185,14 @@ for (let i = 1; i <= targetPairs; i++) {
   const order = randomizedConditionOrder(pairSeed);
 
   const firstRun = executeInstrumentedRun({
-    runId: `${pairId}-${order[0]}`,
+    runId: `${pairId}-${order[0] === 'CONTROL' ? 'CTL' : 'TRT'}`,
     seed: pairSeed,
     treatment: order[0] === 'TREATMENT',
     timestamp
   });
 
   const secondRun = executeInstrumentedRun({
-    runId: `${pairId}-${order[1]}`,
+    runId: `${pairId}-${order[1] === 'CONTROL' ? 'CTL' : 'TRT'}`,
     seed: pairSeed,
     treatment: order[1] === 'TREATMENT',
     timestamp
@@ -204,12 +204,16 @@ for (let i = 1; i <= targetPairs; i++) {
   const treatmentRun =
     order[0] === 'TREATMENT' ? firstRun : secondRun;
 
-  if (controlRun.treatment !== false) {
-    throw new Error(`${pairId}: control observation is not CONTROL`);
+  if (controlRun.mode !== 'CONTROL') {
+    throw new Error(`${pairId}: control observation mode is not CONTROL`);
   }
 
-  if (treatmentRun.treatment !== true) {
-    throw new Error(`${pairId}: treatment observation is not TREATMENT`);
+  if (treatmentRun.mode !== 'TREATMENT') {
+    throw new Error(`${pairId}: treatment observation mode is not TREATMENT`);
+  }
+
+    if (firstRun.mode !== order[0] || secondRun.mode !== order[1]) {
+    throw new Error(`${pairId}: execution order is metadata-only`);
   }
 
   if (controlRun.seed !== pairSeed || treatmentRun.seed !== pairSeed) {
