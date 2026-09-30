@@ -1,0 +1,11 @@
+{
+  "export_timestamp": "2026-09-30T05:25:32.028515Z",
+  "node": "\u03a3-7",
+  "operator": "Kenneth Wayne Dallmier",
+  "repository": "cathedral-engine",
+  "stratum_target": "strata/ash_archive_codex_xxvi.json",
+  "status": "SEALED_AND_VERIFIED",
+  "active_merkle_head": "8b507699816a70308858b112d9a3965d5299f2ca8c02676cbad1ff89d9e72313",
+  "manifest_hash": "3b5359fe901b1ea6771253460d44bd8ff6c1b64f77ec9a886da9e6b6a586044d",
+  "artifact_signature": "ce7128cb7df9dfedfc0e5818cf73b1bb411cd9cb2532ba22dc1d2240cd55b22b"
+}
