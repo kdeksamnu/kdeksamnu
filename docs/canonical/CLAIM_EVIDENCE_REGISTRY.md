@@ -19,3 +19,7 @@
 - **Classification:** HYPOTHESIS
 - **Evidence:** NONE
 - **Status:** NOT_YET_TESTED
+
+## The Epistemic Invariant
+
+> **The evidence boundary advances only when a claim acquires traceable experimental evidence. It never advances because a specification becomes more detailed.**
