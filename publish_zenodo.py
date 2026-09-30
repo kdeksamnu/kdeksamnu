@@ -1,7 +1,7 @@
 import os
 import json
 import hashlib
-import requests
+import urllib.request
 
 ZENODO_API_URL = "https://zenodo.org/api/deposit/depositions"
 ACCESS_TOKEN = os.getenv("ZENODO_ACCESS_TOKEN", "DUMMY_TOKEN_FOR_LOCAL_STAGING")
