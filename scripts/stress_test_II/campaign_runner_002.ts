@@ -232,7 +232,7 @@ const durationDelta = treatmentRun.durationMs - controlRun.durationMs;
   pairResults.push({
     pairId,
     randomizationSeed: pairSeed,
-    conditionOrder,
+      conditionOrder: order,
     controlResult: controlRun,
     treatmentResult: treatmentRun,
     durationDeltaMs: Number(durationDelta.toFixed(3)),
