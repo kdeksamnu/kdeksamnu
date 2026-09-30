@@ -17,8 +17,14 @@
 ### CE-XIX-003
 - **Claim:** A contradictory runtime state produces a physical Harmonic Scar.
 - **Classification:** HYPOTHESIS
-- **Evidence:** NONE
+- **Evidence:** Stress Test II Campaign 002: runtime/telemetry experiment archived in `docs/canonical/STRESS_II_CAMPAIGN_002_REPORT.json` (50 randomized pairs, Student's t-test duration p = 0.894, thermal p = 0.885, aggregate NULL_RESULT).
 - **Status:** NOT_YET_TESTED
+
+> Campaign 002 is experimental evidence about the measurement boundary only.
+> It does not by itself establish that a physical Harmonic Scar exists.
+> CE-XIX-003 remains NOT_YET_TESTED until the predefined evidence-promotion
+> gate is satisfied through traceable physical measurement, appropriate
+> controls, reproducibility, and evidence review.
 
 ## The Epistemic Invariant
 
