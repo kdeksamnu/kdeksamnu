@@ -1,11 +1,11 @@
 {
   "version": "1.0.0-frozen",
-  "timestamp": "2026-09-30T00:57:00.795Z",
+  "timestamp": "2026-09-30T01:00:00.000Z",
   "parameters": {
     "targetRepetitions": 50,
     "significanceThresholdP": 0.01,
-    "effectSizeThresholdDurationMs": 25,
-    "effectSizeThresholdThermalC": 0.5
+    "effectSizeThresholdDurationMs": 25.0,
+    "effectSizeThresholdThermalC": 0.50
   },
   "randomizedExecutionProtocol": "Condition order (Control vs Treatment) must be randomized per run pair using a seeded PRNG to eliminate temporal drift confounds."
 }
