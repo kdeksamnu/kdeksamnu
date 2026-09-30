@@ -1,6 +1,6 @@
 {
   "campaignId": "CAMPAIGN-002",
-  "campaignTimestamp": "2026-09-30T01:28:20.940Z",
+  "campaignTimestamp": "2026-09-30T01:28:51.967Z",
   "planVersion": "1.0.0-frozen",
   "totalPairs": 50,
   "pairs": [
@@ -15,32 +15,32 @@
         "runId": "PAIR-001-CTL",
         "seed": 20260930,
         "mode": "CONTROL",
-        "monotonicStart": 140.461792,
-        "durationMs": 23.606540999999993,
-        "cpuLoadPercent": 2.36,
+        "monotonicStart": 74.368042,
+        "durationMs": 24.312832999999998,
+        "cpuLoadPercent": 2.43,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-001-TRT",
         "seed": 20260930,
         "mode": "TREATMENT",
-        "monotonicStart": 109.342792,
-        "durationMs": 24.243499999999983,
-        "cpuLoadPercent": 2.42,
+        "monotonicStart": 41.619083,
+        "durationMs": 24.521874999999994,
+        "cpuLoadPercent": 2.45,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.637,
+      "durationDeltaMs": 0.209,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "f900d5bd52c501808b984e61047d161cdb32d119e4a1224de2673ad497544354"
+      "outputHash": "942a99c1f22e9f7f29d0867055c1681237fb6516f1ae4c1021e0bbbf4f1c6d5a"
     },
     {
       "pairId": "PAIR-002",
@@ -53,32 +53,32 @@
         "runId": "PAIR-002-CTL",
         "seed": 20260931,
         "mode": "CONTROL",
-        "monotonicStart": 197.150125,
-        "durationMs": 23.804541999999998,
-        "cpuLoadPercent": 2.38,
+        "monotonicStart": 132.523208,
+        "durationMs": 24.448499999999996,
+        "cpuLoadPercent": 2.44,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-002-TRT",
         "seed": 20260931,
         "mode": "TREATMENT",
-        "monotonicStart": 169.172667,
-        "durationMs": 23.339916000000017,
-        "cpuLoadPercent": 2.33,
+        "monotonicStart": 103.492958,
+        "durationMs": 24.409209000000004,
+        "cpuLoadPercent": 2.44,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.465,
+      "durationDeltaMs": -0.039,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "f059f044e73478b1f7b9d82950690068ac88e3e578d0be900053f6fe254b22bb"
+      "outputHash": "dfb1df54ea6756db318b0e14a394d3f9b7008600b4443f0915ddc88f95dddf26"
     },
     {
       "pairId": "PAIR-003",
@@ -91,32 +91,32 @@
         "runId": "PAIR-003-CTL",
         "seed": 20260932,
         "mode": "CONTROL",
-        "monotonicStart": 252.886583,
-        "durationMs": 23.50762499999999,
-        "cpuLoadPercent": 2.35,
+        "monotonicStart": 191.384875,
+        "durationMs": 25.389583000000016,
+        "cpuLoadPercent": 2.54,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-003-TRT",
         "seed": 20260932,
         "mode": "TREATMENT",
-        "monotonicStart": 225.162833,
-        "durationMs": 23.626666999999998,
-        "cpuLoadPercent": 2.36,
+        "monotonicStart": 161.754833,
+        "durationMs": 24.893250000000023,
+        "cpuLoadPercent": 2.49,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.119,
+      "durationDeltaMs": -0.496,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "86b7f36bfea94544f7133d4dc43c7a1ccd42e03a6a88445bb074b5f06d501cd7"
+      "outputHash": "21d54026aca8da1033a7fc0a03f5229ca0aebe67494553442c5b6d42bde83669"
     },
     {
       "pairId": "PAIR-004",
@@ -129,32 +129,32 @@
         "runId": "PAIR-004-CTL",
         "seed": 20260933,
         "mode": "CONTROL",
-        "monotonicStart": 309.462208,
-        "durationMs": 23.406209000000047,
-        "cpuLoadPercent": 2.34,
+        "monotonicStart": 251.333917,
+        "durationMs": 25.402374999999978,
+        "cpuLoadPercent": 2.54,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-004-TRT",
         "seed": 20260933,
         "mode": "TREATMENT",
-        "monotonicStart": 280.675958,
-        "durationMs": 23.93900000000002,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 221.346875,
+        "durationMs": 25.371541999999977,
+        "cpuLoadPercent": 2.54,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.533,
+      "durationDeltaMs": -0.031,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "a4e0eb75dbff0d7a0f225994e49cd4c81fd296e5558ff8cc95001f5ce63f1ce7"
+      "outputHash": "c34c5f1cb77097a360804d47fdd63c5be23cc207db5c3a1afdc659296ddd57be"
     },
     {
       "pairId": "PAIR-005",
@@ -167,32 +167,32 @@
         "runId": "PAIR-005-CTL",
         "seed": 20260934,
         "mode": "CONTROL",
-        "monotonicStart": 337.678542,
-        "durationMs": 23.52966600000002,
-        "cpuLoadPercent": 2.35,
+        "monotonicStart": 281.325167,
+        "durationMs": 25.304416000000003,
+        "cpuLoadPercent": 2.53,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-005-TRT",
         "seed": 20260934,
         "mode": "TREATMENT",
-        "monotonicStart": 365.4255,
-        "durationMs": 24.291999999999973,
-        "cpuLoadPercent": 2.43,
+        "monotonicStart": 311.127042,
+        "durationMs": 25.303999999999974,
+        "cpuLoadPercent": 2.53,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.762,
+      "durationDeltaMs": 0,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "2882eecd967ba825fb8e6de6946edc4a75af98dedfb171d1d0e5460fe497f8c0"
+      "outputHash": "be2e2bd02e7e3902364d1e8e13a89b9f2718d9e1ef1090e8a142131e3e8788ed"
     },
     {
       "pairId": "PAIR-006",
@@ -205,32 +205,32 @@
         "runId": "PAIR-006-CTL",
         "seed": 20260935,
         "mode": "CONTROL",
-        "monotonicStart": 393.853833,
-        "durationMs": 24.010208999999975,
-        "cpuLoadPercent": 2.4,
+        "monotonicStart": 341.11075,
+        "durationMs": 25.50512500000002,
+        "cpuLoadPercent": 2.55,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-006-TRT",
         "seed": 20260935,
         "mode": "TREATMENT",
-        "monotonicStart": 421.568125,
-        "durationMs": 23.60337499999997,
-        "cpuLoadPercent": 2.36,
+        "monotonicStart": 371.225292,
+        "durationMs": 25.212999999999965,
+        "cpuLoadPercent": 2.52,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.407,
+      "durationDeltaMs": -0.292,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "f09ed68db998bc05c498094159130c2c63af0a528b1d1982aca51f4eabab8773"
+      "outputHash": "ec843dd8c6a111faed60fa65cb67451fb38749506a6f751adc4cff2f58bd74dc"
     },
     {
       "pairId": "PAIR-007",
@@ -243,32 +243,32 @@
         "runId": "PAIR-007-CTL",
         "seed": 20260936,
         "mode": "CONTROL",
-        "monotonicStart": 449.191125,
-        "durationMs": 24.076750000000004,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 401.028583,
+        "durationMs": 24.891791999999953,
+        "cpuLoadPercent": 2.49,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-007-TRT",
         "seed": 20260936,
         "mode": "TREATMENT",
-        "monotonicStart": 477.326542,
-        "durationMs": 23.525165999999956,
-        "cpuLoadPercent": 2.35,
+        "monotonicStart": 430.372583,
+        "durationMs": 24.573499999999967,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.552,
+      "durationDeltaMs": -0.318,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "444d50792ced476a46e9c1f8b2ea133ef07e02350f4ff65e0b99c4579e0eca5e"
+      "outputHash": "33bb19d638dc5e792d3e13b2dad7cfdc7b17ada0e80c4f48f402d6f0c989b391"
     },
     {
       "pairId": "PAIR-008",
@@ -281,32 +281,32 @@
         "runId": "PAIR-008-CTL",
         "seed": 20260937,
         "mode": "CONTROL",
-        "monotonicStart": 533.485542,
-        "durationMs": 24.135666000000015,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 488.471625,
+        "durationMs": 24.645374999999945,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-008-TRT",
         "seed": 20260937,
         "mode": "TREATMENT",
-        "monotonicStart": 504.586042,
-        "durationMs": 24.855541000000017,
-        "cpuLoadPercent": 2.49,
+        "monotonicStart": 459.691417,
+        "durationMs": 24.283624999999972,
+        "cpuLoadPercent": 2.43,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.72,
+      "durationDeltaMs": -0.362,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "011d82bd1daec6edd54e41cfafdb779aa47691382d8f01ea08c35e1975d680ed"
+      "outputHash": "324ae7d57e74d6b6b55a8a54f744ab4542240ce7489100dc6a6516c4780457fc"
     },
     {
       "pairId": "PAIR-009",
@@ -319,32 +319,32 @@
         "runId": "PAIR-009-CTL",
         "seed": 20260938,
         "mode": "CONTROL",
-        "monotonicStart": 561.151042,
-        "durationMs": 24.777333,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 517.988083,
+        "durationMs": 24.151166999999987,
+        "cpuLoadPercent": 2.42,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-009-TRT",
         "seed": 20260938,
         "mode": "TREATMENT",
-        "monotonicStart": 589.994,
-        "durationMs": 24.666999999999916,
-        "cpuLoadPercent": 2.47,
+        "monotonicStart": 547.062125,
+        "durationMs": 24.515916999999945,
+        "cpuLoadPercent": 2.45,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.11,
+      "durationDeltaMs": 0.365,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "55962a25279df105c00bf5de1af93fc34bf48d7e8523d6a6f03017af2b9a8f81"
+      "outputHash": "48c3395929550c55da1ee0a5ffecbb162fd9c65de208149bd70f3f515900addc"
     },
     {
       "pairId": "PAIR-010",
@@ -357,32 +357,32 @@
         "runId": "PAIR-010-CTL",
         "seed": 20260939,
         "mode": "CONTROL",
-        "monotonicStart": 646.658958,
-        "durationMs": 24.725667000000044,
+        "monotonicStart": 604.740792,
+        "durationMs": 24.660790999999904,
         "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-010-TRT",
         "seed": 20260939,
         "mode": "TREATMENT",
-        "monotonicStart": 618.647667,
-        "durationMs": 24.087375000000065,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 576.105792,
+        "durationMs": 24.38645800000006,
+        "cpuLoadPercent": 2.44,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.638,
+      "durationDeltaMs": -0.274,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "d57dc626cdf885719e3b4848507c68cbad56b4afcc3484f8f8c6e44cb7df45f7"
+      "outputHash": "68b26ce7411a9e3cdef25ec8129a03464f5e0f1ae894bedb1e6d8298643b9a59"
     },
     {
       "pairId": "PAIR-011",
@@ -395,32 +395,32 @@
         "runId": "PAIR-011-CTL",
         "seed": 20260940,
         "mode": "CONTROL",
-        "monotonicStart": 702.774333,
-        "durationMs": 23.849042000000054,
-        "cpuLoadPercent": 2.38,
+        "monotonicStart": 663.327042,
+        "durationMs": 24.423832999999945,
+        "cpuLoadPercent": 2.44,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-011-TRT",
         "seed": 20260940,
         "mode": "TREATMENT",
-        "monotonicStart": 675.422875,
-        "durationMs": 23.389125000000035,
-        "cpuLoadPercent": 2.34,
+        "monotonicStart": 634.262167,
+        "durationMs": 24.78125,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.46,
+      "durationDeltaMs": 0.357,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "849354c846c050d2618e187878174402f7de8d90bcc48a1598cfff8e66eb8840"
+      "outputHash": "71a0c8c4082920738397dfe59056e2666947561a12c1dfb82be92a71af937b21"
     },
     {
       "pairId": "PAIR-012",
@@ -433,32 +433,32 @@
         "runId": "PAIR-012-CTL",
         "seed": 20260941,
         "mode": "CONTROL",
-        "monotonicStart": 730.739667,
-        "durationMs": 24.067040999999904,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 691.793083,
+        "durationMs": 24.672916999999984,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-012-TRT",
         "seed": 20260941,
         "mode": "TREATMENT",
-        "monotonicStart": 758.77975,
-        "durationMs": 24.416499999999928,
-        "cpuLoadPercent": 2.44,
+        "monotonicStart": 720.354542,
+        "durationMs": 24.576582999999914,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.349,
+      "durationDeltaMs": -0.096,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "915a995dc71bd8fc845a241e7560a975710667bcc32d997c5d98141376a23e30"
+      "outputHash": "2d892a0d8998cdc968de2506c4e3a9c5a8356dc7e91d294bc581287c4694fb3a"
     },
     {
       "pairId": "PAIR-013",
@@ -471,32 +471,32 @@
         "runId": "PAIR-013-CTL",
         "seed": 20260942,
         "mode": "CONTROL",
-        "monotonicStart": 815.476917,
-        "durationMs": 24.35962500000005,
-        "cpuLoadPercent": 2.44,
+        "monotonicStart": 777.707208,
+        "durationMs": 24.740249999999946,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-013-TRT",
         "seed": 20260942,
         "mode": "TREATMENT",
-        "monotonicStart": 787.175083,
-        "durationMs": 24.307458999999994,
-        "cpuLoadPercent": 2.43,
+        "monotonicStart": 749.047083,
+        "durationMs": 24.521624999999972,
+        "cpuLoadPercent": 2.45,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.052,
+      "durationDeltaMs": -0.219,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "034acac5db41b5660fac36fb60c6eb9ada79c4ebb35203d6ccf31624d498912e"
+      "outputHash": "31f66110ee2114d856c512e4e84dd92eaa39c5ccf42fdf2fa055fdcfef2ba119"
     },
     {
       "pairId": "PAIR-014",
@@ -509,32 +509,32 @@
         "runId": "PAIR-014-CTL",
         "seed": 20260943,
         "mode": "CONTROL",
-        "monotonicStart": 871.552125,
-        "durationMs": 24.4068749999999,
-        "cpuLoadPercent": 2.44,
+        "monotonicStart": 835.449417,
+        "durationMs": 25.15112499999998,
+        "cpuLoadPercent": 2.52,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-014-TRT",
         "seed": 20260943,
         "mode": "TREATMENT",
-        "monotonicStart": 843.704167,
-        "durationMs": 23.903290999999967,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 806.45275,
+        "durationMs": 24.884500000000003,
+        "cpuLoadPercent": 2.49,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.504,
+      "durationDeltaMs": -0.267,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "e3b9328b05e21a7e412e7796b478006d52dc5e6f6fa0ba7207a0547b8705bbb2"
+      "outputHash": "5ccb622607425e26ff5ba91fb8fd8a8c1a189dbc5704933d6367928b90fb4ea1"
     },
     {
       "pairId": "PAIR-015",
@@ -547,32 +547,32 @@
         "runId": "PAIR-015-CTL",
         "seed": 20260944,
         "mode": "CONTROL",
-        "monotonicStart": 899.921042,
-        "durationMs": 24.41654099999994,
-        "cpuLoadPercent": 2.44,
+        "monotonicStart": 864.5275,
+        "durationMs": 24.196458000000007,
+        "cpuLoadPercent": 2.42,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-015-TRT",
         "seed": 20260944,
         "mode": "TREATMENT",
-        "monotonicStart": 928.153042,
-        "durationMs": 24.54925000000003,
-        "cpuLoadPercent": 2.45,
+        "monotonicStart": 892.585042,
+        "durationMs": 24.256790999999907,
+        "cpuLoadPercent": 2.43,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.133,
+      "durationDeltaMs": 0.06,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "bef7e4972114c19d9264ab86b8233c3ac33a5250a10cdbeac69d70eaaa25a5e2"
+      "outputHash": "f265e3a9a91f2827a701b216b56eb1d31a7dc2b43756d21212ea61a09f9ba300"
     },
     {
       "pairId": "PAIR-016",
@@ -585,32 +585,32 @@
         "runId": "PAIR-016-CTL",
         "seed": 20260945,
         "mode": "CONTROL",
-        "monotonicStart": 984.88825,
-        "durationMs": 24.534250000000043,
-        "cpuLoadPercent": 2.45,
+        "monotonicStart": 949.335667,
+        "durationMs": 24.975208000000066,
+        "cpuLoadPercent": 2.5,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-016-TRT",
         "seed": 20260945,
         "mode": "TREATMENT",
-        "monotonicStart": 956.878583,
-        "durationMs": 24.116625,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 921.093417,
+        "durationMs": 24.26745799999992,
+        "cpuLoadPercent": 2.43,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.418,
+      "durationDeltaMs": -0.708,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "1523607a5ee9b7b0dcf5147ca19f61ed68100afc94d8201637878fa032ddf9e7"
+      "outputHash": "e40330e029413b5391a48ef45dadc7857efc8ca4c7b517c752f25edbf68be8ed"
     },
     {
       "pairId": "PAIR-017",
@@ -623,32 +623,32 @@
         "runId": "PAIR-017-CTL",
         "seed": 20260946,
         "mode": "CONTROL",
-        "monotonicStart": 1013.178792,
-        "durationMs": 24.79920800000002,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 978.328542,
+        "durationMs": 24.40375000000006,
+        "cpuLoadPercent": 2.44,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-017-TRT",
         "seed": 20260946,
         "mode": "TREATMENT",
-        "monotonicStart": 1041.754042,
-        "durationMs": 24.512083000000075,
-        "cpuLoadPercent": 2.45,
+        "monotonicStart": 1006.698417,
+        "durationMs": 24.436416000000122,
+        "cpuLoadPercent": 2.44,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.287,
+      "durationDeltaMs": 0.033,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "8bbed9fa1418b66e8c246b3edf525279e8b527224ed8b0b499efe8352216ea6a"
+      "outputHash": "657ef4523a6aeec6e68c7ae1f9a8a464d7102f809fb34544768035cf1b83dec2"
     },
     {
       "pairId": "PAIR-018",
@@ -661,32 +661,32 @@
         "runId": "PAIR-018-CTL",
         "seed": 20260947,
         "mode": "CONTROL",
-        "monotonicStart": 1070.103708,
-        "durationMs": 24.70699999999988,
-        "cpuLoadPercent": 2.47,
+        "monotonicStart": 1035.1545,
+        "durationMs": 24.989332999999988,
+        "cpuLoadPercent": 2.5,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-018-TRT",
         "seed": 20260947,
         "mode": "TREATMENT",
-        "monotonicStart": 1098.6785,
-        "durationMs": 24.243791999999985,
-        "cpuLoadPercent": 2.42,
+        "monotonicStart": 1063.766708,
+        "durationMs": 24.945416999999907,
+        "cpuLoadPercent": 2.49,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.463,
+      "durationDeltaMs": -0.044,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "da0875e2cdbb6062262f872838e811ef27dd1ea99c1c9ddbe34fa772f6dcd1a7"
+      "outputHash": "89abd22ce23691d4a46d033bf84f5519a7897623fafe980ecc1e5a399ceff962"
     },
     {
       "pairId": "PAIR-019",
@@ -699,32 +699,32 @@
         "runId": "PAIR-019-CTL",
         "seed": 20260948,
         "mode": "CONTROL",
-        "monotonicStart": 1155.352958,
-        "durationMs": 24.746875000000045,
-        "cpuLoadPercent": 2.47,
+        "monotonicStart": 1121.76,
+        "durationMs": 24.535292000000027,
+        "cpuLoadPercent": 2.45,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-019-TRT",
         "seed": 20260948,
         "mode": "TREATMENT",
-        "monotonicStart": 1126.788208,
-        "durationMs": 24.800709000000097,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 1092.659625,
+        "durationMs": 24.971958000000086,
+        "cpuLoadPercent": 2.5,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.054,
+      "durationDeltaMs": 0.437,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "11ee74050952d9207c535037515b0458fbb2c4ccb494ff6b5dce8331ac5545b1"
+      "outputHash": "49e24362b2061ab0b225e29e5ec39626a0cfad614aeed80dae7a7b4590a11680"
     },
     {
       "pairId": "PAIR-020",
@@ -737,32 +737,32 @@
         "runId": "PAIR-020-CTL",
         "seed": 20260949,
         "mode": "CONTROL",
-        "monotonicStart": 1183.92925,
-        "durationMs": 24.785167,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 1150.315292,
+        "durationMs": 24.213833000000022,
+        "cpuLoadPercent": 2.42,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-020-TRT",
         "seed": 20260949,
         "mode": "TREATMENT",
-        "monotonicStart": 1212.722667,
-        "durationMs": 24.794208000000026,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 1178.279333,
+        "durationMs": 24.14866700000016,
+        "cpuLoadPercent": 2.41,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.009,
+      "durationDeltaMs": -0.065,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "bedd2d7c713ea319075f4af5677121d35b21d3b87623de55e3ca405a1cc8a2ef"
+      "outputHash": "9bf03615a09cf5c740b09abda9d8ecb9f45c13824a47fede6932d047975bc626"
     },
     {
       "pairId": "PAIR-021",
@@ -775,32 +775,32 @@
         "runId": "PAIR-021-CTL",
         "seed": 20260950,
         "mode": "CONTROL",
-        "monotonicStart": 1270.631958,
-        "durationMs": 25.496583999999984,
-        "cpuLoadPercent": 2.55,
+        "monotonicStart": 1235.056,
+        "durationMs": 24.258542000000034,
+        "cpuLoadPercent": 2.43,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-021-TRT",
         "seed": 20260950,
         "mode": "TREATMENT",
-        "monotonicStart": 1241.5575,
-        "durationMs": 24.81079200000022,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 1206.330458,
+        "durationMs": 24.643750000000182,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.686,
+      "durationDeltaMs": 0.385,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "b41862cfee20ced26daed8b8891169ac9f2000a906b54711f06d15eeba0f01b9"
+      "outputHash": "8249acfdb671be926192d03496e2cdbb728bb40d6b21471ccd03f2f48c50af65"
     },
     {
       "pairId": "PAIR-022",
@@ -813,32 +813,32 @@
         "runId": "PAIR-022-CTL",
         "seed": 20260951,
         "mode": "CONTROL",
-        "monotonicStart": 1300.474792,
-        "durationMs": 24.78758300000004,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 1263.297458,
+        "durationMs": 24.73066700000004,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-022-TRT",
         "seed": 20260951,
         "mode": "TREATMENT",
-        "monotonicStart": 1329.141375,
-        "durationMs": 24.775499999999965,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 1291.816125,
+        "durationMs": 24.127707999999984,
+        "cpuLoadPercent": 2.41,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.012,
+      "durationDeltaMs": -0.603,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "a7a339c77cdb4623428d877728d6541aa20127048dc49c20b5c98cb3b1d1c2c1"
+      "outputHash": "31811957c6d3fd08e678323fa78b56fd1a37103101c469f6b1f74e73e7fa4c52"
     },
     {
       "pairId": "PAIR-023",
@@ -851,32 +851,32 @@
         "runId": "PAIR-023-CTL",
         "seed": 20260952,
         "mode": "CONTROL",
-        "monotonicStart": 1385.905833,
-        "durationMs": 24.63762500000007,
-        "cpuLoadPercent": 2.46,
+        "monotonicStart": 1347.938042,
+        "durationMs": 23.914625000000115,
+        "cpuLoadPercent": 2.39,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-023-TRT",
         "seed": 20260952,
         "mode": "TREATMENT",
-        "monotonicStart": 1357.91975,
-        "durationMs": 23.933125000000018,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 1319.892292,
+        "durationMs": 24.25479100000007,
+        "cpuLoadPercent": 2.43,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.705,
+      "durationDeltaMs": 0.34,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "e4c5dd96b92aa1cbfb337e1f4635820db4cdd98425ece76aa05b8379b02428ff"
+      "outputHash": "1796837d931ec68fab51e2bb77de3bb62ba9fc61a5581856157334e3db77d37c"
     },
     {
       "pairId": "PAIR-024",
@@ -889,32 +889,32 @@
         "runId": "PAIR-024-CTL",
         "seed": 20260953,
         "mode": "CONTROL",
-        "monotonicStart": 1443.133667,
-        "durationMs": 25.096499999999878,
-        "cpuLoadPercent": 2.51,
+        "monotonicStart": 1404.447125,
+        "durationMs": 24.14904200000001,
+        "cpuLoadPercent": 2.41,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-024-TRT",
         "seed": 20260953,
         "mode": "TREATMENT",
-        "monotonicStart": 1414.517417,
-        "durationMs": 24.55620799999997,
-        "cpuLoadPercent": 2.46,
+        "monotonicStart": 1375.595,
+        "durationMs": 24.84570800000006,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.54,
+      "durationDeltaMs": 0.697,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "606b9013bdd0b7841545043b1254511c9de9a0ca0f4d69448c5c35127afeae2d"
+      "outputHash": "0b6b064f345a6b27c775f6ca6cc38a0c8c2d28f8c265ab7da7e96125b501485b"
     },
     {
       "pairId": "PAIR-025",
@@ -927,32 +927,32 @@
         "runId": "PAIR-025-CTL",
         "seed": 20260954,
         "mode": "CONTROL",
-        "monotonicStart": 1500.40275,
-        "durationMs": 23.873291999999992,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 1461.26475,
+        "durationMs": 24.493291999999883,
+        "cpuLoadPercent": 2.45,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-025-TRT",
         "seed": 20260954,
         "mode": "TREATMENT",
-        "monotonicStart": 1472.344042,
-        "durationMs": 24.129000000000133,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 1432.489,
+        "durationMs": 24.85070799999994,
+        "cpuLoadPercent": 2.49,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.256,
+      "durationDeltaMs": 0.357,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "bfa0d593a9eb10b950a9943412b3eecbd3f0f31805b327ca0f929b336881d338"
+      "outputHash": "1e49b07081869759d8a996fda254a817946b520ee7d037e8ef6434d3a5dafb22"
     },
     {
       "pairId": "PAIR-026",
@@ -965,32 +965,32 @@
         "runId": "PAIR-026-CTL",
         "seed": 20260955,
         "mode": "CONTROL",
-        "monotonicStart": 1528.287375,
-        "durationMs": 24.701458000000002,
-        "cpuLoadPercent": 2.47,
+        "monotonicStart": 1489.850375,
+        "durationMs": 24.175250000000005,
+        "cpuLoadPercent": 2.42,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-026-TRT",
         "seed": 20260955,
         "mode": "TREATMENT",
-        "monotonicStart": 1557.109083,
-        "durationMs": 24.80641700000001,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 1517.88725,
+        "durationMs": 25.165207999999893,
+        "cpuLoadPercent": 2.52,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.105,
+      "durationDeltaMs": 0.99,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "0d0edde23a7d365d9802f360c599177035a212a2a96cf70150b31066c5357d0d"
+      "outputHash": "4f47596845db541fd5a4ab58e3aa7c714eb97a9f7d2fb81f4db1ef516c5ef356"
     },
     {
       "pairId": "PAIR-027",
@@ -1003,32 +1003,32 @@
         "runId": "PAIR-027-CTL",
         "seed": 20260956,
         "mode": "CONTROL",
-        "monotonicStart": 1585.932083,
-        "durationMs": 25.31533400000012,
-        "cpuLoadPercent": 2.53,
+        "monotonicStart": 1546.887958,
+        "durationMs": 25.679834000000028,
+        "cpuLoadPercent": 2.57,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-027-TRT",
         "seed": 20260956,
         "mode": "TREATMENT",
-        "monotonicStart": 1615.334542,
-        "durationMs": 23.905415999999832,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 1576.583167,
+        "durationMs": 25.1217079999999,
+        "cpuLoadPercent": 2.51,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -1.41,
+      "durationDeltaMs": -0.558,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "1f22d724ad632a44a67941357e73c09549f9bc10142d9aa32abfa864aeb2d1c4"
+      "outputHash": "da6cfe2b6f2c4842de4240fe055983150e7261a4d9b6a72a9f557867df6d6ff3"
     },
     {
       "pairId": "PAIR-028",
@@ -1041,32 +1041,32 @@
         "runId": "PAIR-028-CTL",
         "seed": 20260957,
         "mode": "CONTROL",
-        "monotonicStart": 1670.875792,
-        "durationMs": 23.923499999999876,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 1633.647,
+        "durationMs": 24.572374999999965,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-028-TRT",
         "seed": 20260957,
         "mode": "TREATMENT",
-        "monotonicStart": 1643.557417,
-        "durationMs": 23.230416000000105,
-        "cpuLoadPercent": 2.32,
+        "monotonicStart": 1605.652125,
+        "durationMs": 24.007749999999987,
+        "cpuLoadPercent": 2.4,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.693,
+      "durationDeltaMs": -0.565,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "09d7d8d64efe88ef71e41ff437ff23f8304d9a8d0e86aa8847c1aafbd9b674be"
+      "outputHash": "85add5a129cdb04a9882a0e15bf3f54b453ed58361c925b88c00ecb346a7f239"
     },
     {
       "pairId": "PAIR-029",
@@ -1079,32 +1079,32 @@
         "runId": "PAIR-029-CTL",
         "seed": 20260958,
         "mode": "CONTROL",
-        "monotonicStart": 1698.736417,
-        "durationMs": 23.625332999999955,
-        "cpuLoadPercent": 2.36,
+        "monotonicStart": 1662.044292,
+        "durationMs": 24.695582999999942,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-029-TRT",
         "seed": 20260958,
         "mode": "TREATMENT",
-        "monotonicStart": 1726.38325,
-        "durationMs": 24.35587499999997,
-        "cpuLoadPercent": 2.44,
+        "monotonicStart": 1690.525708,
+        "durationMs": 24.47637500000019,
+        "cpuLoadPercent": 2.45,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.731,
+      "durationDeltaMs": -0.219,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "8d3da58b0c868b5c73c6ff28d8049e6f6f04369ece41888949033f44833339a3"
+      "outputHash": "bdbb4e66a2585e0594bba51fdb7fe4f929a6f39b2ffd507f912038307c22cd43"
     },
     {
       "pairId": "PAIR-030",
@@ -1117,32 +1117,32 @@
         "runId": "PAIR-030-CTL",
         "seed": 20260959,
         "mode": "CONTROL",
-        "monotonicStart": 1783.257208,
-        "durationMs": 24.711624999999913,
-        "cpuLoadPercent": 2.47,
+        "monotonicStart": 1746.971708,
+        "durationMs": 24.219708999999966,
+        "cpuLoadPercent": 2.42,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-030-TRT",
         "seed": 20260959,
         "mode": "TREATMENT",
-        "monotonicStart": 1754.571667,
-        "durationMs": 24.764041000000134,
-        "cpuLoadPercent": 2.48,
+        "monotonicStart": 1719.021333,
+        "durationMs": 24.084542000000056,
+        "cpuLoadPercent": 2.41,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.052,
+      "durationDeltaMs": -0.135,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "e60487d737837950b519f1fd699cdb3efa12059f2b08d7995092a1b9f7e34a38"
+      "outputHash": "568f9fc68b3737f13efc9146c27288567079ac3cef55d3ca47550569944c0edc"
     },
     {
       "pairId": "PAIR-031",
@@ -1155,32 +1155,32 @@
         "runId": "PAIR-031-CTL",
         "seed": 20260960,
         "mode": "CONTROL",
-        "monotonicStart": 1839.06975,
-        "durationMs": 23.860582999999906,
+        "monotonicStart": 1803.974875,
+        "durationMs": 23.898999999999887,
         "cpuLoadPercent": 2.39,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-031-TRT",
         "seed": 20260960,
         "mode": "TREATMENT",
-        "monotonicStart": 1811.7995,
-        "durationMs": 23.364832999999862,
-        "cpuLoadPercent": 2.34,
+        "monotonicStart": 1774.969958,
+        "durationMs": 25.094875000000002,
+        "cpuLoadPercent": 2.51,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.496,
+      "durationDeltaMs": 1.196,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "90fafb8acfeb36c7a51466c7b42f902666bedc5d7428b4eaa4498ff12f7db38d"
+      "outputHash": "c3cc867d0c37dc068a6d26e53b14c5ce2fa1bd8a84432a66b7ec9fee997100d1"
     },
     {
       "pairId": "PAIR-032",
@@ -1193,32 +1193,32 @@
         "runId": "PAIR-032-CTL",
         "seed": 20260961,
         "mode": "CONTROL",
-        "monotonicStart": 1894.930625,
-        "durationMs": 24.217083000000002,
-        "cpuLoadPercent": 2.42,
+        "monotonicStart": 1860.297792,
+        "durationMs": 25.008000000000038,
+        "cpuLoadPercent": 2.5,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-032-TRT",
         "seed": 20260961,
         "mode": "TREATMENT",
-        "monotonicStart": 1866.9725,
-        "durationMs": 24.074707999999873,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 1831.919542,
+        "durationMs": 24.584499999999935,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.142,
+      "durationDeltaMs": -0.424,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "313c6b3165073711595e2211da4132f87b4117376d84971296cf0e2e3bb9735b"
+      "outputHash": "a53d45e0f4155c522f00b037a30d09d4ab562015b3b9868c3f13faba0028a6d9"
     },
     {
       "pairId": "PAIR-033",
@@ -1231,32 +1231,32 @@
         "runId": "PAIR-033-CTL",
         "seed": 20260962,
         "mode": "CONTROL",
-        "monotonicStart": 1923.111375,
-        "durationMs": 24.449833000000126,
-        "cpuLoadPercent": 2.44,
+        "monotonicStart": 1889.19775,
+        "durationMs": 24.667666999999938,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-033-TRT",
         "seed": 20260962,
         "mode": "TREATMENT",
-        "monotonicStart": 1951.495875,
-        "durationMs": 24.20629199999985,
-        "cpuLoadPercent": 2.42,
+        "monotonicStart": 1917.669625,
+        "durationMs": 23.80645800000002,
+        "cpuLoadPercent": 2.38,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.244,
+      "durationDeltaMs": -0.861,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "ddd54c6e68de89376ac1663f4ac0122e114ce83a6db42487bc7fd9fd24eaf9e8"
+      "outputHash": "ea0c206280a4a94fb7faad26c4b1017ec3d3cf2cb8e77b3d2a8a9ae59cb185a1"
     },
     {
       "pairId": "PAIR-034",
@@ -1269,32 +1269,32 @@
         "runId": "PAIR-034-CTL",
         "seed": 20260963,
         "mode": "CONTROL",
-        "monotonicStart": 2007.422583,
-        "durationMs": 24.10995899999989,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 1973.777042,
+        "durationMs": 24.56466599999999,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-034-TRT",
         "seed": 20260963,
         "mode": "TREATMENT",
-        "monotonicStart": 1979.743917,
-        "durationMs": 23.863415999999916,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 1945.436417,
+        "durationMs": 24.44645800000012,
+        "cpuLoadPercent": 2.44,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.247,
+      "durationDeltaMs": -0.118,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "8f7e721acec19a543bd7285a0f524f15690065c107297f7099bb7169e113c29e"
+      "outputHash": "1299cb7b0c3fe802412c6e8aa60a6f7627686f7b992388986be22b6a3d55f9e2"
     },
     {
       "pairId": "PAIR-035",
@@ -1307,32 +1307,32 @@
         "runId": "PAIR-035-CTL",
         "seed": 20260964,
         "mode": "CONTROL",
-        "monotonicStart": 2035.412083,
-        "durationMs": 24.018041999999923,
-        "cpuLoadPercent": 2.4,
+        "monotonicStart": 2002.193,
+        "durationMs": 24.804333000000042,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-035-TRT",
         "seed": 20260964,
         "mode": "TREATMENT",
-        "monotonicStart": 2063.240833,
-        "durationMs": 24.396250000000236,
-        "cpuLoadPercent": 2.44,
+        "monotonicStart": 2030.797583,
+        "durationMs": 24.250125000000025,
+        "cpuLoadPercent": 2.43,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.378,
+      "durationDeltaMs": -0.554,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "0af17eddf94b75c75a277250eb54c5b5fa988132d3365093fe283a70063b70f2"
+      "outputHash": "cdaccdd9fad590a084fce49f57811837a8c547a3fcf62788c8ef772ed9062774"
     },
     {
       "pairId": "PAIR-036",
@@ -1345,32 +1345,32 @@
         "runId": "PAIR-036-CTL",
         "seed": 20260965,
         "mode": "CONTROL",
-        "monotonicStart": 2091.431208,
-        "durationMs": 24.741333999999824,
-        "cpuLoadPercent": 2.47,
+        "monotonicStart": 2058.925583,
+        "durationMs": 24.58645899999965,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-036-TRT",
         "seed": 20260965,
         "mode": "TREATMENT",
-        "monotonicStart": 2119.961625,
-        "durationMs": 24.09658300000001,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 2087.36125,
+        "durationMs": 24.75887499999999,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.645,
+      "durationDeltaMs": 0.172,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "1146b1ced8369ea83a3097bfe5e853a0a0d1ac07210ffa0f5410df541236baed"
+      "outputHash": "658ce5689ba866454248880b1aa5a94181307a75e3069dd352e385fd65d95af9"
     },
     {
       "pairId": "PAIR-037",
@@ -1383,32 +1383,32 @@
         "runId": "PAIR-037-CTL",
         "seed": 20260966,
         "mode": "CONTROL",
-        "monotonicStart": 2147.979708,
-        "durationMs": 24.51566700000012,
-        "cpuLoadPercent": 2.45,
+        "monotonicStart": 2116.07975,
+        "durationMs": 24.768125000000055,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-037-TRT",
         "seed": 20260966,
         "mode": "TREATMENT",
-        "monotonicStart": 2176.459333,
-        "durationMs": 24.00891700000011,
-        "cpuLoadPercent": 2.4,
+        "monotonicStart": 2144.7525,
+        "durationMs": 24.826500000000124,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.507,
+      "durationDeltaMs": 0.058,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "6c4082db296006174599571ded1dbef9422ff673b0ba68ebaee3db6048c9c521"
+      "outputHash": "0711265ebea93c6552d5c747f34ff9ac47648643231661bff635f7e218699425"
     },
     {
       "pairId": "PAIR-038",
@@ -1421,32 +1421,32 @@
         "runId": "PAIR-038-CTL",
         "seed": 20260967,
         "mode": "CONTROL",
-        "monotonicStart": 2232.817167,
-        "durationMs": 24.47195799999963,
-        "cpuLoadPercent": 2.45,
+        "monotonicStart": 2201.3285,
+        "durationMs": 24.69574999999986,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-038-TRT",
         "seed": 20260967,
         "mode": "TREATMENT",
-        "monotonicStart": 2204.758,
-        "durationMs": 24.20183300000008,
+        "monotonicStart": 2173.321292,
+        "durationMs": 24.19441599999982,
         "cpuLoadPercent": 2.42,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.27,
+      "durationDeltaMs": -0.501,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "f1723a4eb8d14106e2a376fbbdbede036d2ece526e89f92eda3a1c6e16d698bb"
+      "outputHash": "1ca74fe5b011f82c3636fd4b8e66205660214ec1aca0d472695bad43c31e4468"
     },
     {
       "pairId": "PAIR-039",
@@ -1459,32 +1459,32 @@
         "runId": "PAIR-039-CTL",
         "seed": 20260968,
         "mode": "CONTROL",
-        "monotonicStart": 2287.9445,
-        "durationMs": 23.958208000000013,
-        "cpuLoadPercent": 2.4,
+        "monotonicStart": 2258.521417,
+        "durationMs": 24.801666000000296,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-039-TRT",
         "seed": 20260968,
         "mode": "TREATMENT",
-        "monotonicStart": 2261.130875,
-        "durationMs": 22.852125000000342,
-        "cpuLoadPercent": 2.29,
+        "monotonicStart": 2229.954333,
+        "durationMs": 24.591625000000022,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -1.106,
+      "durationDeltaMs": -0.21,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "17114a5d8b08561edc03064bc76c709abc233d036f6104c1dfb7ebe95f74cd4f"
+      "outputHash": "2e40ac33c45591f5a850bb99f0be8f8698bff815deb5bde697b08c71760c1008"
     },
     {
       "pairId": "PAIR-040",
@@ -1497,32 +1497,32 @@
         "runId": "PAIR-040-CTL",
         "seed": 20260969,
         "mode": "CONTROL",
-        "monotonicStart": 2315.743,
-        "durationMs": 24.521291999999903,
-        "cpuLoadPercent": 2.45,
+        "monotonicStart": 2287.224,
+        "durationMs": 24.658249999999953,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-040-TRT",
         "seed": 20260969,
         "mode": "TREATMENT",
-        "monotonicStart": 2344.067583,
-        "durationMs": 24.207374999999956,
+        "monotonicStart": 2315.63675,
+        "durationMs": 24.199666999999863,
         "cpuLoadPercent": 2.42,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.314,
+      "durationDeltaMs": -0.459,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "8eb11b97a7b55681ffa2fe16ede300324be2d5e3d72389e7aa6a96f0b7b6e47a"
+      "outputHash": "6873a4568a74119ab595b050852c5ed1005f9d2ec32fcf7dad28610fb19b604c"
     },
     {
       "pairId": "PAIR-041",
@@ -1535,32 +1535,32 @@
         "runId": "PAIR-041-CTL",
         "seed": 20260970,
         "mode": "CONTROL",
-        "monotonicStart": 2372.063792,
-        "durationMs": 24.571707999999944,
-        "cpuLoadPercent": 2.46,
+        "monotonicStart": 2343.764917,
+        "durationMs": 24.84708300000011,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-041-TRT",
         "seed": 20260970,
         "mode": "TREATMENT",
-        "monotonicStart": 2400.449417,
-        "durationMs": 24.163958000000093,
+        "monotonicStart": 2372.523125,
+        "durationMs": 24.20504200000005,
         "cpuLoadPercent": 2.42,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.408,
+      "durationDeltaMs": -0.642,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "0ef8df99704932240b030f7abc73577618fffe7c1096e61efd968b9d490b04bb"
+      "outputHash": "5eb8baf0714ec27a2058ce91347efc8280ffb781ea2fe63bd4e8be915f8d66cc"
     },
     {
       "pairId": "PAIR-042",
@@ -1573,32 +1573,32 @@
         "runId": "PAIR-042-CTL",
         "seed": 20260971,
         "mode": "CONTROL",
-        "monotonicStart": 2456.959625,
-        "durationMs": 23.85891700000002,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 2429.257708,
+        "durationMs": 24.335375000000113,
+        "cpuLoadPercent": 2.43,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-042-TRT",
         "seed": 20260971,
         "mode": "TREATMENT",
-        "monotonicStart": 2428.425333,
-        "durationMs": 24.730583999999908,
-        "cpuLoadPercent": 2.47,
+        "monotonicStart": 2400.576667,
+        "durationMs": 24.805624999999964,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.872,
+      "durationDeltaMs": 0.47,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "1a6a19f3accc4e05c46e23a779f5208855ef925425f7286d58e1765917b6185f"
+      "outputHash": "6ccf26b8062ddc0945636d97b88d5af6e763f21081b293c8d5d3ba433a416e22"
     },
     {
       "pairId": "PAIR-043",
@@ -1611,32 +1611,32 @@
         "runId": "PAIR-043-CTL",
         "seed": 20260972,
         "mode": "CONTROL",
-        "monotonicStart": 2512.330375,
-        "durationMs": 24.00604199999998,
-        "cpuLoadPercent": 2.4,
+        "monotonicStart": 2486.065958,
+        "durationMs": 24.685249999999996,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-043-TRT",
         "seed": 20260972,
         "mode": "TREATMENT",
-        "monotonicStart": 2484.62125,
-        "durationMs": 23.944666999999754,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 2457.565542,
+        "durationMs": 24.608040999999957,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.061,
+      "durationDeltaMs": -0.077,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "de90cbd14d3e4dad6f6c9e80494885f69e1b27a748ac7436c8906dcc5b6f65d3"
+      "outputHash": "b2fec2a7c4fc5d4815c9797d96f78ec7a0d978339e078932b64b5d6bff371a08"
     },
     {
       "pairId": "PAIR-044",
@@ -1649,32 +1649,32 @@
         "runId": "PAIR-044-CTL",
         "seed": 20260973,
         "mode": "CONTROL",
-        "monotonicStart": 2567.714375,
-        "durationMs": 24.037083000000166,
-        "cpuLoadPercent": 2.4,
+        "monotonicStart": 2542.865958,
+        "durationMs": 25.19254200000023,
+        "cpuLoadPercent": 2.52,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-044-TRT",
         "seed": 20260973,
         "mode": "TREATMENT",
-        "monotonicStart": 2540.209917,
-        "durationMs": 23.653332999999748,
-        "cpuLoadPercent": 2.37,
+        "monotonicStart": 2514.706292,
+        "durationMs": 24.233750000000327,
+        "cpuLoadPercent": 2.42,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.384,
+      "durationDeltaMs": -0.959,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "39fac367f2429f38978e602b8907e848d5818662b899e623b987ddf4a0856407"
+      "outputHash": "60aa9ebbba11db3e056791e84851bb8be4deccdf03a91e534d0d26f065cbaebf"
     },
     {
       "pairId": "PAIR-045",
@@ -1687,32 +1687,32 @@
         "runId": "PAIR-045-CTL",
         "seed": 20260974,
         "mode": "CONTROL",
-        "monotonicStart": 2624.029708,
-        "durationMs": 24.065583999999944,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 2600.824375,
+        "durationMs": 25.10654199999999,
+        "cpuLoadPercent": 2.51,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-045-TRT",
         "seed": 20260974,
         "mode": "TREATMENT",
-        "monotonicStart": 2595.799583,
-        "durationMs": 24.22454199999993,
-        "cpuLoadPercent": 2.42,
+        "monotonicStart": 2571.902,
+        "durationMs": 25.092916999999943,
+        "cpuLoadPercent": 2.51,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.159,
+      "durationDeltaMs": -0.014,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "05dd172faec4f24d748f96c37f52c8ae503e4938b4af4e678eb76990a0132f26"
+      "outputHash": "09f73333886fdeed6618e8fbfbe4a58a6a4f5e6a0b8b2b06f02692f6b1515f23"
     },
     {
       "pairId": "PAIR-046",
@@ -1725,32 +1725,32 @@
         "runId": "PAIR-046-CTL",
         "seed": 20260975,
         "mode": "CONTROL",
-        "monotonicStart": 2652.155625,
-        "durationMs": 24.440875000000233,
-        "cpuLoadPercent": 2.44,
+        "monotonicStart": 2629.895375,
+        "durationMs": 23.580875000000106,
+        "cpuLoadPercent": 2.36,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-046-TRT",
         "seed": 20260975,
         "mode": "TREATMENT",
-        "monotonicStart": 2680.513958,
-        "durationMs": 24.438500000000204,
-        "cpuLoadPercent": 2.44,
+        "monotonicStart": 2657.498875,
+        "durationMs": 24.695082999999613,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.002,
+      "durationDeltaMs": 1.114,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "6eb96e60826baf6bd22fec81f1eb71b62f5e937b5cf322c387ae84d1b18724cc"
+      "outputHash": "ec88f1dd72c193eae48431828c198af7cd64b0dea386a92891901de20da91ba4"
     },
     {
       "pairId": "PAIR-047",
@@ -1763,32 +1763,32 @@
         "runId": "PAIR-047-CTL",
         "seed": 20260976,
         "mode": "CONTROL",
-        "monotonicStart": 2737.818333,
-        "durationMs": 23.810291999999663,
-        "cpuLoadPercent": 2.38,
+        "monotonicStart": 2714.928208,
+        "durationMs": 24.664084000000003,
+        "cpuLoadPercent": 2.47,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-047-TRT",
         "seed": 20260976,
         "mode": "TREATMENT",
-        "monotonicStart": 2708.958083,
-        "durationMs": 24.86737499999981,
-        "cpuLoadPercent": 2.49,
+        "monotonicStart": 2686.233375,
+        "durationMs": 24.76720800000021,
+        "cpuLoadPercent": 2.48,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 1.057,
+      "durationDeltaMs": 0.103,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "ccd941df95118614290d1d2ae245fa07928206f58edf81b091b35959916c79fe"
+      "outputHash": "6a39b3a2ca758d27fa35c78f265b5bae2bb617b3069a2398e4a4531d62fe47a0"
     },
     {
       "pairId": "PAIR-048",
@@ -1801,32 +1801,32 @@
         "runId": "PAIR-048-CTL",
         "seed": 20260977,
         "mode": "CONTROL",
-        "monotonicStart": 2765.721708,
-        "durationMs": 23.302208999999948,
-        "cpuLoadPercent": 2.33,
+        "monotonicStart": 2743.613958,
+        "durationMs": 24.028334000000086,
+        "cpuLoadPercent": 2.4,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-048-TRT",
         "seed": 20260977,
         "mode": "TREATMENT",
-        "monotonicStart": 2792.878542,
-        "durationMs": 23.881624999999985,
-        "cpuLoadPercent": 2.39,
+        "monotonicStart": 2771.535417,
+        "durationMs": 24.6106249999998,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.579,
+      "durationDeltaMs": 0.582,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "b272a258182e10de3fc70f228526d43159af98ab26d1f50846df5f5f831a9e69"
+      "outputHash": "9ca8eebada7f0b91dd567807e2cd997ea1b0f151efcfed0f8e5f36f93b5d8044"
     },
     {
       "pairId": "PAIR-049",
@@ -1839,32 +1839,32 @@
         "runId": "PAIR-049-CTL",
         "seed": 20260978,
         "mode": "CONTROL",
-        "monotonicStart": 2848.388375,
-        "durationMs": 24.099041999999827,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 2830.252208,
+        "durationMs": 24.92558400000007,
+        "cpuLoadPercent": 2.49,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-049-TRT",
         "seed": 20260978,
         "mode": "TREATMENT",
-        "monotonicStart": 2820.656167,
-        "durationMs": 23.785957999999937,
-        "cpuLoadPercent": 2.38,
+        "monotonicStart": 2800.559958,
+        "durationMs": 25.197834000000057,
+        "cpuLoadPercent": 2.52,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": -0.313,
+      "durationDeltaMs": 0.272,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "2837635547244f7e89166cc882ad618d6d8b68616d7b6e7b86cbe30526ca8245"
+      "outputHash": "16805e7c6bbc214a10f206781ed5470f9db19a1e4ebd3d533faee26f85a7f61a"
     },
     {
       "pairId": "PAIR-050",
@@ -1877,44 +1877,44 @@
         "runId": "PAIR-050-CTL",
         "seed": 20260979,
         "mode": "CONTROL",
-        "monotonicStart": 2876.446667,
-        "durationMs": 23.829416000000037,
-        "cpuLoadPercent": 2.38,
+        "monotonicStart": 2859.190833,
+        "durationMs": 24.632959000000028,
+        "cpuLoadPercent": 2.46,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "SINGLE_VALUED",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
       "treatmentResult": {
         "runId": "PAIR-050-TRT",
         "seed": 20260979,
         "mode": "TREATMENT",
-        "monotonicStart": 2904.179292,
-        "durationMs": 24.14679100000012,
-        "cpuLoadPercent": 2.41,
+        "monotonicStart": 2887.856208,
+        "durationMs": 24.966583999999784,
+        "cpuLoadPercent": 2.5,
         "thermalDeltaCelsius": 0,
         "acousticDba": null,
         "electricalWatts": null,
         "belnapState": "BOTH",
-        "timestamp": "2026-09-30T01:28:20.940Z"
+        "timestamp": "2026-09-30T01:28:51.967Z"
       },
-      "durationDeltaMs": 0.317,
+      "durationDeltaMs": 0.334,
       "thermalDeltaDiffCelsius": 0,
       "classification": "NULL_RESULT",
-      "outputHash": "a39d49ab9c8b1a8abdc0fab832a71b9036b7d0a24de52ee253926f531e952e19"
+      "outputHash": "642c31f0808401afbbca45d150871a6e011a6a3a1c47f21feaafcba36b65c5a8"
     }
   ],
   "statisticalTest": {
     "testName": "Paired Student's t-test (two-tailed)",
     "design": "Matched control/treatment observations within each randomized pair",
-    "pValueDuration": 0.123326,
+    "pValueDuration": 0.642608,
     "pValueThermal": 1,
     "statisticallySignificant": false,
     "significanceThresholdP": 0.01
   },
   "aggregateAnalysis": {
-    "meanDurationDeltaMs": -0.114,
+    "meanDurationDeltaMs": -0.032,
     "meanThermalDeltaDiffCelsius": 0,
     "campaignClassification": "NULL_RESULT"
   }
