@@ -217,7 +217,16 @@ const durationDelta = treatmentRun.durationMs - controlRun.durationMs;
     classification = 'OBSERVED';
   }
 
-  const payload = JSON.stringify({ pairId, pairSeed, conditionOrder, controlRun, treatmentRun, durationDelta, thermalDiff, classification });
+  const payload = JSON.stringify({
+    pairId,
+    pairSeed,
+    conditionOrder: order,
+    controlRun,
+    treatmentRun,
+    durationDelta,
+    thermalDiff,
+    classification
+  });
   const outputHash = createHash('sha256').update(payload).digest('hex');
 
   pairResults.push({
