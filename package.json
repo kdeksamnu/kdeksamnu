@@ -1,0 +1,21 @@
+{
+  "name": "kdeksamnu",
+  "version": "1.0.0",
+  "description": "<<<<<<< Updated upstream <<<<<<< HEAD # MLAOS Production Infrastructure Production-ready machine learning infrastructure and ontological monitoring systems for MLAOS.",
+  "main": "displacement_shader.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-kdeksamnu:kdeksamnu/kdeksamnu.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
