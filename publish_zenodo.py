@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import json
 import hashlib
@@ -34,3 +35,21 @@ def package_codex_specs():
 
 if __name__ == "__main__":
     package_codex_specs()
+=======
+import json
+import os
+
+metadata = {
+    "title": "MLAOS-Prime Cathedral Engine: Ash Archive Telemetry & Spectral State Ledger",
+    "upload_type": "dataset",
+    "description": "Exhaustive thermodynamic and mythotechnical telemetry logs from the MLAOS-Prime Cathedral Engine substrate.",
+    "creators": [{"name": "Dallmier, Kenneth Wayne"}],
+    "access_right": "open"
+}
+
+os.makedirs("dist", exist_ok=True)
+with open("dist/metadata.json", "w") as f:
+    json.dump(metadata, f, indent=2)
+
+print("[+] Zenodo publication metadata successfully packaged in dist/metadata.json.")
+>>>>>>> 8840e034f771ea0df4cd7dd3a804c61f34db7c1c

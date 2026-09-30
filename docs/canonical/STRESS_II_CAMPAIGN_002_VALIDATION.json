@@ -1,0 +1,16 @@
+{
+  "validatedAt": "2026-09-30T01:01:50.515Z",
+  "targetCampaign": "CAMPAIGN-002",
+  "designCheck": "Paired randomized control/treatment design requires a Paired t-test (evaluating within-pair differences) rather than an unpaired Two-Sample t-test.",
+  "previousUnpaired": {
+    "pValueDuration": 0.893883,
+    "pValueThermal": 0.884614
+  },
+  "correctedPaired": {
+    "testName": "Student’s Paired t-test (Two-Tailed)",
+    "pValueDuration": 0.882158,
+    "tStatDuration": 0.1482,
+    "pValueThermal": 0.872868,
+    "tStatThermal": -0.16
+  }
+}

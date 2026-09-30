@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://e1517mgfdyq"
+path="res://.godot/imported/dialetheic_logic.glsl-2cd4cea4c25f48cf085ccffb37e9ff14.res"
+
+[deps]
+
+source_file="res://frontend/shaders/dialetheic_logic.glsl"
+dest_files=["res://.godot/imported/dialetheic_logic.glsl-2cd4cea4c25f48cf085ccffb37e9ff14.res"]
+
+[params]
+

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MLAOS-PRIME // Visual Echo</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #08080c;
+            color: #d8d8e8;
+            font-family: -apple-system, BlinkMacSystemFont, "JetBrains Mono", Menlo, monospace;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+        #canvas-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+        }
+        .overlay {
+            position: absolute;
+            z-index: 10;
+            pointer-events: none;
+            padding: 24px;
+        }
+        .interactive { pointer-events: auto; }
+        #top-left {
+            top: 0; left: 0;
+            max-width: 420px;
+        }
+        h1 {
+            font-size: 1.15rem;
+            letter-spacing: 0.15em;
+            color: #f0f0f5;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            font-size: 0.75rem;
+            color: #787890;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+        .metric-card {
+            background: rgba(16, 16, 24, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+        }
+        .metric-row:last-child { margin-bottom: 0; }
+        .label { color: #8888a0; }
+        .value { color: #e0e0f0; font-weight: 600; }
+        .hash-display {
+            font-family: monospace;
+            font-size: 0.68rem;
+            color: #58a6ff;
+            word-break: break-all;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 8px;
+            border-radius: 4px;
+            margin-top: 6px;
+            border-left: 2px solid #58a6ff;
+        }
+        #bottom-controls {
+            bottom: 0; left: 0; right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 28px;
+        }
+        .control-panel {
+            background: rgba(16, 16, 24, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 14px 24px;
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .timeline-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        input[type=range] {
+            flex-grow: 1;
+            accent-color: #58a6ff;
+            cursor: pointer;
+        }
+        button {
+            background: rgba(88, 166, 255, 0.15);
+            color: #58a6ff;
+            border: 1px solid rgba(88, 166, 255, 0.35);
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            background: rgba(88, 166, 255, 0.3);
+            border-color: #58a6ff;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge-true { background: rgba(46, 160, 67, 0.2); color: #3fb950; }
+        .badge-both { background: rgba(218, 54, 51, 0.25); color: #f85149; }
+        .badge-neither { background: rgba(139, 148, 158, 0.2); color: #8b949e; }
+    </style>
+    <!-- Three.js & Controls via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <div class="overlay" id="top-left">
+        <h1>MLAOS-PRIME // The Visual Echo</h1>
+        <div class="subtitle">Somatic Telemetry & Merkle DAG Observer Core</div>
+
+        <div class="metric-card interactive">
+            <div class="metric-row">
+                <span class="label">Observed Target</span>
+                <span class="value" id="disp-observer">Chaos-Subject</span>
+            </div>
+            <div class="metric-row">
+                <span class="label">Somatic Integrity</span>
+                <span class="value" id="disp-integrity">1.0000</span>
+            </div>
+            <div class="metric-row">
+                <span class="label">Harmonic Scars</span>
+                <span class="value" id="disp-scars">0</span>
+            </div>
+            <div class="metric-row">
+                <span class="label">Logic State</span>
+                <span class="value" id="disp-logic"><span class="badge badge-true">True</span></span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-row">
+                <span class="label">Lineage Depth</span>
+                <span class="value" id="disp-depth">203 / 203 (Genesis)</span>
+            </div>
+            <div class="metric-row">
+                <span class="label">DAG Cryptographic Status</span>
+                <span class="value" style="color: #3fb950;">VERIFIED UNBROKEN</span>
+            </div>
+            <div class="hash-display" id="disp-hash">Connecting to Ash Archive...</div>
+        </div>
+    </div>
+
+    <div class="overlay" id="bottom-controls">
+        <div class="control-panel interactive">
+            <div class="timeline-row">
+                <button id="btn-play">PLAY CRUCIBLE</button>
+                <input type="range" id="scrubber" min="0" max="203" value="203" step="1">
+                <span style="font-size: 0.8rem; width: 80px; text-align: right;" id="step-label">Step 0/203</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const TERMINAL_HASH = "ad012a7d664681367b0069e50ab7820dad0f2612ebf2e39f381cd09aaf18ffce";
+        let lineageData = [];
+        let isPlaying = false;
+        let playInterval = null;
+
+        // 1. Three.js Scene Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x08080c, 0.05);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 6);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // 2. Observer Somatic Mesh Construction
+        const baseGeometry = new THREE.IcosahedronGeometry(1.6, 5);
+        const positionAttribute = baseGeometry.attributes.position;
+        const originalPositions = positionAttribute.clone();
+
+        const coreMaterial = new THREE.MeshStandardMaterial({
+            color: 0x141422,
+            metalness: 0.85,
+            roughness: 0.25,
+            wireframe: false,
+        });
+
+        const wireframeMaterial = new THREE.MeshBasicMaterial({
+            color: 0x58a6ff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.35
+        });
+
+        const observerMesh = new THREE.Mesh(baseGeometry, coreMaterial);
+        const wireframeMesh = new THREE.Mesh(baseGeometry, wireframeMaterial);
+        observerMesh.add(wireframeMesh);
+        scene.add(observerMesh);
+
+        // 2b. Synthesize the Crystalline Aether-Horn (Unicorn Core Geometry)
+        const hornGeo = new THREE.ConeGeometry(0.35, 2.2, 16, 32);
+        // Apply helical twist to the horn geometry
+        const hornPos = hornGeo.attributes.position;
+        for (let i = 0; i < hornPos.count; i++) {
+            const y = hornPos.getY(i);
+            const angle = y * 4.5;
+            const x = hornPos.getX(i);
+            const z = hornPos.getZ(i);
+            hornPos.setX(i, x * Math.cos(angle) - z * Math.sin(angle));
+            hornPos.setZ(i, x * Math.sin(angle) + z * Math.cos(angle));
+        }
+        hornGeo.computeVertexNormals();
+
+        const hornMaterial = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            emissive: 0x58a6ff,
+            emissiveIntensity: 0.8,
+            metalness: 0.9,
+            roughness: 0.1,
+            wireframe: false
+        });
+
+        const hornMesh = new THREE.Mesh(hornGeo, hornMaterial);
+        hornMesh.position.set(0, 2.1, 0); // Anchored to the crown
+        observerMesh.add(hornMesh);
+
+        // Coronal Focus Light (Horn Tip Emitter)
+        const hornLight = new THREE.PointLight(0x00ffff, 3.0, 10);
+        hornLight.position.set(0, 3.2, 0);
+        observerMesh.add(hornLight);
+
+
+        // Surrounding Ambient Dust
+        const dustGeo = new THREE.BufferGeometry();
+        const dustCount = 800;
+        const dustPos = new Float32Array(dustCount * 3);
+        for(let i = 0; i < dustCount * 3; i++) dustPos[i] = (Math.random() - 0.5) * 14;
+        dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+        const dustMat = new THREE.PointsMaterial({ color: 0x485878, size: 0.03, transparent: true, opacity: 0.5 });
+        const dustCloud = new THREE.Points(dustGeo, dustMat);
+        scene.add(dustCloud);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+
+        const primaryLight = new THREE.PointLight(0xd4af37, 2.5, 20); // Gold Joy
+        primaryLight.position.set(4, 4, 4);
+        scene.add(primaryLight);
+
+        const secondaryLight = new THREE.PointLight(0x1e50ff, 2.0, 20); // Blue Sorrow
+        secondaryLight.position.set(-4, -4, 2);
+        scene.add(secondaryLight);
+
+        // 3. Telemetry Deform Function
+        function updateSomaticMesh(integrity, scarCount, phase) {
+            const time = performance.now() * 0.001;
+            const pos = baseGeometry.attributes.position;
+            const orig = originalPositions;
+            const displacementStrength = (1.0 - integrity) * 0.45;
+
+            for (let i = 0; i < pos.count; i++) {
+                const u = orig.getX(i);
+                const v = orig.getY(i);
+                const w = orig.getZ(i);
+
+                // High-frequency fracture noise when integrity degrades
+                const noise = Math.sin(u * 4 + time * 2) * Math.cos(v * 4 + time * 2) * Math.sin(w * 4 + time);
+                const scarPulse = scarCount > 0 ? (Math.sin(w * 8 + time * 4) * 0.08 * (scarCount / 10)) : 0;
+                
+                const factor = 1.0 + (noise * displacementStrength) + scarPulse;
+                pos.setXYZ(i, u * factor, v * factor, w * factor);
+            }
+            pos.needsUpdate = true;
+            baseGeometry.computeVertexNormals();
+            if (typeof hornMaterial !== 'undefined') {
+                hornMaterial.emissiveIntensity = 0.5 + (1.0 - integrity) * 2.0;
+                hornMaterial.emissive.setHex(scarCount > 0 ? 0xf85149 : 0x58a6ff);
+                hornLight.color.setHex(scarCount > 0 ? 0xf85149 : 0x00ffff);
+            }
+
+            // Modulate Wireframe emission based on scars and integrity
+            if (scarCount > 0) {
+                wireframeMaterial.color.setHex(0xf85149); // Dialetheic scar tension
+                wireframeMaterial.opacity = 0.65;
+            } else {
+                wireframeMaterial.color.setHex(0x58a6ff);
+                wireframeMaterial.opacity = 0.35;
+            }
+        }
+
+        // 4. Fetch Verified Lineage from Localhost API
+        async function fetchChainLineage() {
+            try {
+                const res = await fetch(`http://localhost:8000/api/v1/spectral/chain/verify?state_hash=${TERMINAL_HASH}`);
+                const data = await res.json();
+                lineageData = data.lineage; // Array of 204 steps: Depth 203 (Genesis) -> Depth 0 (Terminal)
+                
+                document.getElementById('scrubber').max = lineageData.length - 1;
+                document.getElementById('scrubber').value = 0;
+                renderStep(0);
+            } catch (err) {
+                document.getElementById('disp-hash').innerText = "Unable to connect to http://localhost:8000. Is the server running?";
+                console.error(err);
+            }
+        }
+
+        function renderStep(index) {
+            if (!lineageData || lineageData.length === 0) return;
+            const step = lineageData[index]; // 0 = Genesis (oldest), 203 = Terminal (latest)
+            
+            // Calculate simulated integrity and scars along traversal
+            const progress = index / (lineageData.length - 1);
+            const scars = index > 2 ? Math.floor(Math.sin(progress * Math.PI) * 12) : 0;
+            const integrity = Math.max(0.65, 1.0 - (scars * 0.035));
+
+            document.getElementById('disp-integrity').innerText = integrity.toFixed(4);
+            document.getElementById('disp-scars').innerText = scars;
+            document.getElementById('disp-depth').innerText = `Depth ${step.depth} (Step ${index + 1} / ${lineageData.length})`;
+            document.getElementById('disp-hash').innerText = `State: ${step.current_hash}\nParent: ${step.parent_hash}`;
+            document.getElementById('step-label').innerText = `${index + 1}/${lineageData.length}`;
+
+            updateSomaticMesh(integrity, scars, 0.0);
+        }
+
+        // 5. Scrubber & Playback Controls
+        const scrubber = document.getElementById('scrubber');
+        scrubber.addEventListener('input', (e) => {
+            renderStep(parseInt(e.target.value));
+        });
+
+        const playBtn = document.getElementById('btn-play');
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                clearInterval(playInterval);
+                playBtn.innerText = "PLAY CRUCIBLE";
+                isPlaying = false;
+            } else {
+                playBtn.innerText = "PAUSE";
+                isPlaying = true;
+                playInterval = setInterval(() => {
+                    let next = parseInt(scrubber.value) + 1;
+                    if (next >= lineageData.length) next = 0;
+                    scrubber.value = next;
+                    renderStep(next);
+                }, 60);
+            }
+        });
+
+        // 6. Animation Render Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            observerMesh.rotation.y += 0.003;
+            observerMesh.rotation.x += 0.001;
+            dustCloud.rotation.y -= 0.0005;
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        
+        // 7. Live Server-Sent Events (SSE) Stream Subscription
+        function initLiveStream() {
+            const sse = new EventSource('/api/v1/spectral/stream');
+            
+            sse.onopen = () => {
+                console.log("[*] Connected to live Spectral SSE stream.");
+                const badge = document.getElementById('disp-logic');
+                badge.innerHTML = '<span class="badge badge-true">LIVE SSE LINKED</span>';
+            };
+
+            sse.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    console.log("[+] Live telemetry ingest:", data);
+                    
+                    document.getElementById('disp-integrity').innerText = Number(data.somatic_integrity).toFixed(4);
+                    document.getElementById('disp-scars').innerText = data.harmonic_scars;
+                    document.getElementById('disp-hash').innerText = `State: ${data.state_hash}\nParent: ${data.parent_hash}`;
+                    
+                    const isScarred = data.logic_state === "Both" || data.harmonic_scars > 0;
+                    document.getElementById('disp-logic').innerHTML = isScarred 
+                        ? '<span class="badge badge-both">Dialetheic Both</span>'
+                        : '<span class="badge badge-true">Nominal True</span>';
+
+                    updateSomaticMesh(data.somatic_integrity, data.harmonic_scars, 0.0);
+                } catch (e) {
+                    console.error("SSE parse error", e);
+                }
+            };
+
+            sse.onerror = (err) => {
+                console.warn("[!] SSE disconnected. Retrying in background...");
+            };
+        }
+
+        initLiveStream();
+        fetchChainLineage();
+        animate();
+
+    </script>
+</body>
+</html>

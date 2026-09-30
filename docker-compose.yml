@@ -1,0 +1,18 @@
+services:
+  engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dallmier/mlaos-prime:latest
+    container_name: mlaos-prime-engine
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:////app/data/ash_archive.db
+    volumes:
+      - ash_archive_data:/app/data
+
+volumes:
+  ash_archive_data:
+    name: mlaos_ash_archive_data

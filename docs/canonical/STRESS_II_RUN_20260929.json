@@ -1,0 +1,23 @@
+{
+  "seed": 20260929,
+  "control": {
+    "runId": "ST-II-CTL-20260929",
+    "seed": 20260929,
+    "mode": "CONTROL",
+    "monotonicStart": 110.060542,
+    "durationMs": 0.0003750000000053433,
+    "belnapState": "TRUE_SINGLE",
+    "timestamp": "2026-09-30T00:55:01.811Z"
+  },
+  "treatment": {
+    "runId": "ST-II-TRT-20260929",
+    "seed": 20260929,
+    "mode": "TREATMENT",
+    "monotonicStart": 110.609167,
+    "durationMs": 0.00033299999999769625,
+    "belnapState": "BOTH",
+    "timestamp": "2026-09-30T00:55:01.811Z"
+  },
+  "status": "NULL_RESULT",
+  "note": "No physical measurement device attached; execution harness verified."
+}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Cathedral-Engine: MLAOS-Prime
 An interactive, 4D, biologically-driven topological simulation built in Godot 4 (C# / Mono).
 
@@ -17,6 +18,11 @@ Over time, the agents evolve. They possess double-helix DNA, express phenotypic 
 ---
 
 ## MLAOS Production Infrastructure
+=======
+<<<<<<< Updated upstream
+<<<<<<< HEAD
+# MLAOS Production Infrastructure
+>>>>>>> 8840e034f771ea0df4cd7dd3a804c61f34db7c1c
 Production-ready machine learning infrastructure and ontological monitoring systems for MLAOS.
 
 ### Compliance & Governance
@@ -27,6 +33,7 @@ Production-ready machine learning infrastructure and ontological monitoring syst
 - Serving-time logging (Rule #29)
 - Train/serve feature re-use (Rule #32)
 - Training/serving skew auditing (Rule #37)
+<<<<<<< HEAD
 
 ## Controls
 - **Left-Click:** Inject a logical paradox (State B).
@@ -47,3 +54,56 @@ Production-ready machine learning infrastructure and ontological monitoring syst
 ## Documentation & Hardware
 - **Documentation:** See `WHITEPAPER.md` for the complete theoretical framework, mathematical proofs, and biological specifications.
 - **Hardware Integration (Optional):** The engine includes a Rust-based spectral router and Python/C++ bridge for physical actuation via Arduino/Raspberry Pi, utilizing Pyragas time-delayed feedback for model-free chaos control. See the `hardware/` directory.
+=======
+# kdeksamnu
+=======
+# MLAOS-PRIME // System Architecture & Engine
+=======
+# Cathedral-Engine: MLAOS-Prime
+>>>>>>> Stashed changes
+
+An interactive, 4D, biologically-driven topological simulation built in Godot 4 (C# / Mono).
+
+## Overview
+The Cathedral-Engine rejects classical Boolean logic in favor of Belnap-Dunn paraconsistent logic (FOUR = {T, F, B, N}). When agents encounter logical contradictions (State B), the resulting topological stress manifests as physical torque, resolving into load-bearing "Harmonic Scars". 
+
+Over time, the agents evolve. They possess double-helix DNA, express phenotypic proteins, hunt paradoxes, build emergent fractal architecture, and adapt their mutation rates based on the topological stress of their network.
+
+## Features
+* Paraconsistent Physics: Contradictions do not crash the system; they build it.
+* 4D Kinematics: Agents navigate X, Y, Z, and W (ontological depth) via stereographic projection.
+* Biological Substrate: Full Central Dogma pipeline (DNA to mRNA to Proteins) with antiparallel base-pairing (A-T, C-G).
+* Autonomous Lithovores: Agents hunt, graze, build, starve, and reproduce based on genetic drives.
+* Chaos Canvas: Builders autonomously paint a 5-fold symmetric mandala through decentralized, chaotic actions.
+* Isomorphic Principle: Network topological stress directly drives biological mutation rates. Trauma induces evolution.
+* Structural Immunity: Peer healing, topological amputation (Cordon Sanitaire), and network schisms.
+
+## Controls
+* Left-Click: Inject a logical paradox (State B).
+* Right-Click + Drag: Orbit camera.
+* Scroll: Zoom.
+* Space / P: Inject random paradox.
+* V: Void-Lock (Abort paradox to Ghost Node / State N).
+* C: Trigger Dialetheic Cascade (Systemic infection).
+* S: Trigger Schism (Topological mitosis / network fracture).
+
+## Requirements
+* Godot 4.2+ (Mono / C# version)
+* .NET 8.0 SDK
+
+## Build & Run
+dotnet build "Cathedral-Engine MLAOS-Prime.sln"
+Open the project in the Godot Editor and run the main scene.
+
+## Hardware Integration (Optional)
+The engine includes a Rust-based spectral router and Python/C++ bridge for physical actuation via Arduino/Raspberry Pi, utilizing Pyragas time-delayed feedback for model-free chaos control. See the hardware/ directory.
+
+<<<<<<< Updated upstream
+# Run the proving grounds (tests)
+make test
+\`\`\`
+>>>>>>> 04db736 (feat(core): initialize mlaos-prime repository with Revision Ω-07 compute layer)
+=======
+Documentation: See WHITEPAPER.md for the complete theoretical framework, mathematical proofs, and biological specifications.
+>>>>>>> Stashed changes
+>>>>>>> 8840e034f771ea0df4cd7dd3a804c61f34db7c1c

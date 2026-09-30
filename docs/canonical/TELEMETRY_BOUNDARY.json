@@ -1,0 +1,8 @@
+{
+  "runId": "ST-II-TELEMETRY-INIT",
+  "seed": 20260929,
+  "timestamp": "2026-09-30T00:30:03.699Z",
+  "stateHash": "PENDING_HARDWARE_PROBE",
+  "instrumentationCategory": "timing",
+  "status": "NOT_YET_TESTED"
+}

@@ -1,0 +1,30 @@
+[project]
+name = "mlaos-prime"
+version = "0.1.0"
+description = "The mythotechnical execution layer. Commercialized via Dallmier Tech Venture."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.29.0",
+    "sqlalchemy>=2.0.29",
+    "pydantic>=2.6.4",
+    "typer>=0.12.0",
+    "rich>=13.7.1",
+    "alembic>=1.13.1",
+    "httpx>=0.28.1",
+]
+
+[project.scripts]
+mlaos-transduce = "rituals.transduce:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.1.1",
+]
+
+[tool.uv]
+package = true
+
+[tool.setuptools.packages.find]
+include = ["engine", "rituals", "codex", "architectures"]
