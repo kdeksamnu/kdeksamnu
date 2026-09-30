@@ -3,7 +3,13 @@ import { createHash } from 'crypto';
 import { executeInstrumentedRun, TelemetryRecord } from './harness';
 import * as analysisPlan from '../../docs/canonical/STATISTICAL_ANALYSIS_PLAN.json';
 
-type Condition = 'TREATMENT' | 'CONTROL';
+type Condition = 'CONTROL' | 'TREATMENT';
+
+interface RandomizedPair {
+  pairId: string;
+  seed: number;
+  conditionOrder: [Condition, Condition];
+}
 
 interface PairResult {
   pairId: string;
@@ -38,12 +44,19 @@ interface CampaignReport {
   };
 }
 
-function seededRandom(seed: number): number {
-  let x = seed >>> 0;
-  x ^= x << 13;
-  x ^= x >>> 17;
-  x ^= x << 5;
-  return (x >>> 0) / 0x100000000;
+function seededPrng(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (1664525 * state + 1013904223) >>> 0;
+    return state / 0x100000000;
+  };
+}
+
+function randomizedConditionOrder(seed: number): [Condition, Condition] {
+  const random = seededPrng(seed)();
+  return random < 0.5
+    ? ['CONTROL', 'TREATMENT']
+    : ['TREATMENT', 'CONTROL'];
 }
 
 function mean(values: number[]): number {
@@ -171,18 +184,14 @@ const durationDifferences: number[] = [];
 const thermalDifferences: number[] = [];
 
 for (let i = 1; i <= targetPairs; i++) {
-  const pairId = `PAIR-${String(i).padStart(3, '0')}`;
   const pairSeed = baseSeed + i;
-
-  const order: [Condition, Condition] =
-    seededRandom(pairSeed) >= 0.5
-      ? ['TREATMENT', 'CONTROL']
-      : ['CONTROL', 'TREATMENT'];
+  const pairId = `PAIR-${String(i).padStart(3, '0')}`;
+  const conditionOrder = randomizedConditionOrder(pairSeed);
 
   let controlRun!: TelemetryRecord;
   let treatmentRun!: TelemetryRecord;
 
-  for (const condition of order) {
+  for (const condition of conditionOrder) {
     const run = executeInstrumentedRun({
       runId: `${pairId}-${condition === 'CONTROL' ? 'CTL' : 'TRT'}`,
       seed: pairSeed,
@@ -210,13 +219,13 @@ for (let i = 1; i <= targetPairs; i++) {
     classification = 'OBSERVED';
   }
 
-  const payload = JSON.stringify({ pairId, pairSeed, order, controlRun, treatmentRun, durationDelta, thermalDiff, classification });
+  const payload = JSON.stringify({ pairId, pairSeed, conditionOrder, controlRun, treatmentRun, durationDelta, thermalDiff, classification });
   const outputHash = createHash('sha256').update(payload).digest('hex');
 
   pairResults.push({
     pairId,
     randomizationSeed: pairSeed,
-    conditionOrder: order,
+    conditionOrder,
     controlResult: controlRun,
     treatmentResult: treatmentRun,
     durationDeltaMs: Number(durationDelta.toFixed(3)),
@@ -266,6 +275,5 @@ const campaignReport: CampaignReport = {
   }
 };
 
-const outPath = `docs/canonical/STRESS_II_CAMPAIGN_002_REPORT.json`;
-writeFileSync(outPath, JSON.stringify(campaignReport, null, 2));
-console.log(`CAMPAIGN-002 re-execution complete with paired t-test and operational randomization. Archived to ${outPath}`);
+writeFileSync('docs/canonical/STRESS_II_CAMPAIGN_002_REPORT.json', JSON.stringify(campaignReport, null, 2));
+console.log('Campaign 002 validated and re-executed successfully.');
