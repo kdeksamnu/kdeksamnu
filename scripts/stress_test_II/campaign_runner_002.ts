@@ -5,12 +5,6 @@ import * as analysisPlan from '../../docs/canonical/STATISTICAL_ANALYSIS_PLAN.js
 
 type Condition = 'CONTROL' | 'TREATMENT';
 
-interface RandomizedPair {
-  pairId: string;
-  seed: number;
-  conditionOrder: [Condition, Condition];
-}
-
 interface PairResult {
   pairId: string;
   randomizationSeed: number;
@@ -44,19 +38,20 @@ interface CampaignReport {
   };
 }
 
-function seededPrng(seed: number): () => number {
-  let state = seed >>> 0;
+// Improved PRNG using Mulberry32 to guarantee robust distribution of order permutations
+function mulberry32(seed: number): () => number {
+  let s = seed >>> 0;
   return () => {
-    state = (1664525 * state + 1013904223) >>> 0;
-    return state / 0x100000000;
+    s += 0x6D2B79F5;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = t + Math.imul(t ^ (t >>> 7), 61 | t) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
 
 function randomizedConditionOrder(seed: number): [Condition, Condition] {
-  const random = seededPrng(seed)();
-  return random < 0.5
-    ? ['CONTROL', 'TREATMENT']
-    : ['TREATMENT', 'CONTROL'];
+  const rand = mulberry32(seed)();
+  return rand < 0.5 ? ['CONTROL', 'TREATMENT'] : ['TREATMENT', 'CONTROL'];
 }
 
 function mean(values: number[]): number {
@@ -184,29 +179,32 @@ const durationDifferences: number[] = [];
 const thermalDifferences: number[] = [];
 
 for (let i = 1; i <= targetPairs; i++) {
-  const pairSeed = baseSeed + i;
   const pairId = `PAIR-${String(i).padStart(3, '0')}`;
-  const conditionOrder = randomizedConditionOrder(pairSeed);
+  const pairSeed = baseSeed + i;
 
-  let controlRun!: TelemetryRecord;
-  let treatmentRun!: TelemetryRecord;
+  const order = randomizedConditionOrder(pairSeed);
 
-  for (const condition of conditionOrder) {
-    const run = executeInstrumentedRun({
-      runId: `${pairId}-${condition === 'CONTROL' ? 'CTL' : 'TRT'}`,
-      seed: pairSeed,
-      treatment: condition === 'TREATMENT',
-      timestamp
-    });
+  const firstRun = executeInstrumentedRun({
+    runId: `${pairId}-${order[0]}`,
+    seed: pairSeed,
+    treatment: order[0] === 'TREATMENT',
+    timestamp
+  });
 
-    if (condition === 'CONTROL') {
-      controlRun = run;
-    } else {
-      treatmentRun = run;
-    }
-  }
+  const secondRun = executeInstrumentedRun({
+    runId: `${pairId}-${order[1]}`,
+    seed: pairSeed,
+    treatment: order[1] === 'TREATMENT',
+    timestamp
+  });
 
-  const durationDelta = treatmentRun.durationMs - controlRun.durationMs;
+  const controlRun =
+    order[0] === 'CONTROL' ? firstRun : secondRun;
+
+  const treatmentRun =
+    order[0] === 'TREATMENT' ? firstRun : secondRun;
+
+const durationDelta = treatmentRun.durationMs - controlRun.durationMs;
   const thermalDiff = treatmentRun.thermalDeltaCelsius - controlRun.thermalDeltaCelsius;
   durationDifferences.push(durationDelta);
   thermalDifferences.push(thermalDiff);
@@ -276,4 +274,4 @@ const campaignReport: CampaignReport = {
 };
 
 writeFileSync('docs/canonical/STRESS_II_CAMPAIGN_002_REPORT.json', JSON.stringify(campaignReport, null, 2));
-console.log('Campaign 002 validated and re-executed successfully.');
+console.log('Campaign 002 re-executed with Mulberry32 order randomization.');
