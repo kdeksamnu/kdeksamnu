@@ -86,3 +86,22 @@ if (!registryContent.includes('CE-XIX-003') || !registryContent.includes('HYPOTH
 console.log('[PASS] Guard 6: CE-XIX-003 boundary intact (HYPOTHESIS / NOT_YET_TESTED).');
 
 console.log('\nSUCCESS: All CI guards passed successfully.');
+
+// Guard 7: Evidence-boundary manifest and reproducibility metadata check
+const manifestPath = "docs/canonical/CAMPAIGN_002_MANIFEST_AND_AUDIT.md";
+if (!existsSync(manifestPath)) {
+  fail("Campaign 002 manifest and audit document is missing.");
+}
+const manifestContent = readFileSync(manifestPath, "utf8");
+if (!manifestContent.includes("CAMPAIGN-002") || !manifestContent.includes("CE-XIX-003")) {
+  fail("Campaign 002 manifest content is incomplete.");
+}
+console.log("[PASS] Guard 7: Evidence-boundary manifest verified.");
+
+// Guard 8: Explicit repository authorization check for Campaign 003 execution
+const authMarkerPath = ".campaign_003_authorized";
+if (existsSync("scripts/stress_test_II/campaign_runner_003.ts") && !existsSync(authMarkerPath)) {
+  fail("Campaign 003 runner exists without explicit authorization marker (.campaign_003_authorized).");
+}
+console.log("[PASS] Guard 8: Campaign 003 authorization rules enforced.");
+
