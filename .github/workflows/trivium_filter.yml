@@ -1,23 +1,19 @@
-name: "MLAOS: The Trivium Filter"
+name: Trivium Filter Validation
+
 on:
   push:
-    branches: [ main ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ main ]
+    branches: [ master, main ]
 
 jobs:
-  trivium_validation:
-    name: "Ascending the Winding Stairs"
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: "Grammar: Syntax Integrity"
-        run: echo "Plumb line checked. Syntax is valid."
-      - name: "Logic: Dialectical Inquiry"
-        run: python scripts/logic_gate.py --strict-dogma
-      - name: "Rhetoric: Luminous Documentation"
-        if: success()
-        run: echo "ARCHIVIST LOG: The change is resonant with the CORE_DOGMA."
-      - name: "The Pine Cone: Hardwiring"
-        if: success()
-        run: echo "Level 4 Certification Awarded."
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Trivium Filter Checks
+        run: |
+          python -m pytest tests/trivium/
