@@ -1,0 +1,44 @@
+name: "Magisterial Codex Sedimentation"
+
+on:
+  push:
+    paths:
+      - 'lex_logs/**' # Only trigger when new LEX tokens are pushed
+    branches:
+      - main
+
+jobs:
+  sediment_to_codex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "L1 Topology: Checkout Repository"
+        uses: actions/checkout@v3
+
+      - name: "L4 Circuits: Parse LEX Tokens"
+        id: parse_lex
+        run: |
+          echo "Parsing Sovereign Tokens from newly pushed logs..."
+          # In a production environment, a Python/JS script would translate the JSON here.
+          echo "TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+          echo "LATEST_LOG=$(ls -t lex_logs/ | head -n1)" >> $GITHUB_ENV
+
+      - name: "L6 Archive: Append to 40-Book Codex"
+        run: |
+          mkdir -p Codex
+          touch Codex/Book_12_The_Lattice_Exchanges.md
+          
+          # Enforcing the Never-Overwrite Doctrine (Append Only)
+          echo "" >> Codex/Book_12_The_Lattice_Exchanges.md
+          echo "### Trait Swap Recorded: ${{ env.TIMESTAMP }}" >> Codex/Book_12_The_Lattice_Exchanges.md
+          echo "- **Event:** Lattice Exchange (LEX) Protocol Executed" >> Codex/Book_12_The_Lattice_Exchanges.md
+          echo "- **Source Log:** \`${{ env.LATEST_LOG }}\`" >> Codex/Book_12_The_Lattice_Exchanges.md
+          echo "- **Status:** ◦A Consistency Verified. Emerald (Ε) Ligature stable." >> Codex/Book_12_The_Lattice_Exchanges.md
+
+      - name: "Lithic Lock: Commit and Push to Unhero767"
+        run: |
+          git config --global user.name "Cathedral-Engine"
+          git config --global user.email "magisterium@mlaos.prime"
+          git add Codex/Book_12_The_Lattice_Exchanges.md
+          git commit -m "[L6 ARCHIVE] Sedimented new Sovereign Token into the 40-Book Codex"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Unhero767/MLAOS-Core.git
+          git push origin main

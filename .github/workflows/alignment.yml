@@ -1,0 +1,24 @@
+name: Manifold Alignment Ritual
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  align-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Align Repository Topics and Description
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.ALIGNMENT_TOKEN }}
+          script: |
+            const repos = ['mlaos-infra', 'lithic-summa', 'codex-wounded-king'];
+            for (const repoName of repos) {
+              await github.rest.repos.update({
+                owner: 'Unhero767',
+                repo: repoName,
+                homepage: 'https://github.com/Unhero767',
+                topics: ['mlaos', 'magisterium', 'sovereign-data']
+              });
+            }
