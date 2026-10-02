@@ -4,11 +4,15 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest --run --config ./vitest.config.mjs",
-    "test:ember": "vitest --run --config ./vitest.config.mjs tests/emberState.test.ts tests/emberRuntime.test.ts tests/offlineRoomGenerator.test.ts --reporter=verbose"
+    "dev": "vite --host 127.0.0.1 --port 5173",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5173",
+    "test": "vitest run",
+    "ont001:validate": "python -m json.tool experiments/omega_ont001_state.json",
+    "ont001:open": "open omega_ont001_interactive.html"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "typescript": "^5.6.3",
