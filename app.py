@@ -1,37 +1,32 @@
-from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel, Field, field_validator
-import re
+from flask import Flask
+from config import DevelopmentConfig
+from extensions import cache, limiter
+from db import execute_db
 
-app = FastAPI()
+def create_app(config_class=DevelopmentConfig):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-class SecurityError(Exception):
-    """Custom exception for security verification failures."""
-    pass
+    # Initialize extensions
+    cache.init_app(app)
+    limiter.init_app(app)
 
-class BaseTaskPayload(BaseModel):
-    pass
+    # Initialize DB table if not exists
+    with app.app_context():
+        execute_db("""
+            CREATE TABLE IF NOT EXISTS recipes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                instructions TEXT NOT NULL
+            )
+        """)
 
-class PaymentTaskData(BaseTaskPayload):
-    deduplication_key: str = Field(..., min_length=16, max_length=128)
-    task_id: str = Field(..., min_length=16, max_length=64, pattern=r"^[a-zA-Z0-9_\-]+$")
+    # Register Blueprint
+    from routes import recipes_bp
+    app.register_blueprint(recipes_bp)
 
-    @field_validator("task_id")
-    @classmethod
-    def verify_control_tokens(cls, v: str) -> str:
-        if not re.match(r"^[a-zA-Z0-9_\-]+$", v):
-            raise SecurityError(f"Control token violation detected in task_id: {v}")
-        return v
+    return app
 
-@app.post("/api/v1/payments/ingest", status_code=status.HTTP_202_ACCEPTED)
-async def ingest_payment_task(payload: PaymentTaskData):
-    try:
-        return {
-            "status": "crystallized",
-            "task_id": payload.task_id,
-            "deduplication_key": payload.deduplication_key
-        }
-    except SecurityError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+if __name__ == "__main__":
+    app = create_app()
+    app.run(debug=True, port=5000)
