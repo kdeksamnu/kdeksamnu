@@ -1,9 +1,17 @@
 {
   "name": "kdeksamnu",
   "version": "1.0.0",
-  "description": "Cathedral-Engine MLAOS-Prime Node Stratum",
-  "private": true,
+  "description": "Ember Engine - Deterministic Dungeon Traversal, Fog/Pressure Mechanics, and Paraconsistent Contradiction Integration",
+  "main": "dist/engine/ember/index.js",
+  "types": "dist/engine/ember/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
   }
 }
